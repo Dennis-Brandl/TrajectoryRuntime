@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "paths": {
+      "@engine/*": ["../web/src/*"],
+      "@kmp-engine/*": ["../kmp-engine/build/dist/js/productionLibrary/*"]
+    }
+  },
+  "include": [
+    "src",
+    "../web/src/types.ts",
+    "../web/src/engine.ts",
+    "../web/src/properties.ts",
+    "../web/src/step-handlers.ts"
+  ]
+}

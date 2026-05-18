@@ -1,0 +1,31 @@
+{
+  "local_id": "Kitchen Library",
+  "oid": "285250098785435648",
+  "version": "1.0.0",
+  "last_modified_date": "2026-02-26T03:22:03.241Z",
+  "environment_specifications": [
+    {
+      "local_id": "Home Kitchen",
+      "oid": "285250178221355008",
+      "version": "1.0.0",
+      "last_modified_date": "2026-02-26T03:23:01.998Z",
+      "included_actions": [],
+      "value_property_specifications": [
+        {
+          "name": "PreheatTime",
+          "oid": "285250193182425088",
+          "entries": [
+            {
+              "name": "Value",
+              "value": "10"
+            },
+            {
+              "name": "Description",
+              "value": "Minutes for typical preheat"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

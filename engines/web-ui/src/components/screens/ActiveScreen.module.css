@@ -1,0 +1,84 @@
+.activeScreen {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.stepViewport {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 8px;
+  /* Embla viewport must establish height for slides */
+  display: flex;
+  flex-direction: column;
+}
+
+.stepContainer {
+  display: flex;
+  touch-action: pan-y pinch-zoom;
+  flex: 1;
+  min-height: 0;
+}
+
+.stepSlide {
+  flex: 0 0 100%;
+  min-width: 0;
+  padding: 0 4px;
+  overflow-y: auto;
+  /* Match viewport height so content fills the working area */
+  height: 100%;
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px;
+  flex-shrink: 0;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d0d0d0;
+  transition: background 0.2s;
+}
+
+.dotActive { background: #2980b9; }
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px;
+  color: #999;
+  font-size: 16px;
+  text-align: center;
+}
+
+.completionOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 10;
+}
+
+.completionCard {
+  background: #e8f8e8;
+  border-radius: 12px;
+  padding: 24px 32px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.completionIcon { color: #27ae60; margin-bottom: 8px; }
+.completionTitle { font-size: 16px; font-weight: 600; color: #2d3436; margin: 0 0 4px; }
+.completionName { font-size: 13px; color: #636e72; margin: 0; }

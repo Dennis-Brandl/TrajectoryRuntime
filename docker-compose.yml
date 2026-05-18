@@ -1,0 +1,22 @@
+##############################################################################
+# Trajectory RT — Docker Compose
+#
+# Usage:
+#   docker compose up --build -d    # build and start
+#   docker compose up -d            # start (image already built)
+#   docker compose down             # stop
+#
+# Access:
+#   Local:   http://localhost:3001
+#   Remote:  http://<your-ip>:3001
+#
+# This is a static web application served by nginx.
+# No database or persistent storage is required.
+##############################################################################
+
+services:
+  trajectoryruntime:
+    build: .
+    ports:
+      - "3001:80"
+    restart: unless-stopped

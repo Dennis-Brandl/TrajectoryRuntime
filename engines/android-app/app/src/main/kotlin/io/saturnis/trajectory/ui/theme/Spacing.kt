@@ -1,0 +1,34 @@
+// Copyright (c) 2026 Saturnis.io. All rights reserved.
+// Licensed under the GNU AGPL v3. See LICENSE.md for details.
+package io.saturnis.trajectory.ui.theme
+
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+
+data class AppSpacingValues(
+    val contentPadding: Dp,
+    val cardSpacing: Dp,
+    val sectionSpacing: Dp,
+    val cardInternalPadding: Dp,
+    val maxContentWidth: Dp,
+)
+
+val CompactSpacing = AppSpacingValues(
+    contentPadding = 16.dp,
+    cardSpacing = 12.dp,
+    sectionSpacing = 24.dp,
+    cardInternalPadding = 16.dp,
+    maxContentWidth = Dp.Infinity,
+)
+
+val ExpandedSpacing = AppSpacingValues(
+    contentPadding = 24.dp,
+    cardSpacing = 16.dp,
+    sectionSpacing = 32.dp,
+    cardInternalPadding = 20.dp,
+    maxContentWidth = 840.dp,
+)
+
+fun spacingFor(widthSizeClass: WindowWidthSizeClass): AppSpacingValues =
+    if (widthSizeClass == WindowWidthSizeClass.Compact) CompactSpacing else ExpandedSpacing

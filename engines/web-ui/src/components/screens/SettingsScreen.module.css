@@ -1,0 +1,165 @@
+.screen {
+  padding: 16px;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.heading {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 16px;
+  color: var(--color-text);
+}
+
+.settingGroup {
+  margin-bottom: 24px;
+}
+
+.groupTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin: 0 0 12px;
+}
+
+.settingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+}
+
+.settingLabel {
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+.checkbox {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--color-accent);
+}
+
+.dangerButton {
+  padding: 10px 16px;
+  border: 1px solid var(--color-danger);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-danger);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 8px;
+}
+.dangerButton:hover {
+  background: var(--color-danger);
+  color: #fff;
+}
+.permissionDenied {
+  font-size: 12px;
+  color: var(--color-warning);
+  margin-top: 4px;
+}
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal {
+  background: var(--color-surface, #fff);
+  color: var(--color-text);
+  border-radius: 12px;
+  padding: 20px;
+  min-width: 320px;
+  max-width: 600px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+.modalTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+.modalBody {
+  overflow-y: auto;
+  margin-bottom: 16px;
+}
+.resourceTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.resourceTable th,
+.resourceTable td {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--color-border);
+}
+.resourceTable th {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+.resourceTable td.numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.modalEmpty {
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  padding: 16px;
+}
+.modalActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.modalCancel {
+  padding: 8px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 14px;
+  cursor: pointer;
+}
+.modalCancel:hover {
+  background: var(--color-surface-hover, rgba(0, 0, 0, 0.05));
+}
+
+.iconButton {
+  padding: 2px 6px;
+  border: none;
+  background: transparent;
+  color: var(--color-danger);
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 4px;
+  line-height: 1;
+}
+.iconButton:hover {
+  background: rgba(220, 38, 38, 0.12);
+}
+
+.aboutName {
+  font-size: 14px;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.aboutVersion {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin: 4px 0 0;
+}

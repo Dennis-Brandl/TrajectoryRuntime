@@ -1,0 +1,2513 @@
+{
+  "schemaVersion": "4.0",
+  "local_id": "Spaghetti Bolognese Dinner",
+  "oid": "286137390274211840",
+  "description": "Complete recipe for classic Spaghetti Bolognese, optimized for a single cook. Parallel steps for efficient time management. Optional red wine deglaze and seasoning adjustment.",
+  "version": "1.0.0",
+  "last_modified_date": "2026-03-02T20:12:49.371Z",
+  "steps": [
+    {
+      "local_id": "Start",
+      "oid": "5000000000001",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-02T20:18:19.316Z",
+      "step_type": "START",
+      "position": {
+        "x": 145,
+        "y": 35
+      }
+    },
+    {
+      "local_id": "Gather Ingredients",
+      "oid": "5000000000017",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-02T20:18:19.316Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "5000000000002",
+          "type": "Header",
+          "value": "Gather Your Ingredients",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "5000000000003",
+          "type": "Image",
+          "value": "ingredients.jpg"
+        },
+        {
+          "oid": "5000000000004",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "5000000000005",
+          "type": "Text",
+          "value": "500g ground beef (or 250g beef + 250g pork)",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000006",
+          "type": "Text",
+          "value": "1 medium onion, 2 carrots, 2 celery stalks",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000007",
+          "type": "Text",
+          "value": "4 cloves garlic",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000008",
+          "type": "Text",
+          "value": "1 can (400g) crushed San Marzano tomatoes",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000009",
+          "type": "Text",
+          "value": "2 tbsp tomato paste",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000010",
+          "type": "Text",
+          "value": "1 cup (250ml) dry red wine (optional)",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000011",
+          "type": "Text",
+          "value": "400g spaghetti or tagliatelle",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000012",
+          "type": "Text",
+          "value": "2 tbsp olive oil, 1 tbsp butter",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000013",
+          "type": "Text",
+          "value": "Salt, black pepper, 1 tsp dried oregano, 2 bay leaves",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000014",
+          "type": "Text",
+          "value": "Fresh basil, Parmigiano-Reggiano for serving",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000015",
+          "type": "SmallText",
+          "value": "Mise en place: measure and organize everything before you start cooking.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "5000000000016",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Gather Your Ingredients",
+                "plainText": "Gather Your Ingredients"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 220,
+              "src": "ingredients.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 406,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 418,
+              "width": 350,
+              "height": 230,
+              "content": {
+                "content": "500g ground beef (or 250g beef + 250g pork)\n1 medium onion, 2 carrots, 2 celery stalks\n4 cloves garlic\n1 can (400g) crushed San Marzano tomatoes\n2 tbsp tomato paste\n1 cup (250ml) dry red wine (optional)\n400g spaghetti or tagliatelle\n2 tbsp olive oil, 1 tbsp butter\nSalt, black pepper, 1 tsp dried oregano, 2 bay leaves\nFresh basil, Parmigiano-Reggiano for serving",
+                "plainText": "500g ground beef (or 250g beef + 250g pork)\n1 medium onion, 2 carrots, 2 celery stalks\n4 cloves garlic\n1 can (400g) crushed San Marzano tomatoes\n2 tbsp tomato paste\n1 cup (250ml) dry red wine (optional)\n400g spaghetti or tagliatelle\n2 tbsp olive oil, 1 tbsp butter\nSalt, black pepper, 1 tsp dried oregano, 2 bay leaves\nFresh basil, Parmigiano-Reggiano for serving"
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 17.99641636439732,
+              "y": 635.4990418837051,
+              "width": 352,
+              "height": 48,
+              "content": {
+                "content": "Mise en place: measure and organize everything before you start cooking.",
+                "plainText": "Mise en place: measure and organize everything before you start cooking."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 700,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 100,
+        "y": 90
+      }
+    },
+    {
+      "local_id": "Start Parallel Prep",
+      "oid": "5000000000019",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-02T20:18:19.316Z",
+      "step_type": "PARALLEL",
+      "position": {
+        "x": 130,
+        "y": 160
+      }
+    },
+    {
+      "local_id": "Fill & Start to Boil Water",
+      "oid": "5000000000029",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-02T20:18:19.316Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "5000000000021",
+          "type": "Header",
+          "value": "Start Boiling Water",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "5000000000022",
+          "type": "Image",
+          "value": "boil-water.jpg"
+        },
+        {
+          "oid": "5000000000023",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "5000000000024",
+          "type": "Text",
+          "value": "Fill a large pot with 4-5 liters of water.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000025",
+          "type": "Text",
+          "value": "Place on the stove over high heat and cover.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000026",
+          "type": "Text",
+          "value": "This will come to a boil while you prep.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000027",
+          "type": "SmallText",
+          "value": "Starting water first maximizes your time — it takes 10-15 minutes to boil.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "5000000000028",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Start Boiling Water",
+                "plainText": "Start Boiling Water"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 220,
+              "src": "boil-water.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 406,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 418,
+              "width": 350,
+              "height": 76,
+              "content": {
+                "content": "Fill a large pot with 4-5 liters of water.\nPlace on the stove over high heat and cover.\nThis will come to a boil while you prep.",
+                "plainText": "Fill a large pot with 4-5 liters of water.\nPlace on the stove over high heat and cover.\nThis will come to a boil while you prep."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 504,
+              "width": 350,
+              "height": 46,
+              "content": {
+                "content": "Starting water first maximizes your time — it takes 10-15 minutes to boil.",
+                "plainText": "Starting water first maximizes your time — it takes 10-15 minutes to boil."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 10,
+        "y": 270
+      }
+    },
+    {
+      "local_id": "Prep Vegetables",
+      "oid": "5000000000040",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-02T20:18:19.316Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "5000000000031",
+          "type": "Header",
+          "value": "Prepare the Soffritto",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "5000000000032",
+          "type": "Image",
+          "value": "prep-vegetables.jpg"
+        },
+        {
+          "oid": "5000000000033",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "5000000000034",
+          "type": "Text",
+          "value": "Finely dice the onion into small (3mm) pieces.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000035",
+          "type": "Text",
+          "value": "Peel and finely dice the carrots.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000036",
+          "type": "Text",
+          "value": "Finely dice the celery stalks.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000037",
+          "type": "Text",
+          "value": "Mince the garlic cloves separately.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000038",
+          "type": "SmallText",
+          "value": "The finer you dice, the more they melt into the sauce. This is the flavor base of Italian cooking.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "5000000000039",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Prepare the Soffritto",
+                "plainText": "Prepare the Soffritto"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 220,
+              "src": "prep-vegetables.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 406,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 418,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Finely dice the onion into small (3mm) pieces.\nPeel and finely dice the carrots.\nFinely dice the celery stalks.\nMince the garlic cloves separately.",
+                "plainText": "Finely dice the onion into small (3mm) pieces.\nPeel and finely dice the carrots.\nFinely dice the celery stalks.\nMince the garlic cloves separately."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 526,
+              "width": 350,
+              "height": 64,
+              "content": {
+                "content": "The finer you dice, the more they melt into the sauce. This is the flavor base of Italian cooking.",
+                "plainText": "The finer you dice, the more they melt into the sauce. This is the flavor base of Italian cooking."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 170,
+        "y": 270
+      }
+    },
+    {
+      "local_id": "Prep Complete",
+      "oid": "5000000000042",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-02T20:18:19.316Z",
+      "step_type": "WAIT ALL",
+      "position": {
+        "x": 125,
+        "y": 370
+      }
+    },
+    {
+      "local_id": "Brown the Meat",
+      "oid": "5000000000054",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-02T20:18:19.316Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "5000000000045",
+          "type": "Header",
+          "value": "Brown the Ground Beef",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "5000000000046",
+          "type": "Image",
+          "value": "brown-meat.jpg"
+        },
+        {
+          "oid": "5000000000047",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "5000000000048",
+          "type": "Text",
+          "value": "Heat 2 tbsp olive oil + 1 tbsp butter in a large Dutch oven over medium-high heat.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000049",
+          "type": "Text",
+          "value": "Add the ground beef, breaking it into pieces.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000050",
+          "type": "Text",
+          "value": "Cook 5-7 minutes until well browned.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000051",
+          "type": "Text",
+          "value": "Do NOT drain the fat — it adds flavor.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000052",
+          "type": "SmallText",
+          "value": "Let the meat sit undisturbed for a minute to develop a good brown crust (Maillard reaction).",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "5000000000053",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Brown the Ground Beef",
+                "plainText": "Brown the Ground Beef"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 220,
+              "src": "brown-meat.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 406,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 418,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Heat 2 tbsp olive oil + 1 tbsp butter in a large Dutch oven over medium-high heat.\nAdd the ground beef, breaking it into pieces.\nCook 5-7 minutes until well browned.\nDo NOT drain the fat — it adds flavor.",
+                "plainText": "Heat 2 tbsp olive oil + 1 tbsp butter in a large Dutch oven over medium-high heat.\nAdd the ground beef, breaking it into pieces.\nCook 5-7 minutes until well browned.\nDo NOT drain the fat — it adds flavor."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 526,
+              "width": 350,
+              "height": 64,
+              "content": {
+                "content": "Let the meat sit undisturbed for a minute to develop a good brown crust (Maillard reaction).",
+                "plainText": "Let the meat sit undisturbed for a minute to develop a good brown crust (Maillard reaction)."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 95,
+        "y": 450
+      }
+    },
+    {
+      "local_id": "Add Soffritto",
+      "oid": "5000000000064",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-02T20:18:19.316Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "5000000000056",
+          "type": "Header",
+          "value": "Add the Soffritto",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "5000000000057",
+          "type": "Image",
+          "value": "soffritto.jpg"
+        },
+        {
+          "oid": "5000000000058",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "5000000000059",
+          "type": "Text",
+          "value": "Add the diced onion, carrot, and celery to the browned meat.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000060",
+          "type": "Text",
+          "value": "Season with a pinch of salt.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000061",
+          "type": "Text",
+          "value": "Cook 5-7 minutes, stirring occasionally, until softened and translucent.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000062",
+          "type": "SmallText",
+          "value": "Reduce heat to medium if they start to color too fast. They should be soft, not browned.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "5000000000063",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Add the Soffritto",
+                "plainText": "Add the Soffritto"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 220,
+              "src": "soffritto.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 406,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20.000770936104615,
+              "y": 417.9938945046999,
+              "width": 352,
+              "height": 96,
+              "content": {
+                "content": "<p>Add the <strong>diced onion, carrot, </strong>and <strong>celery </strong>to the browned meat. Season with a pinch of <strong>salt. </strong>Cook 5-7 minutes, stirring occasionally, until softened and translucent.</p><p></p>",
+                "plainText": "Add the diced onion, carrot, and celery to the browned meat. Season with a pinch of salt. Cook 5-7 minutes, stirring occasionally, until softened and translucent."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 17.99641636439732,
+              "y": 525.9900691925534,
+              "width": 360,
+              "height": 48,
+              "content": {
+                "content": "<p>Reduce heat to medium if they start to color too fast</p><p>They should be soft, not browned.</p>",
+                "plainText": "Reduce heat to medium if they start to color too fastThey should be soft, not browned."
+              },
+              "fontSize": 13,
+              "color": "#555555",
+              "align": "center"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 95,
+        "y": 520
+      }
+    },
+    {
+      "local_id": "Add Garlic & Paste",
+      "oid": "5000000000075",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-02T20:18:19.316Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "5000000000066",
+          "type": "Header",
+          "value": "Add Garlic & Tomato Paste",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "5000000000067",
+          "type": "Image",
+          "value": "garlic-paste.jpg"
+        },
+        {
+          "oid": "5000000000068",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "5000000000069",
+          "type": "Text",
+          "value": "Push the meat and vegetables to the side.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000070",
+          "type": "Text",
+          "value": "Add minced garlic and 2 tbsp tomato paste to the cleared space.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000071",
+          "type": "Text",
+          "value": "Stir the paste on the hot spot for 1-2 minutes until it darkens slightly.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000072",
+          "type": "Text",
+          "value": "Then mix everything together.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000073",
+          "type": "SmallText",
+          "value": "Cooking tomato paste directly on the hot surface caramelizes it and deepens the flavor.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "5000000000074",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Add Garlic & Tomato Paste",
+                "plainText": "Add Garlic & Tomato Paste"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 220,
+              "src": "garlic-paste.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 406,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 418,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Push the meat and vegetables to the side.\nAdd minced garlic and 2 tbsp tomato paste to the cleared space.\nStir the paste on the hot spot for 1-2 minutes until it darkens slightly.\nThen mix everything together.",
+                "plainText": "Push the meat and vegetables to the side.\nAdd minced garlic and 2 tbsp tomato paste to the cleared space.\nStir the paste on the hot spot for 1-2 minutes until it darkens slightly.\nThen mix everything together."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 526,
+              "width": 350,
+              "height": 46,
+              "content": {
+                "content": "Cooking tomato paste directly on the hot surface caramelizes it and deepens the flavor.",
+                "plainText": "Cooking tomato paste directly on the hot surface caramelizes it and deepens the flavor."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 95,
+        "y": 590
+      }
+    },
+    {
+      "local_id": "Add Wine?",
+      "oid": "5000000000083",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-02T20:18:19.316Z",
+      "step_type": "YES_NO",
+      "ui_parameter_specifications": [
+        {
+          "oid": "5000000000077",
+          "type": "Header",
+          "value": "Add Red Wine?",
+          "font_size": 20,
+          "align": "center"
+        },
+        {
+          "oid": "5000000000078",
+          "type": "Image",
+          "value": "wine.jpg"
+        },
+        {
+          "oid": "5000000000079",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "5000000000080",
+          "type": "Text",
+          "value": "Red wine adds depth and complexity. A dry red like Chianti works best.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000081",
+          "type": "SmallText",
+          "value": "You can substitute with beef stock or skip this step.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "5000000000082",
+          "type": "YesNoButtons",
+          "value": "Yes, Add Wine",
+          "value2": "No, Skip Wine"
+        }
+      ],
+      "yes_no_config": {
+        "yes_label": "Yes, Add Wine",
+        "no_label": "No, Skip Wine",
+        "yes_value": "true",
+        "no_value": "false",
+        "default_selection": "none"
+      },
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Add Red Wine?",
+                "plainText": "Add Red Wine?"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 220,
+              "src": "wine.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 406,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 418,
+              "width": 350,
+              "height": 76,
+              "content": {
+                "content": "Red wine adds depth and complexity to the sauce.\nA dry red like Chianti or Sangiovese works best.\nYou can substitute with beef stock or skip this step.",
+                "plainText": "Red wine adds depth and complexity to the sauce.\nA dry red like Chianti or Sangiovese works best.\nYou can substitute with beef stock or skip this step."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "button",
+              "x": 20,
+              "y": 700,
+              "width": 160,
+              "height": 44,
+              "label": "Yes, Add Wine",
+              "outputValue": "true",
+              "deletable": false
+            },
+            {
+              "type": "button",
+              "x": 210,
+              "y": 700,
+              "width": 160,
+              "height": 44,
+              "label": "No, Skip Wine",
+              "outputValue": "false",
+              "deletable": false
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 95,
+        "y": 665
+      }
+    },
+    {
+      "local_id": "Deglaze with Wine",
+      "oid": "5000000000093",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-02T20:18:19.316Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "5000000000085",
+          "type": "Header",
+          "value": "Deglaze with Red Wine",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "5000000000086",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "5000000000087",
+          "type": "Text",
+          "value": "Pour in 1 cup (250ml) of dry red wine.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000088",
+          "type": "Text",
+          "value": "Scrape the bottom of the pot to release browned bits (fond).",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000089",
+          "type": "Text",
+          "value": "Simmer and reduce by about half — 3-4 minutes.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000090",
+          "type": "Text",
+          "value": "The alcohol will cook off, leaving rich flavor.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000091",
+          "type": "SmallText",
+          "value": "You'll know it's ready when the harsh alcohol smell fades and the liquid thickens.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "5000000000092",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Deglaze with Red Wine",
+                "plainText": "Deglaze with Red Wine"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Pour in 1 cup (250ml) of dry red wine.\nScrape the bottom of the pot to release browned bits (fond).\nSimmer and reduce by about half — 3-4 minutes.\nThe alcohol will cook off, leaving rich flavor.",
+                "plainText": "Pour in 1 cup (250ml) of dry red wine.\nScrape the bottom of the pot to release browned bits (fond).\nSimmer and reduce by about half — 3-4 minutes.\nThe alcohol will cook off, leaving rich flavor."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 296,
+              "width": 350,
+              "height": 46,
+              "content": {
+                "content": "You'll know it's ready when the harsh alcohol smell fades and the liquid thickens.",
+                "plainText": "You'll know it's ready when the harsh alcohol smell fades and the liquid thickens."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 5,
+        "y": 760
+      }
+    },
+    {
+      "local_id": "Continue",
+      "oid": "5000000000095",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-02T20:18:19.316Z",
+      "step_type": "WAIT ANY",
+      "position": {
+        "x": 145,
+        "y": 845
+      }
+    },
+    {
+      "local_id": "Add Tomatoes & Herbs",
+      "oid": "5000000000107",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-02T20:18:19.316Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "5000000000098",
+          "type": "Header",
+          "value": "Add Tomatoes & Herbs",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "5000000000099",
+          "type": "Image",
+          "value": "tomatoes-herbs.jpg"
+        },
+        {
+          "oid": "5000000000100",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "5000000000101",
+          "type": "Text",
+          "value": "Pour in the can (400g) of crushed San Marzano tomatoes.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000102",
+          "type": "Text",
+          "value": "Add 1 tsp dried oregano and 2 bay leaves.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000103",
+          "type": "Text",
+          "value": "Season with salt and freshly ground black pepper.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000104",
+          "type": "Text",
+          "value": "Stir well to combine everything.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000105",
+          "type": "SmallText",
+          "value": "If using whole canned tomatoes, crush them by hand for a rustic texture.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "5000000000106",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Add Tomatoes & Herbs",
+                "plainText": "Add Tomatoes & Herbs"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 220,
+              "src": "tomatoes-herbs.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 406,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 418,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Pour in the can (400g) of crushed San Marzano tomatoes.\nAdd 1 tsp dried oregano and 2 bay leaves.\nSeason with salt and freshly ground black pepper.\nStir well to combine everything.",
+                "plainText": "Pour in the can (400g) of crushed San Marzano tomatoes.\nAdd 1 tsp dried oregano and 2 bay leaves.\nSeason with salt and freshly ground black pepper.\nStir well to combine everything."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 526,
+              "width": 350,
+              "height": 46,
+              "content": {
+                "content": "If using whole canned tomatoes, crush them by hand for a rustic texture.",
+                "plainText": "If using whole canned tomatoes, crush them by hand for a rustic texture."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 115,
+        "y": 930
+      }
+    },
+    {
+      "local_id": "Simmer & Cook Pasta",
+      "oid": "5000000000109",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-02T20:18:19.316Z",
+      "step_type": "PARALLEL",
+      "position": {
+        "x": 145,
+        "y": 1000
+      }
+    },
+    {
+      "local_id": "Simmer Sauce",
+      "oid": "5000000000120",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-02T20:18:19.316Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "5000000000111",
+          "type": "Header",
+          "value": "Simmer the Sauce (30 min)",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "5000000000112",
+          "type": "Image",
+          "value": "simmer-sauce.jpg"
+        },
+        {
+          "oid": "5000000000113",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "5000000000114",
+          "type": "Text",
+          "value": "Reduce heat to LOW.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000115",
+          "type": "Text",
+          "value": "Partially cover with a lid (leave a gap for steam).",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000116",
+          "type": "Text",
+          "value": "Simmer gently for 30 minutes, stirring every 8-10 minutes.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000117",
+          "type": "Text",
+          "value": "The sauce will thicken and the flavors meld.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000118",
+          "type": "SmallText",
+          "value": "Too thick? Add a splash of pasta water. Too thin? Remove the lid to evaporate.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "5000000000119",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Simmer the Sauce (30 min)",
+                "plainText": "Simmer the Sauce (30 min)"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 220,
+              "src": "simmer-sauce.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 406,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 418,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Reduce heat to LOW.\nPartially cover with a lid (leave a gap for steam).\nSimmer gently for 30 minutes, stirring every 8-10 minutes.\nThe sauce will thicken and the flavors meld.",
+                "plainText": "Reduce heat to LOW.\nPartially cover with a lid (leave a gap for steam).\nSimmer gently for 30 minutes, stirring every 8-10 minutes.\nThe sauce will thicken and the flavors meld."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 526,
+              "width": 350,
+              "height": 46,
+              "content": {
+                "content": "Too thick? Add a splash of pasta water. Too thin? Remove the lid to evaporate.",
+                "plainText": "Too thick? Add a splash of pasta water. Too thin? Remove the lid to evaporate."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 45,
+        "y": 1095
+      }
+    },
+    {
+      "local_id": "Cook the Pasta",
+      "oid": "5000000000131",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-02T20:18:19.316Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "5000000000122",
+          "type": "Header",
+          "value": "Salt Water & Cook Pasta",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "5000000000123",
+          "type": "Image",
+          "value": "cook-pasta.jpg"
+        },
+        {
+          "oid": "5000000000124",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "5000000000125",
+          "type": "Text",
+          "value": "Once water boils, add 2 tbsp salt.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000126",
+          "type": "Text",
+          "value": "Add 400g spaghetti and stir immediately.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000127",
+          "type": "Text",
+          "value": "Cook per package directions MINUS 1 minute (al dente).",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000128",
+          "type": "Text",
+          "value": "Before draining, reserve 1 cup starchy pasta water.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000129",
+          "type": "SmallText",
+          "value": "Start pasta about 15 minutes into the simmer so both finish together. The starchy water is liquid gold!",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "5000000000130",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Salt Water & Cook Pasta",
+                "plainText": "Salt Water & Cook Pasta"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 220,
+              "src": "cook-pasta.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 406,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 418,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Once water boils, add 2 tbsp salt.\nAdd 400g spaghetti and stir immediately.\nCook per package directions MINUS 1 minute (al dente).\nBefore draining, reserve 1 cup starchy pasta water.",
+                "plainText": "Once water boils, add 2 tbsp salt.\nAdd 400g spaghetti and stir immediately.\nCook per package directions MINUS 1 minute (al dente).\nBefore draining, reserve 1 cup starchy pasta water."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 526,
+              "width": 350,
+              "height": 64,
+              "content": {
+                "content": "Start pasta about 15 minutes into the simmer so both finish together. The starchy water is liquid gold!",
+                "plainText": "Start pasta about 15 minutes into the simmer so both finish together. The starchy water is liquid gold!"
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 180,
+        "y": 1095
+      }
+    },
+    {
+      "local_id": "Sauce & Pasta Ready",
+      "oid": "5000000000133",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-02T20:18:19.316Z",
+      "step_type": "WAIT ALL",
+      "position": {
+        "x": 150,
+        "y": 1190
+      }
+    },
+    {
+      "local_id": "Adjust Seasoning?",
+      "oid": "5000000000141",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-02T20:18:19.316Z",
+      "step_type": "YES_NO",
+      "ui_parameter_specifications": [
+        {
+          "oid": "5000000000136",
+          "type": "Header",
+          "value": "Taste the Sauce",
+          "font_size": 20,
+          "align": "center"
+        },
+        {
+          "oid": "5000000000137",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "5000000000138",
+          "type": "Text",
+          "value": "Remove the bay leaves. Taste the sauce carefully.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000139",
+          "type": "Text",
+          "value": "Does it need more salt, pepper, or a pinch of sugar?",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000140",
+          "type": "YesNoButtons",
+          "value": "Yes, Adjust",
+          "value2": "No, Perfect!"
+        }
+      ],
+      "yes_no_config": {
+        "yes_label": "Yes, Adjust",
+        "no_label": "No, Perfect!",
+        "yes_value": "true",
+        "no_value": "false",
+        "default_selection": "none"
+      },
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Taste the Sauce",
+                "plainText": "Taste the Sauce"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 76,
+              "content": {
+                "content": "Remove the bay leaves.\nTaste the sauce carefully.\nDoes it need more salt, pepper, or a pinch of sugar to balance acidity?",
+                "plainText": "Remove the bay leaves.\nTaste the sauce carefully.\nDoes it need more salt, pepper, or a pinch of sugar to balance acidity?"
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "button",
+              "x": 20,
+              "y": 700,
+              "width": 160,
+              "height": 44,
+              "label": "Yes, Adjust",
+              "outputValue": "true",
+              "deletable": false
+            },
+            {
+              "type": "button",
+              "x": 210,
+              "y": 700,
+              "width": 160,
+              "height": 44,
+              "label": "No, Perfect!",
+              "outputValue": "false",
+              "deletable": false
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 120,
+        "y": 1275
+      }
+    },
+    {
+      "local_id": "Adjust Seasoning",
+      "oid": "5000000000151",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-02T20:18:19.316Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "5000000000143",
+          "type": "Header",
+          "value": "Adjust Seasoning",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "5000000000144",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "5000000000145",
+          "type": "Text",
+          "value": "Add salt in small pinches, stirring and tasting after each.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000146",
+          "type": "Text",
+          "value": "Add freshly ground black pepper to taste.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000147",
+          "type": "Text",
+          "value": "If too acidic, add a tiny pinch of sugar (1/4 tsp).",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000148",
+          "type": "Text",
+          "value": "Stir well and simmer 1-2 more minutes.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000149",
+          "type": "SmallText",
+          "value": "Season gradually — you can always add more, but can't take it away!",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "5000000000150",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Adjust Seasoning",
+                "plainText": "Adjust Seasoning"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Add salt in small pinches, stirring and tasting after each.\nAdd freshly ground black pepper to taste.\nIf too acidic, add a tiny pinch of sugar (1/4 tsp).\nStir well and simmer 1-2 more minutes.",
+                "plainText": "Add salt in small pinches, stirring and tasting after each.\nAdd freshly ground black pepper to taste.\nIf too acidic, add a tiny pinch of sugar (1/4 tsp).\nStir well and simmer 1-2 more minutes."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 296,
+              "width": 350,
+              "height": 46,
+              "content": {
+                "content": "Season gradually — you can always add more, but can't take it away!",
+                "plainText": "Season gradually — you can always add more, but can't take it away!"
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 45,
+        "y": 1370
+      }
+    },
+    {
+      "local_id": "Continue",
+      "oid": "5000000000153",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-02T20:18:19.316Z",
+      "step_type": "WAIT ANY",
+      "position": {
+        "x": 170,
+        "y": 1450
+      }
+    },
+    {
+      "local_id": "Drain & Combine",
+      "oid": "5000000000165",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-02T20:18:19.316Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "5000000000156",
+          "type": "Header",
+          "value": "Drain & Combine Pasta with Sauce",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "5000000000157",
+          "type": "Image",
+          "value": "combine.jpg"
+        },
+        {
+          "oid": "5000000000158",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "5000000000159",
+          "type": "Text",
+          "value": "Drain the pasta (save that pasta water!).",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000160",
+          "type": "Text",
+          "value": "Add drained pasta directly into the sauce pot.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000161",
+          "type": "Text",
+          "value": "Toss vigorously over medium heat for 1-2 minutes.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000162",
+          "type": "Text",
+          "value": "Add splashes of reserved pasta water for a silky coating.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000163",
+          "type": "SmallText",
+          "value": "The starch emulsifies with fat, creating that restaurant-quality glossy finish.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "5000000000164",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Drain & Combine Pasta with Sauce",
+                "plainText": "Drain & Combine Pasta with Sauce"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 220,
+              "src": "combine.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 406,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 418,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Drain the pasta (save that pasta water!).\nAdd drained pasta directly into the sauce pot.\nToss vigorously over medium heat for 1-2 minutes.\nAdd splashes of reserved pasta water for a silky coating.",
+                "plainText": "Drain the pasta (save that pasta water!).\nAdd drained pasta directly into the sauce pot.\nToss vigorously over medium heat for 1-2 minutes.\nAdd splashes of reserved pasta water for a silky coating."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 526,
+              "width": 350,
+              "height": 46,
+              "content": {
+                "content": "The starch emulsifies with fat, creating that restaurant-quality glossy finish.",
+                "plainText": "The starch emulsifies with fat, creating that restaurant-quality glossy finish."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 140,
+        "y": 1540
+      }
+    },
+    {
+      "local_id": "Plate & Serve",
+      "oid": "5000000000176",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-02T20:18:19.316Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "5000000000167",
+          "type": "Header",
+          "value": "Plate & Serve — Buon Appetito!",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "5000000000168",
+          "type": "Image",
+          "value": "plate-serve.jpg"
+        },
+        {
+          "oid": "5000000000169",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "5000000000170",
+          "type": "Text",
+          "value": "Divide the pasta into warmed bowls using tongs.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000171",
+          "type": "Text",
+          "value": "Top with freshly grated Parmigiano-Reggiano.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000172",
+          "type": "Text",
+          "value": "Garnish with fresh basil leaves.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000173",
+          "type": "Text",
+          "value": "Serve with crusty bread and the rest of the wine.",
+          "font_size": 15
+        },
+        {
+          "oid": "5000000000174",
+          "type": "SmallText",
+          "value": "Warm your bowls with hot water — keeps the pasta hot longer at the table.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "5000000000175",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Plate & Serve — Buon Appetito!",
+                "plainText": "Plate & Serve — Buon Appetito!"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 220,
+              "src": "plate-serve.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 406,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 418,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Divide the pasta into warmed bowls using tongs.\nTop with freshly grated Parmigiano-Reggiano.\nGarnish with fresh basil leaves.\nServe with crusty bread and the rest of the wine.",
+                "plainText": "Divide the pasta into warmed bowls using tongs.\nTop with freshly grated Parmigiano-Reggiano.\nGarnish with fresh basil leaves.\nServe with crusty bread and the rest of the wine."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 526,
+              "width": 350,
+              "height": 46,
+              "content": {
+                "content": "Warm your bowls with hot water — keeps the pasta hot longer at the table.",
+                "plainText": "Warm your bowls with hot water — keeps the pasta hot longer at the table."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 140,
+        "y": 1610
+      }
+    },
+    {
+      "local_id": "End",
+      "oid": "5000000000178",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-02T20:18:19.316Z",
+      "step_type": "END",
+      "position": {
+        "x": 185,
+        "y": 1700
+      }
+    }
+  ],
+  "connections": [
+    {
+      "from_step_id": "5000000000001",
+      "to_step_id": "5000000000017",
+      "connection_id": "5000000000018"
+    },
+    {
+      "from_step_id": "5000000000017",
+      "to_step_id": "5000000000019",
+      "connection_id": "5000000000020"
+    },
+    {
+      "from_step_id": "5000000000019",
+      "to_step_id": "5000000000029",
+      "connection_id": "5000000000030"
+    },
+    {
+      "from_step_id": "5000000000019",
+      "to_step_id": "5000000000040",
+      "connection_id": "5000000000041"
+    },
+    {
+      "from_step_id": "5000000000029",
+      "to_step_id": "5000000000042",
+      "connection_id": "5000000000043"
+    },
+    {
+      "from_step_id": "5000000000040",
+      "to_step_id": "5000000000042",
+      "connection_id": "5000000000044"
+    },
+    {
+      "from_step_id": "5000000000042",
+      "to_step_id": "5000000000054",
+      "connection_id": "5000000000055"
+    },
+    {
+      "from_step_id": "5000000000054",
+      "to_step_id": "5000000000064",
+      "connection_id": "5000000000065"
+    },
+    {
+      "from_step_id": "5000000000064",
+      "to_step_id": "5000000000075",
+      "connection_id": "5000000000076"
+    },
+    {
+      "from_step_id": "5000000000075",
+      "to_step_id": "5000000000083",
+      "connection_id": "5000000000084"
+    },
+    {
+      "from_step_id": "5000000000083",
+      "to_step_id": "5000000000093",
+      "connection_id": "5000000000094",
+      "source_handle_id": "yes"
+    },
+    {
+      "from_step_id": "5000000000093",
+      "to_step_id": "5000000000095",
+      "connection_id": "5000000000096"
+    },
+    {
+      "from_step_id": "5000000000083",
+      "to_step_id": "5000000000095",
+      "connection_id": "5000000000097",
+      "source_handle_id": "no"
+    },
+    {
+      "from_step_id": "5000000000095",
+      "to_step_id": "5000000000107",
+      "connection_id": "5000000000108"
+    },
+    {
+      "from_step_id": "5000000000107",
+      "to_step_id": "5000000000109",
+      "connection_id": "5000000000110"
+    },
+    {
+      "from_step_id": "5000000000109",
+      "to_step_id": "5000000000120",
+      "connection_id": "5000000000121"
+    },
+    {
+      "from_step_id": "5000000000109",
+      "to_step_id": "5000000000131",
+      "connection_id": "5000000000132"
+    },
+    {
+      "from_step_id": "5000000000120",
+      "to_step_id": "5000000000133",
+      "connection_id": "5000000000134"
+    },
+    {
+      "from_step_id": "5000000000131",
+      "to_step_id": "5000000000133",
+      "connection_id": "5000000000135"
+    },
+    {
+      "from_step_id": "5000000000133",
+      "to_step_id": "5000000000141",
+      "connection_id": "5000000000142"
+    },
+    {
+      "from_step_id": "5000000000141",
+      "to_step_id": "5000000000151",
+      "connection_id": "5000000000152",
+      "source_handle_id": "yes"
+    },
+    {
+      "from_step_id": "5000000000151",
+      "to_step_id": "5000000000153",
+      "connection_id": "5000000000154"
+    },
+    {
+      "from_step_id": "5000000000141",
+      "to_step_id": "5000000000153",
+      "connection_id": "5000000000155",
+      "source_handle_id": "no"
+    },
+    {
+      "from_step_id": "5000000000153",
+      "to_step_id": "5000000000165",
+      "connection_id": "5000000000166"
+    },
+    {
+      "from_step_id": "5000000000165",
+      "to_step_id": "5000000000176",
+      "connection_id": "5000000000177"
+    },
+    {
+      "from_step_id": "5000000000176",
+      "to_step_id": "5000000000178",
+      "connection_id": "5000000000179"
+    }
+  ],
+  "environment_specifications": [
+    {
+      "local_id": "Home Kitchen",
+      "oid": "285250178221355008",
+      "version": "1.0.0",
+      "last_modified_date": "2026-02-26T03:23:01.998Z",
+      "library_name": "Kitchen Library",
+      "included_actions": [],
+      "value_property_specifications": [
+        {
+          "name": "PreheatTime",
+          "oid": "285250193182425088",
+          "entries": [
+            {
+              "name": "Value",
+              "value": "10"
+            },
+            {
+              "name": "Description",
+              "value": "Minutes for typical preheat"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

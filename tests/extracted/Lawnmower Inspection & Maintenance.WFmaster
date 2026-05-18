@@ -1,0 +1,4293 @@
+{
+  "schemaVersion": "4.0",
+  "local_id": "Lawnmower Inspection & Maintenance",
+  "oid": "287053821710987264",
+  "description": "Complete lawnmower inspection and maintenance workflow covering safety disconnect, fuel/oil checks, under-deck blade inspection, drive system checks, and cleaning protocol.",
+  "version": "1.0.0",
+  "last_modified_date": "2026-03-03T02:49:24.298Z",
+  "steps": [
+    {
+      "local_id": "Start",
+      "oid": "7000000000001",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.342Z",
+      "step_type": "START",
+      "position": {
+        "x": 130,
+        "y": 120
+      }
+    },
+    {
+      "local_id": "Spark Plug Disconnect",
+      "oid": "7000000000011",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.342Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "7000000000002",
+          "type": "Header",
+          "value": "Spark Plug Disconnect",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "7000000000003",
+          "type": "Image",
+          "value": "engine-closeup.jpg"
+        },
+        {
+          "oid": "7000000000004",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "7000000000005",
+          "type": "Text",
+          "value": "MANDATORY FIRST STEP: Locate the spark plug",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000006",
+          "type": "Text",
+          "value": "on top of the engine. Pull the rubber boot",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000007",
+          "type": "Text",
+          "value": "firmly off the spark plug terminal to prevent",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000008",
+          "type": "Text",
+          "value": "accidental engine startup during maintenance.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000009",
+          "type": "SmallText",
+          "value": "Never work under or near the blade without disconnecting the spark plug first.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "7000000000010",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Spark Plug Disconnect",
+                "plainText": "Spark Plug Disconnect"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 200,
+              "src": "engine-closeup.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 386,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 398,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "MANDATORY FIRST STEP: Locate the spark plug\non top of the engine. Pull the rubber boot\nfirmly off the spark plug terminal to prevent\naccidental engine startup during maintenance.",
+                "plainText": "MANDATORY FIRST STEP: Locate the spark plug\non top of the engine. Pull the rubber boot\nfirmly off the spark plug terminal to prevent\naccidental engine startup during maintenance."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 506,
+              "width": 350,
+              "height": 46,
+              "content": {
+                "content": "Never work under or near the blade without disconnecting the spark plug first.",
+                "plainText": "Never work under or near the blade without disconnecting the spark plug first."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 85,
+        "y": 175
+      }
+    },
+    {
+      "local_id": "Fuel Level & Leak Check",
+      "oid": "7000000000026",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.342Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "fuel_level",
+          "oid": "7000000000024",
+          "description": "Fuel Level"
+        },
+        {
+          "id": "leak_observations",
+          "oid": "7000000000025",
+          "description": "Leak Observations"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "7000000000013",
+          "type": "Header",
+          "value": "Fuel Level & Leak Check",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "7000000000014",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "7000000000015",
+          "type": "Text",
+          "value": "Check the fuel level in the tank. Inspect",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000016",
+          "type": "Text",
+          "value": "around the fuel cap, fuel lines, and tank",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000017",
+          "type": "Text",
+          "value": "seams for any signs of leaks, cracks, or",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000018",
+          "type": "Text",
+          "value": "dampness that indicate fuel seepage.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000020",
+          "type": "Text",
+          "value": "Fuel Level",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000021",
+          "type": "TextInput",
+          "value": "Full / Half / Low / Empty"
+        },
+        {
+          "oid": "7000000000022",
+          "type": "Text",
+          "value": "Leak Observations",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000023",
+          "type": "TextInput",
+          "value": "None / Describe location..."
+        },
+        {
+          "oid": "7000000000019",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Fuel Level & Leak Check",
+                "plainText": "Fuel Level & Leak Check"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Check the fuel level in the tank. Inspect\naround the fuel cap, fuel lines, and tank\nseams for any signs of leaks, cracks, or\ndampness that indicate fuel seepage.",
+                "plainText": "Check the fuel level in the tank. Inspect\naround the fuel cap, fuel lines, and tank\nseams for any signs of leaks, cracks, or\ndampness that indicate fuel seepage."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 296,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Fuel Level",
+                "plainText": "Fuel Level"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 322,
+              "width": 350,
+              "height": 40,
+              "label": "Fuel Level",
+              "placeholder": "Full / Half / Low / Empty",
+              "fieldName": "fuel_level",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 372,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Leak Observations",
+                "plainText": "Leak Observations"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 398,
+              "width": 350,
+              "height": 40,
+              "label": "Leak Observations",
+              "placeholder": "None / Describe location...",
+              "fieldName": "leak_observations",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 85,
+        "y": 245
+      }
+    },
+    {
+      "local_id": "Oil Level Check",
+      "oid": "7000000000042",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.342Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "oil_level",
+          "oid": "7000000000040",
+          "description": "Oil Level"
+        },
+        {
+          "id": "oil_color",
+          "oid": "7000000000041",
+          "description": "Oil Color"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "7000000000028",
+          "type": "Header",
+          "value": "Oil Level Check",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "7000000000029",
+          "type": "Image",
+          "value": "oil-check.jpg"
+        },
+        {
+          "oid": "7000000000030",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "7000000000031",
+          "type": "Text",
+          "value": "Remove the dipstick and wipe it clean with",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000032",
+          "type": "Text",
+          "value": "a rag. Re-insert fully, then withdraw to",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000033",
+          "type": "Text",
+          "value": "check the level. Note the oil color and",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000034",
+          "type": "Text",
+          "value": "level relative to the Add/Full marks.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000036",
+          "type": "Text",
+          "value": "Oil Level",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000037",
+          "type": "TextInput",
+          "value": "Full / Add / Low"
+        },
+        {
+          "oid": "7000000000038",
+          "type": "Text",
+          "value": "Oil Color",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000039",
+          "type": "TextInput",
+          "value": "Clear-Amber / Dark / Black"
+        },
+        {
+          "oid": "7000000000035",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Oil Level Check",
+                "plainText": "Oil Level Check"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 200,
+              "src": "oil-check.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 386,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 398,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Remove the dipstick and wipe it clean with\na rag. Re-insert fully, then withdraw to\ncheck the level. Note the oil color and\nlevel relative to the Add/Full marks.",
+                "plainText": "Remove the dipstick and wipe it clean with\na rag. Re-insert fully, then withdraw to\ncheck the level. Note the oil color and\nlevel relative to the Add/Full marks."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 506,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Oil Level",
+                "plainText": "Oil Level"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 532,
+              "width": 350,
+              "height": 40,
+              "label": "Oil Level",
+              "placeholder": "Full / Add / Low",
+              "fieldName": "oil_level",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 582,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Oil Color",
+                "plainText": "Oil Color"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 608,
+              "width": 350,
+              "height": 40,
+              "label": "Oil Color",
+              "placeholder": "Clear-Amber / Dark / Black",
+              "fieldName": "oil_color",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 85,
+        "y": 315
+      }
+    },
+    {
+      "local_id": "Oil Change Needed?",
+      "oid": "7000000000050",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.342Z",
+      "step_type": "YES_NO",
+      "ui_parameter_specifications": [
+        {
+          "oid": "7000000000044",
+          "type": "Header",
+          "value": "Oil Change Needed?",
+          "font_size": 20,
+          "align": "center"
+        },
+        {
+          "oid": "7000000000045",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "7000000000046",
+          "type": "Text",
+          "value": "Is the oil BLACK in color or below the",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000047",
+          "type": "Text",
+          "value": "\"Add\" line on the dipstick?",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000048",
+          "type": "SmallText",
+          "value": "Black oil indicates contamination. Low oil risks engine damage.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "7000000000049",
+          "type": "YesNoButtons",
+          "value": "Yes - Change Oil",
+          "value2": "No - Oil OK"
+        }
+      ],
+      "yes_no_config": {
+        "yes_label": "Yes - Change Oil",
+        "no_label": "No - Oil OK",
+        "yes_value": "true",
+        "no_value": "false",
+        "default_selection": "none"
+      },
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Oil Change Needed?",
+                "plainText": "Oil Change Needed?"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 60,
+              "content": {
+                "content": "Is the oil BLACK in color or below the\n\"Add\" line on the dipstick?",
+                "plainText": "Is the oil BLACK in color or below the\n\"Add\" line on the dipstick?"
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 258,
+              "width": 350,
+              "height": 40,
+              "content": {
+                "content": "Black oil indicates contamination. Low oil risks engine damage.",
+                "plainText": "Black oil indicates contamination. Low oil risks engine damage."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 20,
+              "y": 700,
+              "width": 160,
+              "height": 44,
+              "label": "Yes - Change Oil",
+              "outputValue": "true",
+              "deletable": false
+            },
+            {
+              "type": "button",
+              "x": 210,
+              "y": 700,
+              "width": 160,
+              "height": 44,
+              "label": "No - Oil OK",
+              "outputValue": "false",
+              "deletable": false
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 85,
+        "y": 390
+      }
+    },
+    {
+      "local_id": "Change Oil",
+      "oid": "7000000000066",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.342Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "oil_type_used",
+          "oid": "7000000000064",
+          "description": "Oil Type Used"
+        },
+        {
+          "id": "oil_quantity",
+          "oid": "7000000000065",
+          "description": "Quantity Added"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "7000000000052",
+          "type": "Header",
+          "value": "Change Oil",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "7000000000053",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "7000000000054",
+          "type": "Text",
+          "value": "Oil change required. Drain old oil per the",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000055",
+          "type": "Text",
+          "value": "manufacturer instructions. Replace with the",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000056",
+          "type": "Text",
+          "value": "recommended oil grade and quantity. Dispose",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000057",
+          "type": "Text",
+          "value": "of used oil at a recycling center.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000058",
+          "type": "SmallText",
+          "value": "Check your owner's manual for the correct oil type (typically SAE 30 or 10W-30).",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "7000000000060",
+          "type": "Text",
+          "value": "Oil Type Used",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000061",
+          "type": "TextInput",
+          "value": "e.g., SAE 30, 10W-30..."
+        },
+        {
+          "oid": "7000000000062",
+          "type": "Text",
+          "value": "Quantity Added",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000063",
+          "type": "TextInput",
+          "value": "e.g., 20 oz, 0.6L..."
+        },
+        {
+          "oid": "7000000000059",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Change Oil",
+                "plainText": "Change Oil"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Oil change required. Drain old oil per the\nmanufacturer instructions. Replace with the\nrecommended oil grade and quantity. Dispose\nof used oil at a recycling center.",
+                "plainText": "Oil change required. Drain old oil per the\nmanufacturer instructions. Replace with the\nrecommended oil grade and quantity. Dispose\nof used oil at a recycling center."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 296,
+              "width": 350,
+              "height": 46,
+              "content": {
+                "content": "Check your owner's manual for the correct oil type (typically SAE 30 or 10W-30).",
+                "plainText": "Check your owner's manual for the correct oil type (typically SAE 30 or 10W-30)."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 352,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Oil Type Used",
+                "plainText": "Oil Type Used"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 378,
+              "width": 350,
+              "height": 40,
+              "label": "Oil Type Used",
+              "placeholder": "e.g., SAE 30, 10W-30...",
+              "fieldName": "oil_type_used",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 428,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Quantity Added",
+                "plainText": "Quantity Added"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 454,
+              "width": 350,
+              "height": 40,
+              "label": "Quantity Added",
+              "placeholder": "e.g., 20 oz, 0.6L...",
+              "fieldName": "oil_quantity",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 0,
+        "y": 485
+      }
+    },
+    {
+      "local_id": "Continue After Oil Check",
+      "oid": "7000000000068",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.342Z",
+      "step_type": "WAIT ANY",
+      "position": {
+        "x": 135,
+        "y": 575
+      }
+    },
+    {
+      "local_id": "Begin Inspection",
+      "oid": "7000000000071",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.342Z",
+      "step_type": "PARALLEL",
+      "position": {
+        "x": 135,
+        "y": 660
+      }
+    },
+    {
+      "local_id": "Tilt Mower - Safety",
+      "oid": "7000000000082",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.342Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "7000000000073",
+          "type": "Header",
+          "value": "Tilt Mower - Safety",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "7000000000074",
+          "type": "Image",
+          "value": "mower-grass.jpg"
+        },
+        {
+          "oid": "7000000000075",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "7000000000076",
+          "type": "Text",
+          "value": "IMPORTANT: Always tilt the mower with",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000077",
+          "type": "Text",
+          "value": "the air filter facing UP. This prevents",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000078",
+          "type": "Text",
+          "value": "oil from flooding the carburetor.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000079",
+          "type": "Text",
+          "value": "Carefully tilt the mower onto its side.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000080",
+          "type": "SmallText",
+          "value": "Air filter UP, exhaust DOWN. Place on a clean surface.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "7000000000081",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Tilt Mower - Safety",
+                "plainText": "Tilt Mower - Safety"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 200,
+              "src": "mower-grass.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 386,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 398,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "IMPORTANT: Always tilt the mower with\nthe air filter facing UP. This prevents\noil from flooding the carburetor.\nCarefully tilt the mower onto its side.",
+                "plainText": "IMPORTANT: Always tilt the mower with\nthe air filter facing UP. This prevents\noil from flooding the carburetor.\nCarefully tilt the mower onto its side."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 506,
+              "width": 350,
+              "height": 46,
+              "content": {
+                "content": "Air filter UP, exhaust DOWN. Place on a clean surface.",
+                "plainText": "Air filter UP, exhaust DOWN. Place on a clean surface."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 15,
+        "y": 770
+      }
+    },
+    {
+      "local_id": "Blade Condition Check",
+      "oid": "7000000000094",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.342Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "blade_condition_notes",
+          "oid": "7000000000093",
+          "description": "Blade Condition Notes"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "7000000000084",
+          "type": "Header",
+          "value": "Blade Condition",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "7000000000085",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "7000000000086",
+          "type": "Text",
+          "value": "Inspect the blade for nicks, cracks, bends,",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000087",
+          "type": "Text",
+          "value": "or excessive dullness. Look at the cutting",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000088",
+          "type": "Text",
+          "value": "edge along the full length. Check the center",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000089",
+          "type": "Text",
+          "value": "mounting hole for elongation or damage.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000091",
+          "type": "Text",
+          "value": "Blade Condition Notes",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000092",
+          "type": "TextInput",
+          "value": "Describe condition..."
+        },
+        {
+          "oid": "7000000000090",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Blade Condition",
+                "plainText": "Blade Condition"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Inspect the blade for nicks, cracks, bends,\nor excessive dullness. Look at the cutting\nedge along the full length. Check the center\nmounting hole for elongation or damage.",
+                "plainText": "Inspect the blade for nicks, cracks, bends,\nor excessive dullness. Look at the cutting\nedge along the full length. Check the center\nmounting hole for elongation or damage."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 296,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Blade Condition Notes",
+                "plainText": "Blade Condition Notes"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 322,
+              "width": 350,
+              "height": 40,
+              "label": "Blade Condition Notes",
+              "placeholder": "Describe condition...",
+              "fieldName": "blade_condition_notes",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 15,
+        "y": 850
+      }
+    },
+    {
+      "local_id": "Blade Replacement Needed?",
+      "oid": "7000000000101",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.342Z",
+      "step_type": "YES_NO",
+      "ui_parameter_specifications": [
+        {
+          "oid": "7000000000096",
+          "type": "Header",
+          "value": "Blade Replacement?",
+          "font_size": 20,
+          "align": "center"
+        },
+        {
+          "oid": "7000000000097",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "7000000000098",
+          "type": "Text",
+          "value": "Is the blade bent, cracked, or showing",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000099",
+          "type": "Text",
+          "value": "visible damage requiring replacement?",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000100",
+          "type": "YesNoButtons",
+          "value": "Yes - Failed",
+          "value2": "No - OK"
+        }
+      ],
+      "yes_no_config": {
+        "yes_label": "Yes - Failed",
+        "no_label": "No - OK",
+        "yes_value": "true",
+        "no_value": "false",
+        "default_selection": "none"
+      },
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Blade Replacement?",
+                "plainText": "Blade Replacement?"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 60,
+              "content": {
+                "content": "Is the blade bent, cracked, or showing\nvisible damage requiring replacement?",
+                "plainText": "Is the blade bent, cracked, or showing\nvisible damage requiring replacement?"
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 258,
+              "width": 350,
+              "height": 40,
+              "content": {
+                "content": "A bent blade is unsafe. Never attempt to straighten a bent blade.",
+                "plainText": "A bent blade is unsafe. Never attempt to straighten a bent blade."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 20,
+              "y": 700,
+              "width": 160,
+              "height": 44,
+              "label": "Yes - Failed",
+              "outputValue": "true",
+              "deletable": false
+            },
+            {
+              "type": "button",
+              "x": 210,
+              "y": 700,
+              "width": 160,
+              "height": 44,
+              "label": "No - OK",
+              "outputValue": "false",
+              "deletable": false
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 15,
+        "y": 935
+      }
+    },
+    {
+      "local_id": "FAILED - Replace Blade",
+      "oid": "7000000000114",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.342Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "blade_failure_notes",
+          "oid": "7000000000113",
+          "description": "Failure Description"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "7000000000103",
+          "type": "Header",
+          "value": "FAILED - Replace Blade",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "7000000000104",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "7000000000105",
+          "type": "Text",
+          "value": "The blade has FAILED inspection and must",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000106",
+          "type": "Text",
+          "value": "be replaced before next use. Do NOT attempt",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000107",
+          "type": "Text",
+          "value": "to straighten a bent blade. Order a matching",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000108",
+          "type": "Text",
+          "value": "replacement from the manufacturer.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000110",
+          "type": "Text",
+          "value": "Failure Description",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000111",
+          "type": "TextInput",
+          "value": "Describe the failure..."
+        },
+        {
+          "oid": "7000000000112",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "FAILED - Replace Blade",
+                "plainText": "FAILED - Replace Blade"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "The blade has FAILED inspection and must\nbe replaced before next use. Do NOT attempt\nto straighten a bent blade. Order a matching\nreplacement from the manufacturer.",
+                "plainText": "The blade has FAILED inspection and must\nbe replaced before next use. Do NOT attempt\nto straighten a bent blade. Order a matching\nreplacement from the manufacturer."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 296,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Failure Description",
+                "plainText": "Failure Description"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 322,
+              "width": 350,
+              "height": 40,
+              "label": "Failure Description",
+              "placeholder": "Describe the failure...",
+              "fieldName": "blade_failure_notes",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": -70,
+        "y": 1025
+      }
+    },
+    {
+      "local_id": "Continue Blade Inspection",
+      "oid": "7000000000116",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.343Z",
+      "step_type": "WAIT ANY",
+      "position": {
+        "x": 65,
+        "y": 1130
+      }
+    },
+    {
+      "local_id": "Blade Sharpness Rating",
+      "oid": "7000000000131",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.343Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "sharpness_rating",
+          "oid": "7000000000130",
+          "description": "Sharpness Rating (1-5)"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "7000000000119",
+          "type": "Header",
+          "value": "Blade Sharpness",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "7000000000120",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "7000000000121",
+          "type": "Text",
+          "value": "Rate the blade sharpness on a scale of 1-5:",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000122",
+          "type": "Text",
+          "value": "1 = Very dull, rounded edge",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000123",
+          "type": "Text",
+          "value": "2 = Dull, tears grass instead of cutting",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000124",
+          "type": "Text",
+          "value": "3 = Acceptable, reasonably clean cut",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000125",
+          "type": "Text",
+          "value": "4 = Good, sharp cutting edge",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000126",
+          "type": "Text",
+          "value": "5 = Like new, razor sharp",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000128",
+          "type": "Text",
+          "value": "Sharpness Rating (1-5)",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000129",
+          "type": "TextInput",
+          "value": "Enter 1 through 5"
+        },
+        {
+          "oid": "7000000000127",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Blade Sharpness",
+                "plainText": "Blade Sharpness"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 142,
+              "content": {
+                "content": "Rate the blade sharpness on a scale of 1-5:\n1 = Very dull, rounded edge\n2 = Dull, tears grass instead of cutting\n3 = Acceptable, reasonably clean cut\n4 = Good, sharp cutting edge\n5 = Like new, razor sharp",
+                "plainText": "Rate the blade sharpness on a scale of 1-5:\n1 = Very dull, rounded edge\n2 = Dull, tears grass instead of cutting\n3 = Acceptable, reasonably clean cut\n4 = Good, sharp cutting edge\n5 = Like new, razor sharp"
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 340,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Sharpness Rating (1-5)",
+                "plainText": "Sharpness Rating (1-5)"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 366,
+              "width": 350,
+              "height": 40,
+              "label": "Sharpness Rating (1-5)",
+              "placeholder": "Enter 1 through 5",
+              "fieldName": "sharpness_rating",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 35,
+        "y": 1220
+      }
+    },
+    {
+      "local_id": "Sharpening Needed?",
+      "oid": "7000000000139",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.343Z",
+      "step_type": "YES_NO",
+      "ui_parameter_specifications": [
+        {
+          "oid": "7000000000133",
+          "type": "Header",
+          "value": "Sharpening Needed?",
+          "font_size": 20,
+          "align": "center"
+        },
+        {
+          "oid": "7000000000134",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "7000000000135",
+          "type": "Text",
+          "value": "Is the sharpness rating below 3?",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000136",
+          "type": "Text",
+          "value": "A rating below 3 means the blade tears",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000137",
+          "type": "Text",
+          "value": "grass and needs sharpening.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000138",
+          "type": "YesNoButtons",
+          "value": "Yes - Sharpen",
+          "value2": "No - OK"
+        }
+      ],
+      "yes_no_config": {
+        "yes_label": "Yes - Sharpen",
+        "no_label": "No - OK",
+        "yes_value": "true",
+        "no_value": "false",
+        "default_selection": "none"
+      },
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Sharpening Needed?",
+                "plainText": "Sharpening Needed?"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 76,
+              "content": {
+                "content": "Is the sharpness rating below 3?\nA rating below 3 means the blade tears\ngrass and needs sharpening.",
+                "plainText": "Is the sharpness rating below 3?\nA rating below 3 means the blade tears\ngrass and needs sharpening."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "button",
+              "x": 20,
+              "y": 700,
+              "width": 160,
+              "height": 44,
+              "label": "Yes - Sharpen",
+              "outputValue": "true",
+              "deletable": false
+            },
+            {
+              "type": "button",
+              "x": 210,
+              "y": 700,
+              "width": 160,
+              "height": 44,
+              "label": "No - OK",
+              "outputValue": "false",
+              "deletable": false
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 35,
+        "y": 1305
+      }
+    },
+    {
+      "local_id": "Sharpen Blade",
+      "oid": "7000000000152",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.343Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "sharpening_notes",
+          "oid": "7000000000151",
+          "description": "Sharpening Notes"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "7000000000141",
+          "type": "Header",
+          "value": "Sharpen Blade",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "7000000000142",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "7000000000143",
+          "type": "Text",
+          "value": "Remove the blade using the correct socket.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000144",
+          "type": "Text",
+          "value": "Sharpen using a bench grinder or mill file",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000145",
+          "type": "Text",
+          "value": "at the original bevel angle. Maintain equal",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000146",
+          "type": "Text",
+          "value": "material removal from each end for balance.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000148",
+          "type": "Text",
+          "value": "Sharpening Notes",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000149",
+          "type": "TextInput",
+          "value": "Describe work done..."
+        },
+        {
+          "oid": "7000000000150",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Sharpen Blade",
+                "plainText": "Sharpen Blade"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Remove the blade using the correct socket.\nSharpen using a bench grinder or mill file\nat the original bevel angle. Maintain equal\nmaterial removal from each end for balance.",
+                "plainText": "Remove the blade using the correct socket.\nSharpen using a bench grinder or mill file\nat the original bevel angle. Maintain equal\nmaterial removal from each end for balance."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 296,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Sharpening Notes",
+                "plainText": "Sharpening Notes"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 322,
+              "width": 350,
+              "height": 40,
+              "label": "Sharpening Notes",
+              "placeholder": "Describe work done...",
+              "fieldName": "sharpening_notes",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": -55,
+        "y": 1395
+      }
+    },
+    {
+      "local_id": "Continue After Sharpness",
+      "oid": "7000000000154",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.343Z",
+      "step_type": "WAIT ANY",
+      "position": {
+        "x": 85,
+        "y": 1455
+      }
+    },
+    {
+      "local_id": "Blade Balance Check",
+      "oid": "7000000000167",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.343Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "blade_balance_status",
+          "oid": "7000000000166",
+          "description": "Balance Status"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "7000000000157",
+          "type": "Header",
+          "value": "Blade Balance",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "7000000000158",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "7000000000159",
+          "type": "Text",
+          "value": "Check that the blade spins freely and evenly",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000160",
+          "type": "Text",
+          "value": "on the mounting bolt. It should not wobble or",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000161",
+          "type": "Text",
+          "value": "sit at an angle. An unbalanced blade causes",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000162",
+          "type": "Text",
+          "value": "vibration and premature bearing wear.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000164",
+          "type": "Text",
+          "value": "Balance Status",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000165",
+          "type": "TextInput",
+          "value": "OK / Wobble / Needs Adjustment"
+        },
+        {
+          "oid": "7000000000163",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Blade Balance",
+                "plainText": "Blade Balance"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Check that the blade spins freely and evenly\non the mounting bolt. It should not wobble or\nsit at an angle. An unbalanced blade causes\nvibration and premature bearing wear.",
+                "plainText": "Check that the blade spins freely and evenly\non the mounting bolt. It should not wobble or\nsit at an angle. An unbalanced blade causes\nvibration and premature bearing wear."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 296,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Balance Status",
+                "plainText": "Balance Status"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 322,
+              "width": 350,
+              "height": 40,
+              "label": "Balance Status",
+              "placeholder": "OK / Wobble / Needs Adjustment",
+              "fieldName": "blade_balance_status",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 55,
+        "y": 1540
+      }
+    },
+    {
+      "local_id": "Debris Build-up",
+      "oid": "7000000000183",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.343Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "debris_level",
+          "oid": "7000000000181",
+          "description": "Debris Level"
+        },
+        {
+          "id": "debris_action",
+          "oid": "7000000000182",
+          "description": "Action Taken"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "7000000000169",
+          "type": "Header",
+          "value": "Debris Build-up",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "7000000000170",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "7000000000171",
+          "type": "Text",
+          "value": "Inspect the cutting envelope under the deck",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000172",
+          "type": "Text",
+          "value": "for dried grass build-up. Heavy clogging",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000173",
+          "type": "Text",
+          "value": "restricts airflow and reduces cutting quality.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000174",
+          "type": "Text",
+          "value": "Scrape away compacted grass with a plastic",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000175",
+          "type": "Text",
+          "value": "putty knife to avoid scratching the deck.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000177",
+          "type": "Text",
+          "value": "Debris Level",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000178",
+          "type": "TextInput",
+          "value": "None / Light / Heavy"
+        },
+        {
+          "oid": "7000000000179",
+          "type": "Text",
+          "value": "Action Taken",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000180",
+          "type": "TextInput",
+          "value": "Scraped clean / Partial / N/A"
+        },
+        {
+          "oid": "7000000000176",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Debris Build-up",
+                "plainText": "Debris Build-up"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 120,
+              "content": {
+                "content": "Inspect the cutting envelope under the deck\nfor dried grass build-up. Heavy clogging\nrestricts airflow and reduces cutting quality.\nScrape away compacted grass with a plastic\nputty knife to avoid scratching the deck.",
+                "plainText": "Inspect the cutting envelope under the deck\nfor dried grass build-up. Heavy clogging\nrestricts airflow and reduces cutting quality.\nScrape away compacted grass with a plastic\nputty knife to avoid scratching the deck."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 318,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Debris Level",
+                "plainText": "Debris Level"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 344,
+              "width": 350,
+              "height": 40,
+              "label": "Debris Level",
+              "placeholder": "None / Light / Heavy",
+              "fieldName": "debris_level",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 394,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Action Taken",
+                "plainText": "Action Taken"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 420,
+              "width": 350,
+              "height": 40,
+              "label": "Action Taken",
+              "placeholder": "Scraped clean / Partial / N/A",
+              "fieldName": "debris_action",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 55,
+        "y": 1615
+      }
+    },
+    {
+      "local_id": "Safety Bail Arm",
+      "oid": "7000000000199",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.343Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "bail_arm_condition",
+          "oid": "7000000000197",
+          "description": "Bail Arm Condition"
+        },
+        {
+          "id": "brake_release",
+          "oid": "7000000000198",
+          "description": "Brake Engages Properly?"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "7000000000185",
+          "type": "Header",
+          "value": "Safety Bail Arm",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "7000000000186",
+          "type": "Image",
+          "value": "mower-handle.jpg"
+        },
+        {
+          "oid": "7000000000187",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "7000000000188",
+          "type": "Text",
+          "value": "Pull the safety bail arm handle toward the",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000189",
+          "type": "Text",
+          "value": "mower handle. The engine brake should release",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000190",
+          "type": "Text",
+          "value": "smoothly. When released, the blade should",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000191",
+          "type": "Text",
+          "value": "stop within 3 seconds.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000193",
+          "type": "Text",
+          "value": "Bail Arm Condition",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000194",
+          "type": "TextInput",
+          "value": "Smooth / Stiff / Stuck"
+        },
+        {
+          "oid": "7000000000195",
+          "type": "Text",
+          "value": "Brake Engages Properly?",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000196",
+          "type": "TextInput",
+          "value": "Yes / No"
+        },
+        {
+          "oid": "7000000000192",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Safety Bail Arm",
+                "plainText": "Safety Bail Arm"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 200,
+              "src": "mower-handle.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 386,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 398,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Pull the safety bail arm handle toward the\nmower handle. The engine brake should release\nsmoothly. When released, the blade should\nstop within 3 seconds.",
+                "plainText": "Pull the safety bail arm handle toward the\nmower handle. The engine brake should release\nsmoothly. When released, the blade should\nstop within 3 seconds."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 506,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Bail Arm Condition",
+                "plainText": "Bail Arm Condition"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 532,
+              "width": 350,
+              "height": 40,
+              "label": "Bail Arm Condition",
+              "placeholder": "Smooth / Stiff / Stuck",
+              "fieldName": "bail_arm_condition",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 582,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Brake Engages Properly?",
+                "plainText": "Brake Engages Properly?"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 608,
+              "width": 350,
+              "height": 40,
+              "label": "Brake Engages Properly?",
+              "placeholder": "Yes / No",
+              "fieldName": "brake_release",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 190,
+        "y": 770
+      }
+    },
+    {
+      "local_id": "Drive Cable Check",
+      "oid": "7000000000215",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.343Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "drive_cable_tension",
+          "oid": "7000000000213",
+          "description": "Cable Tension"
+        },
+        {
+          "id": "creep_test",
+          "oid": "7000000000214",
+          "description": "Mower Creeps When Released?"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "7000000000201",
+          "type": "Header",
+          "value": "Drive Cable Check",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "7000000000202",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "7000000000203",
+          "type": "Text",
+          "value": "For self-propelled models: Check the drive",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000204",
+          "type": "Text",
+          "value": "cable for proper tension. With the drive lever",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000205",
+          "type": "Text",
+          "value": "released, the mower should NOT creep forward.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000206",
+          "type": "Text",
+          "value": "If it does, the cable needs adjustment.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000207",
+          "type": "SmallText",
+          "value": "Skip this step if your mower is push-type only.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "7000000000209",
+          "type": "Text",
+          "value": "Cable Tension",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000210",
+          "type": "TextInput",
+          "value": "OK / Slack / Too Tight"
+        },
+        {
+          "oid": "7000000000211",
+          "type": "Text",
+          "value": "Mower Creeps When Released?",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000212",
+          "type": "TextInput",
+          "value": "Yes / No / N/A (push mower)"
+        },
+        {
+          "oid": "7000000000208",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Drive Cable Check",
+                "plainText": "Drive Cable Check"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "For self-propelled models: Check the drive\ncable for proper tension. With the drive lever\nreleased, the mower should NOT creep forward.\nIf it does, the cable needs adjustment.",
+                "plainText": "For self-propelled models: Check the drive\ncable for proper tension. With the drive lever\nreleased, the mower should NOT creep forward.\nIf it does, the cable needs adjustment."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 296,
+              "width": 350,
+              "height": 46,
+              "content": {
+                "content": "Skip this step if your mower is push-type only.",
+                "plainText": "Skip this step if your mower is push-type only."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 352,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Cable Tension",
+                "plainText": "Cable Tension"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 378,
+              "width": 350,
+              "height": 40,
+              "label": "Cable Tension",
+              "placeholder": "OK / Slack / Too Tight",
+              "fieldName": "drive_cable_tension",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 428,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Mower Creeps When Released?",
+                "plainText": "Mower Creeps When Released?"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 454,
+              "width": 350,
+              "height": 40,
+              "label": "Mower Creeps When Released?",
+              "placeholder": "Yes / No / N/A (push mower)",
+              "fieldName": "creep_test",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 190,
+        "y": 1540
+      }
+    },
+    {
+      "local_id": "Wheel Bearings Check",
+      "oid": "7000000000236",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.343Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "wheel_front_left",
+          "oid": "7000000000232",
+          "description": "Front Left Wheel"
+        },
+        {
+          "id": "wheel_front_right",
+          "oid": "7000000000233",
+          "description": "Front Right Wheel"
+        },
+        {
+          "id": "wheel_rear_left",
+          "oid": "7000000000234",
+          "description": "Rear Left Wheel"
+        },
+        {
+          "id": "wheel_rear_right",
+          "oid": "7000000000235",
+          "description": "Rear Right Wheel"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "7000000000217",
+          "type": "Header",
+          "value": "Wheel Bearings",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "7000000000218",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "7000000000219",
+          "type": "Text",
+          "value": "Wiggle each wheel side to side. Check for",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000220",
+          "type": "Text",
+          "value": "excessive lateral play indicating worn bushings.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000221",
+          "type": "Text",
+          "value": "Spin each wheel to check for grinding or",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000222",
+          "type": "Text",
+          "value": "rough rotation.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000224",
+          "type": "Text",
+          "value": "Front Left Wheel",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000225",
+          "type": "TextInput",
+          "value": "OK / Play / Grinding"
+        },
+        {
+          "oid": "7000000000226",
+          "type": "Text",
+          "value": "Front Right Wheel",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000227",
+          "type": "TextInput",
+          "value": "OK / Play / Grinding"
+        },
+        {
+          "oid": "7000000000228",
+          "type": "Text",
+          "value": "Rear Left Wheel",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000229",
+          "type": "TextInput",
+          "value": "OK / Play / Grinding"
+        },
+        {
+          "oid": "7000000000230",
+          "type": "Text",
+          "value": "Rear Right Wheel",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000231",
+          "type": "TextInput",
+          "value": "OK / Play / Grinding"
+        },
+        {
+          "oid": "7000000000223",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Wheel Bearings",
+                "plainText": "Wheel Bearings"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Wiggle each wheel side to side. Check for\nexcessive lateral play indicating worn bushings.\nSpin each wheel to check for grinding or\nrough rotation.",
+                "plainText": "Wiggle each wheel side to side. Check for\nexcessive lateral play indicating worn bushings.\nSpin each wheel to check for grinding or\nrough rotation."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 296,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Front Left Wheel",
+                "plainText": "Front Left Wheel"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 322,
+              "width": 350,
+              "height": 40,
+              "label": "Front Left Wheel",
+              "placeholder": "OK / Play / Grinding",
+              "fieldName": "wheel_front_left",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 372,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Front Right Wheel",
+                "plainText": "Front Right Wheel"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 398,
+              "width": 350,
+              "height": 40,
+              "label": "Front Right Wheel",
+              "placeholder": "OK / Play / Grinding",
+              "fieldName": "wheel_front_right",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 448,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Rear Left Wheel",
+                "plainText": "Rear Left Wheel"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 474,
+              "width": 350,
+              "height": 40,
+              "label": "Rear Left Wheel",
+              "placeholder": "OK / Play / Grinding",
+              "fieldName": "wheel_rear_left",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 524,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Rear Right Wheel",
+                "plainText": "Rear Right Wheel"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 550,
+              "width": 350,
+              "height": 40,
+              "label": "Rear Right Wheel",
+              "placeholder": "OK / Play / Grinding",
+              "fieldName": "wheel_rear_right",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 190,
+        "y": 1615
+      }
+    },
+    {
+      "local_id": "Inspection Complete",
+      "oid": "7000000000238",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.343Z",
+      "step_type": "WAIT ALL",
+      "position": {
+        "x": 110,
+        "y": 1755
+      }
+    },
+    {
+      "local_id": "Air Filter Inspection",
+      "oid": "7000000000253",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.343Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "filter_condition",
+          "oid": "7000000000251",
+          "description": "Filter Condition"
+        },
+        {
+          "id": "filter_type",
+          "oid": "7000000000252",
+          "description": "Filter Type"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "7000000000241",
+          "type": "Header",
+          "value": "Air Filter Inspection",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "7000000000242",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "7000000000243",
+          "type": "Text",
+          "value": "Remove the air filter cover. Remove the",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000244",
+          "type": "Text",
+          "value": "filter element. Inspect the filter condition",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000245",
+          "type": "Text",
+          "value": "and identify the filter type.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000247",
+          "type": "Text",
+          "value": "Filter Condition",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000248",
+          "type": "TextInput",
+          "value": "New / Clean / Dirty / Damaged"
+        },
+        {
+          "oid": "7000000000249",
+          "type": "Text",
+          "value": "Filter Type",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000250",
+          "type": "TextInput",
+          "value": "Paper / Foam"
+        },
+        {
+          "oid": "7000000000246",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Air Filter Inspection",
+                "plainText": "Air Filter Inspection"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 76,
+              "content": {
+                "content": "Remove the air filter cover. Remove the\nfilter element. Inspect the filter condition\nand identify the filter type.",
+                "plainText": "Remove the air filter cover. Remove the\nfilter element. Inspect the filter condition\nand identify the filter type."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 274,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Filter Condition",
+                "plainText": "Filter Condition"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 300,
+              "width": 350,
+              "height": 40,
+              "label": "Filter Condition",
+              "placeholder": "New / Clean / Dirty / Damaged",
+              "fieldName": "filter_condition",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 350,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Filter Type",
+                "plainText": "Filter Type"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 376,
+              "width": 350,
+              "height": 40,
+              "label": "Filter Type",
+              "placeholder": "Paper / Foam",
+              "fieldName": "filter_type",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 80,
+        "y": 1835
+      }
+    },
+    {
+      "local_id": "Air Filter Maintenance",
+      "oid": "7000000000266",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.343Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "filter_action",
+          "oid": "7000000000265",
+          "description": "Action Taken"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "7000000000255",
+          "type": "Header",
+          "value": "Air Filter Maintenance",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "7000000000256",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "7000000000257",
+          "type": "Text",
+          "value": "Based on filter type:",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000258",
+          "type": "Text",
+          "value": "- Paper: Tap gently to dislodge dust. Do NOT",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000259",
+          "type": "Text",
+          "value": "  wash or oil a paper filter. Replace if soiled.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000260",
+          "type": "Text",
+          "value": "- Foam: Check for oil saturation. Wash in warm",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000261",
+          "type": "Text",
+          "value": "  soapy water, squeeze dry, re-oil if required.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000263",
+          "type": "Text",
+          "value": "Action Taken",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000264",
+          "type": "TextInput",
+          "value": "Cleaned / Replaced / OK as-is"
+        },
+        {
+          "oid": "7000000000262",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Air Filter Maintenance",
+                "plainText": "Air Filter Maintenance"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 120,
+              "content": {
+                "content": "Based on filter type:\n- Paper: Tap gently to dislodge dust. Do NOT\n  wash or oil a paper filter. Replace if soiled.\n- Foam: Check for oil saturation. Wash in warm\n  soapy water, squeeze dry, re-oil if required.",
+                "plainText": "Based on filter type:\n- Paper: Tap gently to dislodge dust. Do NOT\n  wash or oil a paper filter. Replace if soiled.\n- Foam: Check for oil saturation. Wash in warm\n  soapy water, squeeze dry, re-oil if required."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 318,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Action Taken",
+                "plainText": "Action Taken"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 344,
+              "width": 350,
+              "height": 40,
+              "label": "Action Taken",
+              "placeholder": "Cleaned / Replaced / OK as-is",
+              "fieldName": "filter_action",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 80,
+        "y": 1920
+      }
+    },
+    {
+      "local_id": "Cooling Fins Cleaning",
+      "oid": "7000000000282",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.343Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "fins_condition",
+          "oid": "7000000000280",
+          "description": "Fins Condition Before"
+        },
+        {
+          "id": "fins_cleaned",
+          "oid": "7000000000281",
+          "description": "Cleaned Successfully?"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "7000000000268",
+          "type": "Header",
+          "value": "Cooling Fins Cleaning",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "7000000000269",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "7000000000270",
+          "type": "Text",
+          "value": "Use compressed air or a stiff brush to clean",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000271",
+          "type": "Text",
+          "value": "the cooling fins around the engine head.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000272",
+          "type": "Text",
+          "value": "Remove all grass clippings, dirt, and debris.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000273",
+          "type": "Text",
+          "value": "Clogged fins cause engine overheating.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000274",
+          "type": "SmallText",
+          "value": "Wear safety glasses when using compressed air.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "7000000000276",
+          "type": "Text",
+          "value": "Fins Condition Before",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000277",
+          "type": "TextInput",
+          "value": "Clean / Light Debris / Heavy Debris"
+        },
+        {
+          "oid": "7000000000278",
+          "type": "Text",
+          "value": "Cleaned Successfully?",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000279",
+          "type": "TextInput",
+          "value": "Yes / No"
+        },
+        {
+          "oid": "7000000000275",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Cooling Fins Cleaning",
+                "plainText": "Cooling Fins Cleaning"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Use compressed air or a stiff brush to clean\nthe cooling fins around the engine head.\nRemove all grass clippings, dirt, and debris.\nClogged fins cause engine overheating.",
+                "plainText": "Use compressed air or a stiff brush to clean\nthe cooling fins around the engine head.\nRemove all grass clippings, dirt, and debris.\nClogged fins cause engine overheating."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 296,
+              "width": 350,
+              "height": 46,
+              "content": {
+                "content": "Wear safety glasses when using compressed air.",
+                "plainText": "Wear safety glasses when using compressed air."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 352,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Fins Condition Before",
+                "plainText": "Fins Condition Before"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 378,
+              "width": 350,
+              "height": 40,
+              "label": "Fins Condition Before",
+              "placeholder": "Clean / Light Debris / Heavy Debris",
+              "fieldName": "fins_condition",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 428,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Cleaned Successfully?",
+                "plainText": "Cleaned Successfully?"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 454,
+              "width": 350,
+              "height": 40,
+              "label": "Cleaned Successfully?",
+              "placeholder": "Yes / No",
+              "fieldName": "fins_cleaned",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 80,
+        "y": 2000
+      }
+    },
+    {
+      "local_id": "Deck Wash & Scrape",
+      "oid": "7000000000297",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.343Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "deck_condition",
+          "oid": "7000000000295",
+          "description": "Deck Condition"
+        },
+        {
+          "id": "deck_action",
+          "oid": "7000000000296",
+          "description": "Action Taken"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "7000000000284",
+          "type": "Header",
+          "value": "Deck Wash & Scrape",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "7000000000285",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "7000000000286",
+          "type": "Text",
+          "value": "Scrape away \"grass scale\" from the underside",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000287",
+          "type": "Text",
+          "value": "of the deck. Use a plastic putty knife to",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000288",
+          "type": "Text",
+          "value": "avoid scratching the metal or paint coating.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000289",
+          "type": "SmallText",
+          "value": "Some mowers have a deck wash port - connect a garden hose and run the blade briefly to rinse.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "7000000000291",
+          "type": "Text",
+          "value": "Deck Condition",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000292",
+          "type": "TextInput",
+          "value": "Clean / Light Build-up / Heavy Scale"
+        },
+        {
+          "oid": "7000000000293",
+          "type": "Text",
+          "value": "Action Taken",
+          "font_size": 14
+        },
+        {
+          "oid": "7000000000294",
+          "type": "TextInput",
+          "value": "Scraped / Hose wash / N/A"
+        },
+        {
+          "oid": "7000000000290",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Deck Wash & Scrape",
+                "plainText": "Deck Wash & Scrape"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 76,
+              "content": {
+                "content": "Scrape away \"grass scale\" from the underside\nof the deck. Use a plastic putty knife to\navoid scratching the metal or paint coating.",
+                "plainText": "Scrape away \"grass scale\" from the underside\nof the deck. Use a plastic putty knife to\navoid scratching the metal or paint coating."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 274,
+              "width": 350,
+              "height": 64,
+              "content": {
+                "content": "Some mowers have a deck wash port - connect a garden hose and run the blade briefly to rinse.",
+                "plainText": "Some mowers have a deck wash port - connect a garden hose and run the blade briefly to rinse."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 348,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Deck Condition",
+                "plainText": "Deck Condition"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 374,
+              "width": 350,
+              "height": 40,
+              "label": "Deck Condition",
+              "placeholder": "Clean / Light Build-up / Heavy Scale",
+              "fieldName": "deck_condition",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 424,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Action Taken",
+                "plainText": "Action Taken"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 450,
+              "width": 350,
+              "height": 40,
+              "label": "Action Taken",
+              "placeholder": "Scraped / Hose wash / N/A",
+              "fieldName": "deck_action",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 80,
+        "y": 2080
+      }
+    },
+    {
+      "local_id": "Reconnect Spark Plug",
+      "oid": "7000000000308",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.343Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "7000000000299",
+          "type": "Header",
+          "value": "Reconnect Spark Plug",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "7000000000300",
+          "type": "Image",
+          "value": "mower-complete.jpg"
+        },
+        {
+          "oid": "7000000000301",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "7000000000302",
+          "type": "Text",
+          "value": "Maintenance complete. Return the mower to",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000303",
+          "type": "Text",
+          "value": "its upright position. Reconnect the spark",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000304",
+          "type": "Text",
+          "value": "plug lead by firmly pushing the rubber boot",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000305",
+          "type": "Text",
+          "value": "back onto the spark plug terminal until it",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000306",
+          "type": "Text",
+          "value": "clicks into place.",
+          "font_size": 15
+        },
+        {
+          "oid": "7000000000307",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Reconnect Spark Plug",
+                "plainText": "Reconnect Spark Plug"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 200,
+              "src": "mower-complete.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 386,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 398,
+              "width": 350,
+              "height": 120,
+              "content": {
+                "content": "Maintenance complete. Return the mower to\nits upright position. Reconnect the spark\nplug lead by firmly pushing the rubber boot\nback onto the spark plug terminal until it\nclicks into place.",
+                "plainText": "Maintenance complete. Return the mower to\nits upright position. Reconnect the spark\nplug lead by firmly pushing the rubber boot\nback onto the spark plug terminal until it\nclicks into place."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 80,
+        "y": 2155
+      }
+    },
+    {
+      "local_id": "End",
+      "oid": "7000000000310",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:53:11.343Z",
+      "step_type": "END",
+      "position": {
+        "x": 125,
+        "y": 2230
+      }
+    }
+  ],
+  "connections": [
+    {
+      "from_step_id": "7000000000001",
+      "to_step_id": "7000000000011",
+      "connection_id": "7000000000012"
+    },
+    {
+      "from_step_id": "7000000000011",
+      "to_step_id": "7000000000026",
+      "connection_id": "7000000000027"
+    },
+    {
+      "from_step_id": "7000000000026",
+      "to_step_id": "7000000000042",
+      "connection_id": "7000000000043"
+    },
+    {
+      "from_step_id": "7000000000042",
+      "to_step_id": "7000000000050",
+      "connection_id": "7000000000051"
+    },
+    {
+      "from_step_id": "7000000000050",
+      "to_step_id": "7000000000066",
+      "connection_id": "7000000000067",
+      "source_handle_id": "yes"
+    },
+    {
+      "from_step_id": "7000000000050",
+      "to_step_id": "7000000000068",
+      "connection_id": "7000000000069",
+      "source_handle_id": "no"
+    },
+    {
+      "from_step_id": "7000000000066",
+      "to_step_id": "7000000000068",
+      "connection_id": "7000000000070"
+    },
+    {
+      "from_step_id": "7000000000068",
+      "to_step_id": "7000000000071",
+      "connection_id": "7000000000072"
+    },
+    {
+      "from_step_id": "7000000000071",
+      "to_step_id": "7000000000082",
+      "connection_id": "7000000000083"
+    },
+    {
+      "from_step_id": "7000000000082",
+      "to_step_id": "7000000000094",
+      "connection_id": "7000000000095"
+    },
+    {
+      "from_step_id": "7000000000094",
+      "to_step_id": "7000000000101",
+      "connection_id": "7000000000102"
+    },
+    {
+      "from_step_id": "7000000000101",
+      "to_step_id": "7000000000114",
+      "connection_id": "7000000000115",
+      "source_handle_id": "yes"
+    },
+    {
+      "from_step_id": "7000000000101",
+      "to_step_id": "7000000000116",
+      "connection_id": "7000000000117",
+      "source_handle_id": "no"
+    },
+    {
+      "from_step_id": "7000000000114",
+      "to_step_id": "7000000000116",
+      "connection_id": "7000000000118"
+    },
+    {
+      "from_step_id": "7000000000116",
+      "to_step_id": "7000000000131",
+      "connection_id": "7000000000132"
+    },
+    {
+      "from_step_id": "7000000000131",
+      "to_step_id": "7000000000139",
+      "connection_id": "7000000000140"
+    },
+    {
+      "from_step_id": "7000000000139",
+      "to_step_id": "7000000000152",
+      "connection_id": "7000000000153",
+      "source_handle_id": "yes"
+    },
+    {
+      "from_step_id": "7000000000139",
+      "to_step_id": "7000000000154",
+      "connection_id": "7000000000155",
+      "source_handle_id": "no"
+    },
+    {
+      "from_step_id": "7000000000152",
+      "to_step_id": "7000000000154",
+      "connection_id": "7000000000156"
+    },
+    {
+      "from_step_id": "7000000000154",
+      "to_step_id": "7000000000167",
+      "connection_id": "7000000000168"
+    },
+    {
+      "from_step_id": "7000000000167",
+      "to_step_id": "7000000000183",
+      "connection_id": "7000000000184"
+    },
+    {
+      "from_step_id": "7000000000071",
+      "to_step_id": "7000000000199",
+      "connection_id": "7000000000200"
+    },
+    {
+      "from_step_id": "7000000000199",
+      "to_step_id": "7000000000215",
+      "connection_id": "7000000000216"
+    },
+    {
+      "from_step_id": "7000000000215",
+      "to_step_id": "7000000000236",
+      "connection_id": "7000000000237"
+    },
+    {
+      "from_step_id": "7000000000183",
+      "to_step_id": "7000000000238",
+      "connection_id": "7000000000239"
+    },
+    {
+      "from_step_id": "7000000000236",
+      "to_step_id": "7000000000238",
+      "connection_id": "7000000000240"
+    },
+    {
+      "from_step_id": "7000000000238",
+      "to_step_id": "7000000000253",
+      "connection_id": "7000000000254"
+    },
+    {
+      "from_step_id": "7000000000253",
+      "to_step_id": "7000000000266",
+      "connection_id": "7000000000267"
+    },
+    {
+      "from_step_id": "7000000000266",
+      "to_step_id": "7000000000282",
+      "connection_id": "7000000000283"
+    },
+    {
+      "from_step_id": "7000000000282",
+      "to_step_id": "7000000000297",
+      "connection_id": "7000000000298"
+    },
+    {
+      "from_step_id": "7000000000297",
+      "to_step_id": "7000000000308",
+      "connection_id": "7000000000309"
+    },
+    {
+      "from_step_id": "7000000000308",
+      "to_step_id": "7000000000310",
+      "connection_id": "7000000000311"
+    }
+  ]
+}

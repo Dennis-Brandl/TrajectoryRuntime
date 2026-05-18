@@ -1,0 +1,128 @@
+.frame {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width 300ms ease, height 300ms ease;
+  margin: 0 auto;
+  position: relative;
+  background: var(--frame-bg, #ffffff);
+}
+
+/* Phone */
+.frame--phone {
+  width: 360px;
+  height: 800px;
+  border-radius: 44px;
+  border: 8px solid var(--frame-bezel-color, #1a1a1a);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+/* Tablet horizontal (landscape) */
+.frame--tablet-horizontal {
+  width: 1340px;
+  height: 800px;
+  border-radius: 18px;
+  border: 10px solid var(--frame-bezel-color, #1a1a1a);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+/* Tablet vertical (portrait) */
+.frame--tablet-vertical {
+  width: 800px;
+  height: 1280px;
+  border-radius: 18px;
+  border: 10px solid var(--frame-bezel-color, #1a1a1a);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+/* Desktop */
+.frame--desktop {
+  width: 1280px;
+  height: 880px;
+  border-radius: 8px;
+  border: 1px solid var(--frame-border-color, #ccc);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  resize: both;
+  overflow: hidden;
+}
+
+/* Desktop expanded (side): widened to accommodate a vertical graph pane on the left. */
+.frame--desktop-wide {
+  width: 1620px;
+}
+
+/* Desktop expanded (below): taller to accommodate a horizontal graph pane below the canvas.
+   Used for BPMN workflows since BPMN diagrams flow left-to-right. */
+.frame--desktop-tall {
+  height: 1024px;
+}
+
+/* Dynamic Island (phone only) */
+.dynamicIsland {
+  width: 126px;
+  height: 36px;
+  border-radius: 18px;
+  background: var(--frame-bezel-color, #1a1a1a);
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+/* Home Indicator (phone only) */
+.homeIndicator {
+  width: 134px;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--frame-indicator-color, #888);
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Desktop Title Bar */
+.titleBar {
+  height: 32px;
+  min-height: 32px;
+  background: var(--frame-titlebar-bg, #e8e8e8);
+  border-bottom: 1px solid var(--frame-border-color, #ccc);
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  align-items: center;
+  padding-left: 12px;
+}
+
+.trafficLights {
+  display: flex;
+  gap: 8px;
+}
+
+.trafficDot {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.dotClose {
+  background: #ff5f57;
+}
+
+.dotMinimize {
+  background: #febc2e;
+}
+
+.dotMaximize {
+  background: #28c840;
+}
+
+/* Content Area — container query host */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+  container-type: inline-size;
+  container-name: device-frame;
+}

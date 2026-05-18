@@ -1,0 +1,4241 @@
+{
+  "schemaVersion": "4.0",
+  "local_id": "VRF Heat Pump Inspection",
+  "oid": "287051945623973888",
+  "description": "Outdoor and indoor inspection protocol for Mitsubishi Electric City Multi (VRF) systems. Covers physical/environmental checks, electrical diagnostics, refrigerant/mechanical inspection, and indoor unit operational metrics. Records measurements and routes to repair workflows as needed.",
+  "version": "1.0.0",
+  "last_modified_date": "2026-03-03T02:41:57.004Z",
+  "steps": [
+    {
+      "local_id": "Start",
+      "oid": "6000000000001",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.742Z",
+      "step_type": "START",
+      "position": {
+        "x": 100,
+        "y": 200
+      }
+    },
+    {
+      "local_id": "Clearance Check",
+      "oid": "6000000000010",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.742Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000002",
+          "type": "Header",
+          "value": "Clearance Inspection",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000003",
+          "type": "Image",
+          "value": "clearance-check.jpg"
+        },
+        {
+          "oid": "6000000000004",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000005",
+          "type": "Text",
+          "value": "Verify at least 500mm (20 in) of clearance around all intake grilles.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000006",
+          "type": "Text",
+          "value": "Measure the clearance on each side of the outdoor unit.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000007",
+          "type": "Text",
+          "value": "Restricted airflow reduces efficiency and can cause compressor overheating.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000008",
+          "type": "SmallText",
+          "value": "Mitsubishi City Multi units require unobstructed airflow for proper heat exchange. Check for new obstructions such as vegetation growth or stored equipment.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000009",
+          "type": "Button",
+          "value": "Next"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Clearance Inspection",
+                "plainText": "Clearance Inspection"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 200,
+              "src": "clearance-check.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 386,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 398,
+              "width": 350,
+              "height": 76,
+              "content": {
+                "content": "Verify at least 500mm (20 in) of clearance around all intake grilles.\nMeasure the clearance on each side of the outdoor unit.\nRestricted airflow reduces efficiency and can cause compressor overheating.",
+                "plainText": "Verify at least 500mm (20 in) of clearance around all intake grilles.\nMeasure the clearance on each side of the outdoor unit.\nRestricted airflow reduces efficiency and can cause compressor overheating."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 484,
+              "width": 350,
+              "height": 82,
+              "content": {
+                "content": "Mitsubishi City Multi units require unobstructed airflow for proper heat exchange. Check for new obstructions such as vegetation growth or stored equipment.",
+                "plainText": "Mitsubishi City Multi units require unobstructed airflow for proper heat exchange. Check for new obstructions such as vegetation growth or stored equipment."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Next",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 55,
+        "y": 250
+      }
+    },
+    {
+      "local_id": "Clearance Check - Record",
+      "oid": "6000000000026",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.742Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "clearance_front_mm",
+          "oid": "6000000000022",
+          "description": "Front clearance (mm)"
+        },
+        {
+          "id": "clearance_rear_mm",
+          "oid": "6000000000023",
+          "description": "Rear clearance (mm)"
+        },
+        {
+          "id": "clearance_left_mm",
+          "oid": "6000000000024",
+          "description": "Left clearance (mm)"
+        },
+        {
+          "id": "clearance_right_mm",
+          "oid": "6000000000025",
+          "description": "Right clearance (mm)"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000011",
+          "type": "Header",
+          "value": "Record: Clearance Inspection",
+          "font_size": 20,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000012",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000013",
+          "type": "Text",
+          "value": "Front clearance (mm)",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000014",
+          "type": "TextInput",
+          "value": "e.g., 650"
+        },
+        {
+          "oid": "6000000000015",
+          "type": "Text",
+          "value": "Rear clearance (mm)",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000016",
+          "type": "TextInput",
+          "value": "e.g., 500"
+        },
+        {
+          "oid": "6000000000017",
+          "type": "Text",
+          "value": "Left clearance (mm)",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000018",
+          "type": "TextInput",
+          "value": "e.g., 800"
+        },
+        {
+          "oid": "6000000000019",
+          "type": "Text",
+          "value": "Right clearance (mm)",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000020",
+          "type": "TextInput",
+          "value": "e.g., 750"
+        },
+        {
+          "oid": "6000000000021",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Record: Clearance Inspection",
+                "plainText": "Record: Clearance Inspection"
+              },
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Front clearance (mm)",
+                "plainText": "Front clearance (mm)"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 214,
+              "width": 350,
+              "height": 40,
+              "label": "Front clearance (mm)",
+              "placeholder": "e.g., 650",
+              "fieldName": "clearance_front_mm",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 264,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Rear clearance (mm)",
+                "plainText": "Rear clearance (mm)"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 290,
+              "width": 350,
+              "height": 40,
+              "label": "Rear clearance (mm)",
+              "placeholder": "e.g., 500",
+              "fieldName": "clearance_rear_mm",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 340,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Left clearance (mm)",
+                "plainText": "Left clearance (mm)"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 366,
+              "width": 350,
+              "height": 40,
+              "label": "Left clearance (mm)",
+              "placeholder": "e.g., 800",
+              "fieldName": "clearance_left_mm",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 416,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Right clearance (mm)",
+                "plainText": "Right clearance (mm)"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 442,
+              "width": 350,
+              "height": 40,
+              "label": "Right clearance (mm)",
+              "placeholder": "e.g., 750",
+              "fieldName": "clearance_right_mm",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 55,
+        "y": 320
+      }
+    },
+    {
+      "local_id": "Structure Check",
+      "oid": "6000000000038",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.742Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000029",
+          "type": "Header",
+          "value": "Structural Integrity",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000030",
+          "type": "Image",
+          "value": "outdoor-unit.jpg"
+        },
+        {
+          "oid": "6000000000031",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000032",
+          "type": "Text",
+          "value": "Inspect all mounting bolts for tightness using the appropriate wrench.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000033",
+          "type": "Text",
+          "value": "Check the concrete or steel base for vibration-induced cracking.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000034",
+          "type": "Text",
+          "value": "Look for rust or corrosion on mounting hardware.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000035",
+          "type": "Text",
+          "value": "Verify the unit is level (use a spirit level if available).",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000036",
+          "type": "SmallText",
+          "value": "VRF compressors generate significant vibration. Loose mounting leads to refrigerant line fatigue and premature failure.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000037",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Structural Integrity",
+                "plainText": "Structural Integrity"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 200,
+              "src": "outdoor-unit.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 386,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 398,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Inspect all mounting bolts for tightness using the appropriate wrench.\nCheck the concrete or steel base for vibration-induced cracking.\nLook for rust or corrosion on mounting hardware.\nVerify the unit is level (use a spirit level if available).",
+                "plainText": "Inspect all mounting bolts for tightness using the appropriate wrench.\nCheck the concrete or steel base for vibration-induced cracking.\nLook for rust or corrosion on mounting hardware.\nVerify the unit is level (use a spirit level if available)."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 506,
+              "width": 350,
+              "height": 64,
+              "content": {
+                "content": "VRF compressors generate significant vibration. Loose mounting leads to refrigerant line fatigue and premature failure.",
+                "plainText": "VRF compressors generate significant vibration. Loose mounting leads to refrigerant line fatigue and premature failure."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 55,
+        "y": 390
+      }
+    },
+    {
+      "local_id": "Debris Inspection",
+      "oid": "6000000000054",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.742Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "debris_condition",
+          "oid": "6000000000052",
+          "description": "Debris condition"
+        },
+        {
+          "id": "debris_notes",
+          "oid": "6000000000053",
+          "description": "Notes on debris or damage"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000040",
+          "type": "Header",
+          "value": "Heat Exchanger & Debris",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000041",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000042",
+          "type": "Text",
+          "value": "Inspect heat exchanger fins for dust, leaves, or cottonwood buildup.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000043",
+          "type": "Text",
+          "value": "Check for bent or damaged fins (use a fin comb if needed).",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000044",
+          "type": "Text",
+          "value": "Look inside the unit for animal nests or insect infestations.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000045",
+          "type": "Text",
+          "value": "Verify the drain holes at the bottom of the unit are clear.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000046",
+          "type": "SmallText",
+          "value": "A dirty condenser coil can reduce capacity by 20-30%. Schedule a coil cleaning if buildup is moderate or worse.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000048",
+          "type": "Text",
+          "value": "Debris condition",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000049",
+          "type": "TextInput",
+          "value": "Clean / Light / Moderate / Heavy"
+        },
+        {
+          "oid": "6000000000050",
+          "type": "Text",
+          "value": "Notes on debris or damage",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000051",
+          "type": "TextInput",
+          "value": "Describe any issues found..."
+        },
+        {
+          "oid": "6000000000047",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Heat Exchanger & Debris",
+                "plainText": "Heat Exchanger & Debris"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Inspect heat exchanger fins for dust, leaves, or cottonwood buildup.\nCheck for bent or damaged fins (use a fin comb if needed).\nLook inside the unit for animal nests or insect infestations.\nVerify the drain holes at the bottom of the unit are clear.",
+                "plainText": "Inspect heat exchanger fins for dust, leaves, or cottonwood buildup.\nCheck for bent or damaged fins (use a fin comb if needed).\nLook inside the unit for animal nests or insect infestations.\nVerify the drain holes at the bottom of the unit are clear."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 296,
+              "width": 350,
+              "height": 64,
+              "content": {
+                "content": "A dirty condenser coil can reduce capacity by 20-30%. Schedule a coil cleaning if buildup is moderate or worse.",
+                "plainText": "A dirty condenser coil can reduce capacity by 20-30%. Schedule a coil cleaning if buildup is moderate or worse."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 370,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Debris condition",
+                "plainText": "Debris condition"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 396,
+              "width": 350,
+              "height": 40,
+              "label": "Debris condition",
+              "placeholder": "Clean / Light / Moderate / Heavy",
+              "fieldName": "debris_condition",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 446,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Notes on debris or damage",
+                "plainText": "Notes on debris or damage"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 472,
+              "width": 350,
+              "height": 40,
+              "label": "Notes on debris or damage",
+              "placeholder": "Describe any issues found...",
+              "fieldName": "debris_notes",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 55,
+        "y": 465
+      }
+    },
+    {
+      "local_id": "Voltage Measurement",
+      "oid": "6000000000065",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.742Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000056",
+          "type": "Header",
+          "value": "Voltage Symmetry Check",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000057",
+          "type": "Image",
+          "value": "voltage-test.jpg"
+        },
+        {
+          "oid": "6000000000058",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000059",
+          "type": "Text",
+          "value": "Measure line-to-line voltage at the outdoor unit disconnect.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000060",
+          "type": "Text",
+          "value": "Record all three phase-to-phase readings (L1-L2, L2-L3, L1-L3).",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000061",
+          "type": "Text",
+          "value": "Calculate deviation: ((Max - Min) / Average) x 100.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000062",
+          "type": "Text",
+          "value": "Deviation must be less than 2% for safe compressor operation.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000063",
+          "type": "SmallText",
+          "value": "Voltage imbalance causes excessive current draw on one phase, leading to winding overheating and premature compressor failure.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000064",
+          "type": "Button",
+          "value": "Next"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Voltage Symmetry Check",
+                "plainText": "Voltage Symmetry Check"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 200,
+              "src": "voltage-test.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 386,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 398,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Measure line-to-line voltage at the outdoor unit disconnect.\nRecord all three phase-to-phase readings (L1-L2, L2-L3, L1-L3).\nCalculate deviation: ((Max - Min) / Average) x 100.\nDeviation must be less than 2% for safe compressor operation.",
+                "plainText": "Measure line-to-line voltage at the outdoor unit disconnect.\nRecord all three phase-to-phase readings (L1-L2, L2-L3, L1-L3).\nCalculate deviation: ((Max - Min) / Average) x 100.\nDeviation must be less than 2% for safe compressor operation."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 506,
+              "width": 350,
+              "height": 64,
+              "content": {
+                "content": "Voltage imbalance causes excessive current draw on one phase, leading to winding overheating and premature compressor failure.",
+                "plainText": "Voltage imbalance causes excessive current draw on one phase, leading to winding overheating and premature compressor failure."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Next",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 55,
+        "y": 540
+      }
+    },
+    {
+      "local_id": "Voltage Measurement - Record",
+      "oid": "6000000000081",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.742Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "voltage_l1_l2",
+          "oid": "6000000000077",
+          "description": "L1-L2 Voltage (V)"
+        },
+        {
+          "id": "voltage_l2_l3",
+          "oid": "6000000000078",
+          "description": "L2-L3 Voltage (V)"
+        },
+        {
+          "id": "voltage_l1_l3",
+          "oid": "6000000000079",
+          "description": "L1-L3 Voltage (V)"
+        },
+        {
+          "id": "voltage_deviation_pct",
+          "oid": "6000000000080",
+          "description": "Calculated deviation (%)"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000066",
+          "type": "Header",
+          "value": "Record: Voltage Symmetry Check",
+          "font_size": 20,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000067",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000068",
+          "type": "Text",
+          "value": "L1-L2 Voltage (V)",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000069",
+          "type": "TextInput",
+          "value": "e.g., 230"
+        },
+        {
+          "oid": "6000000000070",
+          "type": "Text",
+          "value": "L2-L3 Voltage (V)",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000071",
+          "type": "TextInput",
+          "value": "e.g., 228"
+        },
+        {
+          "oid": "6000000000072",
+          "type": "Text",
+          "value": "L1-L3 Voltage (V)",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000073",
+          "type": "TextInput",
+          "value": "e.g., 231"
+        },
+        {
+          "oid": "6000000000074",
+          "type": "Text",
+          "value": "Calculated deviation (%)",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000075",
+          "type": "TextInput",
+          "value": "e.g., 1.3"
+        },
+        {
+          "oid": "6000000000076",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Record: Voltage Symmetry Check",
+                "plainText": "Record: Voltage Symmetry Check"
+              },
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "L1-L2 Voltage (V)",
+                "plainText": "L1-L2 Voltage (V)"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 214,
+              "width": 350,
+              "height": 40,
+              "label": "L1-L2 Voltage (V)",
+              "placeholder": "e.g., 230",
+              "fieldName": "voltage_l1_l2",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 264,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "L2-L3 Voltage (V)",
+                "plainText": "L2-L3 Voltage (V)"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 290,
+              "width": 350,
+              "height": 40,
+              "label": "L2-L3 Voltage (V)",
+              "placeholder": "e.g., 228",
+              "fieldName": "voltage_l2_l3",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 340,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "L1-L3 Voltage (V)",
+                "plainText": "L1-L3 Voltage (V)"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 366,
+              "width": 350,
+              "height": 40,
+              "label": "L1-L3 Voltage (V)",
+              "placeholder": "e.g., 231",
+              "fieldName": "voltage_l1_l3",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 416,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Calculated deviation (%)",
+                "plainText": "Calculated deviation (%)"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 442,
+              "width": 350,
+              "height": 40,
+              "label": "Calculated deviation (%)",
+              "placeholder": "e.g., 1.3",
+              "fieldName": "voltage_deviation_pct",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 55,
+        "y": 615
+      }
+    },
+    {
+      "local_id": "Voltage Deviation >2%?",
+      "oid": "6000000000089",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.742Z",
+      "step_type": "YES_NO",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000084",
+          "type": "Header",
+          "value": "Voltage Deviation Check",
+          "font_size": 20,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000085",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000086",
+          "type": "Text",
+          "value": "Does the calculated voltage deviation exceed 2%?",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000087",
+          "type": "Text",
+          "value": "If yes, you must report this power issue to the main office before continuing.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000088",
+          "type": "YesNoButtons",
+          "value": "Yes, >2%",
+          "value2": "No, Within Spec"
+        }
+      ],
+      "yes_no_config": {
+        "yes_label": "Yes, >2%",
+        "no_label": "No, Within Spec",
+        "yes_value": "true",
+        "no_value": "false",
+        "default_selection": "none"
+      },
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Voltage Deviation Check",
+                "plainText": "Voltage Deviation Check"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 60,
+              "content": {
+                "content": "Does the calculated voltage deviation exceed 2%?\nIf yes, you must report this power issue to the main office before continuing the inspection.",
+                "plainText": "Does the calculated voltage deviation exceed 2%?\nIf yes, you must report this power issue to the main office before continuing the inspection."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 258,
+              "width": 350,
+              "height": 40,
+              "content": {
+                "content": "Excessive voltage imbalance can damage compressor windings.",
+                "plainText": "Excessive voltage imbalance can damage compressor windings."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 20,
+              "y": 700,
+              "width": 160,
+              "height": 44,
+              "label": "Yes, >2%",
+              "outputValue": "true",
+              "deletable": false
+            },
+            {
+              "type": "button",
+              "x": 210,
+              "y": 700,
+              "width": 160,
+              "height": 44,
+              "label": "No, Within Spec",
+              "outputValue": "false",
+              "deletable": false
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 55,
+        "y": 690
+      }
+    },
+    {
+      "local_id": "Call Main Office",
+      "oid": "6000000000106",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.742Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "office_contact_name",
+          "oid": "6000000000104",
+          "description": "Person contacted"
+        },
+        {
+          "id": "office_instructions",
+          "oid": "6000000000105",
+          "description": "Instructions received"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000091",
+          "type": "Header",
+          "value": "Report Power Issue",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000092",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000093",
+          "type": "Text",
+          "value": "Call the main office at 555-1212.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000094",
+          "type": "Text",
+          "value": "Report the voltage imbalance readings.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000095",
+          "type": "Text",
+          "value": "Provide the unit serial number and location.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000096",
+          "type": "Text",
+          "value": "Document the call and any instructions received.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000097",
+          "type": "Text",
+          "value": "Continue the inspection after reporting.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000098",
+          "type": "SmallText",
+          "value": "Do not attempt to adjust the power supply. This requires a licensed electrician.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000100",
+          "type": "Text",
+          "value": "Person contacted",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000101",
+          "type": "TextInput",
+          "value": "Name of person at main office"
+        },
+        {
+          "oid": "6000000000102",
+          "type": "Text",
+          "value": "Instructions received",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000103",
+          "type": "TextInput",
+          "value": "Notes from the call..."
+        },
+        {
+          "oid": "6000000000099",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Report Power Issue",
+                "plainText": "Report Power Issue"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 120,
+              "content": {
+                "content": "Call the main office at 555-1212.\nReport the voltage imbalance readings.\nProvide the unit serial number and location.\nDocument the call and any instructions received.\nContinue the inspection after reporting.",
+                "plainText": "Call the main office at 555-1212.\nReport the voltage imbalance readings.\nProvide the unit serial number and location.\nDocument the call and any instructions received.\nContinue the inspection after reporting."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 318,
+              "width": 350,
+              "height": 46,
+              "content": {
+                "content": "Do not attempt to adjust the power supply. This requires a licensed electrician.",
+                "plainText": "Do not attempt to adjust the power supply. This requires a licensed electrician."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 374,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Person contacted",
+                "plainText": "Person contacted"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 400,
+              "width": 350,
+              "height": 40,
+              "label": "Person contacted",
+              "placeholder": "Name of person at main office",
+              "fieldName": "office_contact_name",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 450,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Instructions received",
+                "plainText": "Instructions received"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 476,
+              "width": 350,
+              "height": 40,
+              "label": "Instructions received",
+              "placeholder": "Notes from the call...",
+              "fieldName": "office_instructions",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": -20,
+        "y": 770
+      }
+    },
+    {
+      "local_id": "Continue Inspection",
+      "oid": "6000000000108",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.742Z",
+      "step_type": "WAIT ANY",
+      "position": {
+        "x": 110,
+        "y": 860
+      }
+    },
+    {
+      "local_id": "Terminal Tightness",
+      "oid": "6000000000124",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.742Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "discolored_wires",
+          "oid": "6000000000123",
+          "description": "Discolored wires found?"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000111",
+          "type": "Header",
+          "value": "Terminal & Wiring Check",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000112",
+          "type": "Image",
+          "value": "terminal-check.jpg"
+        },
+        {
+          "oid": "6000000000113",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000114",
+          "type": "Text",
+          "value": "Open the electrical compartment cover.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000115",
+          "type": "Text",
+          "value": "Inspect all wiring for discolored insulation (brown, black, or melted).",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000116",
+          "type": "Text",
+          "value": "Discolored wires indicate overheating — replace immediately.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000117",
+          "type": "Text",
+          "value": "Torque all terminal screws to manufacturer specification.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000118",
+          "type": "Text",
+          "value": "Check contactor points for pitting or carbon buildup.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000119",
+          "type": "SmallText",
+          "value": "Loose terminals cause arcing, which generates heat and accelerates corrosion. Re-torque annually.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000121",
+          "type": "Text",
+          "value": "Discolored wires found?",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000122",
+          "type": "TextInput",
+          "value": "Yes / No — describe location if Yes"
+        },
+        {
+          "oid": "6000000000120",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Terminal & Wiring Check",
+                "plainText": "Terminal & Wiring Check"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 200,
+              "src": "terminal-check.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 386,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 398,
+              "width": 350,
+              "height": 120,
+              "content": {
+                "content": "Open the electrical compartment cover.\nInspect all wiring for discolored insulation (brown, black, or melted).\nDiscolored wires indicate overheating — replace immediately.\nTorque all terminal screws to manufacturer specification.\nCheck contactor points for pitting or carbon buildup.",
+                "plainText": "Open the electrical compartment cover.\nInspect all wiring for discolored insulation (brown, black, or melted).\nDiscolored wires indicate overheating — replace immediately.\nTorque all terminal screws to manufacturer specification.\nCheck contactor points for pitting or carbon buildup."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 528,
+              "width": 350,
+              "height": 64,
+              "content": {
+                "content": "Loose terminals cause arcing, which generates heat and accelerates corrosion. Re-torque annually.",
+                "plainText": "Loose terminals cause arcing, which generates heat and accelerates corrosion. Re-torque annually."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 602,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Discolored wires found?",
+                "plainText": "Discolored wires found?"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 628,
+              "width": 350,
+              "height": 40,
+              "label": "Discolored wires found?",
+              "placeholder": "Yes / No — describe location if Yes",
+              "fieldName": "discolored_wires",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 688,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 80,
+        "y": 945
+      }
+    },
+    {
+      "local_id": "Export Error Logs",
+      "oid": "6000000000136",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.743Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000126",
+          "type": "Header",
+          "value": "M-NET Error Log Export",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000127",
+          "type": "Image",
+          "value": "electrical-panel.jpg"
+        },
+        {
+          "oid": "6000000000128",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000129",
+          "type": "Text",
+          "value": "Access the M-NET maintenance controller or laptop tool.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000130",
+          "type": "Text",
+          "value": "Navigate to Error History / Malfunction Log.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000131",
+          "type": "Text",
+          "value": "Export or record the last 10 error codes with timestamps.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000132",
+          "type": "Text",
+          "value": "Note any recurring codes — these indicate chronic issues.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000133",
+          "type": "Text",
+          "value": "Check for communication errors between indoor and outdoor units.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000134",
+          "type": "SmallText",
+          "value": "Common VRF error codes: 4102 (high pressure), 4250 (discharge temp), 6607 (inverter). Refer to the Mitsubishi service manual for code definitions.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000135",
+          "type": "Button",
+          "value": "Next"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "M-NET Error Log Export",
+                "plainText": "M-NET Error Log Export"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 200,
+              "src": "electrical-panel.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 386,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 398,
+              "width": 350,
+              "height": 120,
+              "content": {
+                "content": "Access the M-NET maintenance controller or laptop tool.\nNavigate to Error History / Malfunction Log.\nExport or record the last 10 error codes with timestamps.\nNote any recurring codes — these indicate chronic issues.\nCheck for communication errors between indoor and outdoor units.",
+                "plainText": "Access the M-NET maintenance controller or laptop tool.\nNavigate to Error History / Malfunction Log.\nExport or record the last 10 error codes with timestamps.\nNote any recurring codes — these indicate chronic issues.\nCheck for communication errors between indoor and outdoor units."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 528,
+              "width": 350,
+              "height": 82,
+              "content": {
+                "content": "Common VRF error codes: 4102 (high pressure), 4250 (discharge temp), 6607 (inverter). Refer to the Mitsubishi service manual for code definitions.",
+                "plainText": "Common VRF error codes: 4102 (high pressure), 4250 (discharge temp), 6607 (inverter). Refer to the Mitsubishi service manual for code definitions."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Next",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 80,
+        "y": 1015
+      }
+    },
+    {
+      "local_id": "Export Error Logs - Record",
+      "oid": "6000000000146",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.743Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "error_codes",
+          "oid": "6000000000144",
+          "description": "Error codes (last 10)"
+        },
+        {
+          "id": "error_notes",
+          "oid": "6000000000145",
+          "description": "Recurring issues noted"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000137",
+          "type": "Header",
+          "value": "Record: M-NET Error Log Export",
+          "font_size": 20,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000138",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000139",
+          "type": "Text",
+          "value": "Error codes (last 10)",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000140",
+          "type": "TextInput",
+          "value": "e.g., 4102, 6607, 1302, ..."
+        },
+        {
+          "oid": "6000000000141",
+          "type": "Text",
+          "value": "Recurring issues noted",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000142",
+          "type": "TextInput",
+          "value": "Describe any patterns..."
+        },
+        {
+          "oid": "6000000000143",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Record: M-NET Error Log Export",
+                "plainText": "Record: M-NET Error Log Export"
+              },
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Error codes (last 10)",
+                "plainText": "Error codes (last 10)"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 214,
+              "width": 350,
+              "height": 40,
+              "label": "Error codes (last 10)",
+              "placeholder": "e.g., 4102, 6607, 1302, ...",
+              "fieldName": "error_codes",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 264,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Recurring issues noted",
+                "plainText": "Recurring issues noted"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 290,
+              "width": 350,
+              "height": 40,
+              "label": "Recurring issues noted",
+              "placeholder": "Describe any patterns...",
+              "fieldName": "error_notes",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 80,
+        "y": 1090
+      }
+    },
+    {
+      "local_id": "Oil Leak Inspection",
+      "oid": "6000000000158",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.743Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000149",
+          "type": "Header",
+          "value": "Compressor Oil Leak Check",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000150",
+          "type": "Image",
+          "value": "compressor-area.jpg"
+        },
+        {
+          "oid": "6000000000151",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000152",
+          "type": "Text",
+          "value": "Visually inspect the base of each compressor for oily residue.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000153",
+          "type": "Text",
+          "value": "Check all flare joints, brazed connections, and service valves.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000154",
+          "type": "Text",
+          "value": "Look for oil stains on piping, particularly at bends and fittings.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000155",
+          "type": "Text",
+          "value": "Oily residue indicates a refrigerant leak (oil travels with refrigerant).",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000156",
+          "type": "SmallText",
+          "value": "VRF systems contain large refrigerant charges. Even small leaks lead to significant capacity loss and environmental impact.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000157",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Compressor Oil Leak Check",
+                "plainText": "Compressor Oil Leak Check"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 200,
+              "src": "compressor-area.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 386,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 398,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Visually inspect the base of each compressor for oily residue.\nCheck all flare joints, brazed connections, and service valves.\nLook for oil stains on piping, particularly at bends and fittings.\nOily residue indicates a refrigerant leak (oil travels with refrigerant).",
+                "plainText": "Visually inspect the base of each compressor for oily residue.\nCheck all flare joints, brazed connections, and service valves.\nLook for oil stains on piping, particularly at bends and fittings.\nOily residue indicates a refrigerant leak (oil travels with refrigerant)."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 506,
+              "width": 350,
+              "height": 64,
+              "content": {
+                "content": "VRF systems contain large refrigerant charges. Even small leaks lead to significant capacity loss and environmental impact.",
+                "plainText": "VRF systems contain large refrigerant charges. Even small leaks lead to significant capacity loss and environmental impact."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 80,
+        "y": 1165
+      }
+    },
+    {
+      "local_id": "Oil Leak Detected?",
+      "oid": "6000000000165",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.743Z",
+      "step_type": "YES_NO",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000160",
+          "type": "Header",
+          "value": "Oil Leak Assessment",
+          "font_size": 20,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000161",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000162",
+          "type": "Text",
+          "value": "Was any oily residue detected at the compressor base, flare joints, or piping connections?",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000163",
+          "type": "Text",
+          "value": "If YES, proceed to the Leak Repair workflow.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000164",
+          "type": "YesNoButtons",
+          "value": "Yes, Leak Found",
+          "value2": "No, All Clear"
+        }
+      ],
+      "yes_no_config": {
+        "yes_label": "Yes, Leak Found",
+        "no_label": "No, All Clear",
+        "yes_value": "true",
+        "no_value": "false",
+        "default_selection": "none"
+      },
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Oil Leak Assessment",
+                "plainText": "Oil Leak Assessment"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 60,
+              "content": {
+                "content": "Was any oily residue detected at the compressor base, flare joints, or piping connections?\nIf YES, proceed to the Leak Repair workflow after documenting the location.",
+                "plainText": "Was any oily residue detected at the compressor base, flare joints, or piping connections?\nIf YES, proceed to the Leak Repair workflow after documenting the location."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "button",
+              "x": 20,
+              "y": 700,
+              "width": 160,
+              "height": 44,
+              "label": "Yes, Leak Found",
+              "outputValue": "true",
+              "deletable": false
+            },
+            {
+              "type": "button",
+              "x": 210,
+              "y": 700,
+              "width": 160,
+              "height": 44,
+              "label": "No, All Clear",
+              "outputValue": "false",
+              "deletable": false
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 80,
+        "y": 1235
+      }
+    },
+    {
+      "local_id": "Initiate Leak Repair",
+      "oid": "6000000000182",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.743Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "leak_location",
+          "oid": "6000000000180",
+          "description": "Leak location"
+        },
+        {
+          "id": "leak_severity",
+          "oid": "6000000000181",
+          "description": "Severity (Minor / Moderate / Severe)"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000167",
+          "type": "Header",
+          "value": "Leak Repair Required",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000168",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000169",
+          "type": "Text",
+          "value": "Document the exact location of the oily residue.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000170",
+          "type": "Text",
+          "value": "Take a photo of the leak area for the repair team.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000171",
+          "type": "Text",
+          "value": "Open the \"Leak Repair\" workflow in Trajectory for the repair procedure.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000172",
+          "type": "Text",
+          "value": "If the leak is severe, isolate the circuit at the service valve.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000173",
+          "type": "Text",
+          "value": "Continue this inspection — the repair will be handled separately.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000174",
+          "type": "SmallText",
+          "value": "SAFETY: Do not use an open flame for leak detection. Use electronic leak detectors or UV dye methods only.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000176",
+          "type": "Text",
+          "value": "Leak location",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000177",
+          "type": "TextInput",
+          "value": "e.g., Compressor #2 suction flare joint"
+        },
+        {
+          "oid": "6000000000178",
+          "type": "Text",
+          "value": "Severity (Minor / Moderate / Severe)",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000179",
+          "type": "TextInput",
+          "value": "Describe severity..."
+        },
+        {
+          "oid": "6000000000175",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Leak Repair Required",
+                "plainText": "Leak Repair Required"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 120,
+              "content": {
+                "content": "Document the exact location of the oily residue.\nTake a photo of the leak area for the repair team.\nOpen the \"Leak Repair\" workflow in Trajectory for the repair procedure.\nIf the leak is severe, isolate the circuit at the service valve.\nContinue this inspection — the repair will be handled separately.",
+                "plainText": "Document the exact location of the oily residue.\nTake a photo of the leak area for the repair team.\nOpen the \"Leak Repair\" workflow in Trajectory for the repair procedure.\nIf the leak is severe, isolate the circuit at the service valve.\nContinue this inspection — the repair will be handled separately."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 318,
+              "width": 350,
+              "height": 64,
+              "content": {
+                "content": "SAFETY: Do not use an open flame for leak detection. Use electronic leak detectors or UV dye methods only.",
+                "plainText": "SAFETY: Do not use an open flame for leak detection. Use electronic leak detectors or UV dye methods only."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 392,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Leak location",
+                "plainText": "Leak location"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 418,
+              "width": 350,
+              "height": 40,
+              "label": "Leak location",
+              "placeholder": "e.g., Compressor #2 suction flare joint",
+              "fieldName": "leak_location",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 468,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Severity (Minor / Moderate / Severe)",
+                "plainText": "Severity (Minor / Moderate / Severe)"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 494,
+              "width": 350,
+              "height": 40,
+              "label": "Severity (Minor / Moderate / Severe)",
+              "placeholder": "Describe severity...",
+              "fieldName": "leak_severity",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": -10,
+        "y": 1335
+      }
+    },
+    {
+      "local_id": "Continue After Leak Check",
+      "oid": "6000000000184",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.743Z",
+      "step_type": "WAIT ANY",
+      "position": {
+        "x": 125,
+        "y": 1410
+      }
+    },
+    {
+      "local_id": "Crankcase Heater Check",
+      "oid": "6000000000195",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.743Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000187",
+          "type": "Header",
+          "value": "Crankcase Heater Verification",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000188",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000189",
+          "type": "Text",
+          "value": "Verify the compressor is currently OFF (not running).",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000190",
+          "type": "Text",
+          "value": "Use a clamp ammeter on the crankcase heater circuit.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000191",
+          "type": "Text",
+          "value": "Confirm current draw matches the nameplate specification.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000192",
+          "type": "Text",
+          "value": "If no current: check the heater relay, wiring, and heater element.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000193",
+          "type": "SmallText",
+          "value": "The crankcase heater prevents liquid refrigerant from pooling in the compressor oil sump during off-cycles. A failed heater leads to compressor slugging on startup.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000194",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Crankcase Heater Verification",
+                "plainText": "Crankcase Heater Verification"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Verify the compressor is currently OFF (not running).\nUse a clamp ammeter on the crankcase heater circuit.\nConfirm current draw matches the nameplate specification.\nIf no current: check the heater relay, wiring, and heater element.",
+                "plainText": "Verify the compressor is currently OFF (not running).\nUse a clamp ammeter on the crankcase heater circuit.\nConfirm current draw matches the nameplate specification.\nIf no current: check the heater relay, wiring, and heater element."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 296,
+              "width": 350,
+              "height": 82,
+              "content": {
+                "content": "The crankcase heater prevents liquid refrigerant from pooling in the compressor oil sump during off-cycles. A failed heater leads to compressor slugging on startup.",
+                "plainText": "The crankcase heater prevents liquid refrigerant from pooling in the compressor oil sump during off-cycles. A failed heater leads to compressor slugging on startup."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 95,
+        "y": 1495
+      }
+    },
+    {
+      "local_id": "Inverter IPM Check",
+      "oid": "6000000000212",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.743Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "ipm_resistance",
+          "oid": "6000000000210",
+          "description": "IPM resistance reading (ohms)"
+        },
+        {
+          "id": "ipm_in_spec",
+          "oid": "6000000000211",
+          "description": "Within specification?"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000197",
+          "type": "Header",
+          "value": "Inverter IPM Resistance Check",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000198",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000199",
+          "type": "Text",
+          "value": "Disconnect power and wait 5 minutes for capacitors to discharge.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000200",
+          "type": "Text",
+          "value": "Set multimeter to resistance (ohms) mode.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000201",
+          "type": "Text",
+          "value": "Measure resistance of the IPM (Intelligent Power Module).",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000202",
+          "type": "Text",
+          "value": "Compare readings to the service manual specifications.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000203",
+          "type": "Text",
+          "value": "Asymmetric readings indicate a failed power semiconductor.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000204",
+          "type": "SmallText",
+          "value": "SAFETY: Confirm zero voltage with a meter before touching any inverter components. DC bus capacitors store lethal energy.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000206",
+          "type": "Text",
+          "value": "IPM resistance reading (ohms)",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000207",
+          "type": "TextInput",
+          "value": "e.g., Open / 5.2M / Short"
+        },
+        {
+          "oid": "6000000000208",
+          "type": "Text",
+          "value": "Within specification?",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000209",
+          "type": "TextInput",
+          "value": "Yes / No"
+        },
+        {
+          "oid": "6000000000205",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Inverter IPM Resistance Check",
+                "plainText": "Inverter IPM Resistance Check"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 120,
+              "content": {
+                "content": "Disconnect power and wait 5 minutes for capacitors to discharge.\nSet multimeter to resistance (ohms) mode.\nMeasure resistance of the IPM (Intelligent Power Module).\nCompare readings to the service manual specifications.\nAsymmetric readings indicate a failed power semiconductor.",
+                "plainText": "Disconnect power and wait 5 minutes for capacitors to discharge.\nSet multimeter to resistance (ohms) mode.\nMeasure resistance of the IPM (Intelligent Power Module).\nCompare readings to the service manual specifications.\nAsymmetric readings indicate a failed power semiconductor."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 318,
+              "width": 350,
+              "height": 64,
+              "content": {
+                "content": "SAFETY: Confirm zero voltage with a meter before touching any inverter components. DC bus capacitors store lethal energy.",
+                "plainText": "SAFETY: Confirm zero voltage with a meter before touching any inverter components. DC bus capacitors store lethal energy."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 392,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "IPM resistance reading (ohms)",
+                "plainText": "IPM resistance reading (ohms)"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 418,
+              "width": 350,
+              "height": 40,
+              "label": "IPM resistance reading (ohms)",
+              "placeholder": "e.g., Open / 5.2M / Short",
+              "fieldName": "ipm_resistance",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 468,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Within specification?",
+                "plainText": "Within specification?"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 494,
+              "width": 350,
+              "height": 40,
+              "label": "Within specification?",
+              "placeholder": "Yes / No",
+              "fieldName": "ipm_in_spec",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 95,
+        "y": 1570
+      }
+    },
+    {
+      "local_id": "Filter Status",
+      "oid": "6000000000224",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.743Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000214",
+          "type": "Header",
+          "value": "Indoor Unit: Filter Check",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000215",
+          "type": "Image",
+          "value": "indoor-unit.jpg"
+        },
+        {
+          "oid": "6000000000216",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000217",
+          "type": "Text",
+          "value": "Check the \"Filter Sign\" indicator on the indoor unit remote controller.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000218",
+          "type": "Text",
+          "value": "Remove and visually inspect the air filters.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000219",
+          "type": "Text",
+          "value": "If clogged: clean with vacuum or rinse with water and air-dry.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000220",
+          "type": "Text",
+          "value": "If damaged: replace with correct model filter.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000221",
+          "type": "Text",
+          "value": "Reset the filter sign timer after cleaning/replacement.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000222",
+          "type": "SmallText",
+          "value": "Dirty filters are the #1 cause of service calls. They reduce airflow, freeze evaporator coils, and increase energy consumption by up to 15%.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000223",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Indoor Unit: Filter Check",
+                "plainText": "Indoor Unit: Filter Check"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 200,
+              "src": "indoor-unit.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 386,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 398,
+              "width": 350,
+              "height": 120,
+              "content": {
+                "content": "Check the \"Filter Sign\" indicator on the indoor unit remote controller.\nRemove and visually inspect the air filters.\nIf clogged: clean with vacuum or rinse with water and air-dry.\nIf damaged: replace with correct model filter.\nReset the filter sign timer after cleaning/replacement.",
+                "plainText": "Check the \"Filter Sign\" indicator on the indoor unit remote controller.\nRemove and visually inspect the air filters.\nIf clogged: clean with vacuum or rinse with water and air-dry.\nIf damaged: replace with correct model filter.\nReset the filter sign timer after cleaning/replacement."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 528,
+              "width": 350,
+              "height": 82,
+              "content": {
+                "content": "Dirty filters are the #1 cause of service calls. They reduce airflow, freeze evaporator coils, and increase energy consumption by up to 15%.",
+                "plainText": "Dirty filters are the #1 cause of service calls. They reduce airflow, freeze evaporator coils, and increase energy consumption by up to 15%."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 95,
+        "y": 1650
+      }
+    },
+    {
+      "local_id": "Drain Pan Inspection",
+      "oid": "6000000000235",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.743Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000226",
+          "type": "Header",
+          "value": "Indoor Unit: Drain Pan",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000227",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000228",
+          "type": "Text",
+          "value": "Remove the drain pan access cover.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000229",
+          "type": "Text",
+          "value": "Inspect for standing water (indicates a blocked drain).",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000230",
+          "type": "Text",
+          "value": "Check for slime, mold, or algae growth.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000231",
+          "type": "Text",
+          "value": "Clean the pan with a mild disinfectant if contaminated.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000232",
+          "type": "Text",
+          "value": "Verify the drain line is flowing freely.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000233",
+          "type": "SmallText",
+          "value": "Biological growth in drain pans can cause health hazards and foul odors. Consider installing condensate pan treatment tablets for prevention.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000234",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Indoor Unit: Drain Pan",
+                "plainText": "Indoor Unit: Drain Pan"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 120,
+              "content": {
+                "content": "Remove the drain pan access cover.\nInspect for standing water (indicates a blocked drain).\nCheck for slime, mold, or algae growth.\nClean the pan with a mild disinfectant if contaminated.\nVerify the drain line is flowing freely.",
+                "plainText": "Remove the drain pan access cover.\nInspect for standing water (indicates a blocked drain).\nCheck for slime, mold, or algae growth.\nClean the pan with a mild disinfectant if contaminated.\nVerify the drain line is flowing freely."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 318,
+              "width": 350,
+              "height": 82,
+              "content": {
+                "content": "Biological growth in drain pans can cause health hazards and foul odors. Consider installing condensate pan treatment tablets for prevention.",
+                "plainText": "Biological growth in drain pans can cause health hazards and foul odors. Consider installing condensate pan treatment tablets for prevention."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 95,
+        "y": 1730
+      }
+    },
+    {
+      "local_id": "Condensate Pump Test",
+      "oid": "6000000000246",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.743Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000237",
+          "type": "Header",
+          "value": "Indoor Unit: Condensate Pump",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000238",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000239",
+          "type": "Text",
+          "value": "Locate the secondary drain port on the indoor unit.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000240",
+          "type": "Text",
+          "value": "Slowly pour approximately 500ml of water into the port.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000241",
+          "type": "Text",
+          "value": "This should trigger the float switch and activate the pump.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000242",
+          "type": "Text",
+          "value": "Verify water is pumped out through the condensate line.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000243",
+          "type": "Text",
+          "value": "Listen for the pump motor — it should run smoothly without grinding.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000244",
+          "type": "SmallText",
+          "value": "If the float switch does not trigger, the unit will eventually overflow and cause water damage. Test this at every inspection.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000245",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Indoor Unit: Condensate Pump",
+                "plainText": "Indoor Unit: Condensate Pump"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 120,
+              "content": {
+                "content": "Locate the secondary drain port on the indoor unit.\nSlowly pour approximately 500ml of water into the port.\nThis should trigger the float switch and activate the pump.\nVerify water is pumped out through the condensate line.\nListen for the pump motor — it should run smoothly without grinding.",
+                "plainText": "Locate the secondary drain port on the indoor unit.\nSlowly pour approximately 500ml of water into the port.\nThis should trigger the float switch and activate the pump.\nVerify water is pumped out through the condensate line.\nListen for the pump motor — it should run smoothly without grinding."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 318,
+              "width": 350,
+              "height": 64,
+              "content": {
+                "content": "If the float switch does not trigger, the unit will eventually overflow and cause water damage. Test this at every inspection.",
+                "plainText": "If the float switch does not trigger, the unit will eventually overflow and cause water damage. Test this at every inspection."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 95,
+        "y": 1810
+      }
+    },
+    {
+      "local_id": "Delta T Measurement",
+      "oid": "6000000000258",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.743Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000248",
+          "type": "Header",
+          "value": "Temperature Differential (ΔT)",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000249",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000250",
+          "type": "Text",
+          "value": "Set the unit to COOLING mode at maximum fan speed.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000251",
+          "type": "Text",
+          "value": "Allow 10 minutes for the system to stabilize.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000252",
+          "type": "Text",
+          "value": "Measure the Return Air temperature at the intake grille.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000253",
+          "type": "Text",
+          "value": "Measure the Supply Air temperature at the discharge grille.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000254",
+          "type": "Text",
+          "value": "Calculate ΔT = Return Air - Supply Air.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000255",
+          "type": "Text",
+          "value": "Target range: 8°C to 12°C (15°F to 22°F).",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000256",
+          "type": "SmallText",
+          "value": "Low ΔT may indicate low refrigerant charge, dirty evaporator, or restricted airflow. High ΔT may indicate low airflow (dirty filter or failed fan).",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000257",
+          "type": "Button",
+          "value": "Next"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Temperature Differential (ΔT)",
+                "plainText": "Temperature Differential (ΔT)"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 142,
+              "content": {
+                "content": "Set the unit to COOLING mode at maximum fan speed.\nAllow 10 minutes for the system to stabilize.\nMeasure the Return Air temperature at the intake grille.\nMeasure the Supply Air temperature at the discharge grille.\nCalculate ΔT = Return Air - Supply Air.\nTarget range: 8°C to 12°C (15°F to 22°F).",
+                "plainText": "Set the unit to COOLING mode at maximum fan speed.\nAllow 10 minutes for the system to stabilize.\nMeasure the Return Air temperature at the intake grille.\nMeasure the Supply Air temperature at the discharge grille.\nCalculate ΔT = Return Air - Supply Air.\nTarget range: 8°C to 12°C (15°F to 22°F)."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 340,
+              "width": 350,
+              "height": 82,
+              "content": {
+                "content": "Low ΔT may indicate low refrigerant charge, dirty evaporator, or restricted airflow. High ΔT may indicate low airflow (dirty filter or failed fan).",
+                "plainText": "Low ΔT may indicate low refrigerant charge, dirty evaporator, or restricted airflow. High ΔT may indicate low airflow (dirty filter or failed fan)."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Next",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 95,
+        "y": 1885
+      }
+    },
+    {
+      "local_id": "Delta T Measurement - Record",
+      "oid": "6000000000274",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.743Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "return_air_temp_c",
+          "oid": "6000000000270",
+          "description": "Return Air temp (°C)"
+        },
+        {
+          "id": "supply_air_temp_c",
+          "oid": "6000000000271",
+          "description": "Supply Air temp (°C)"
+        },
+        {
+          "id": "delta_t_c",
+          "oid": "6000000000272",
+          "description": "Delta T (°C)"
+        },
+        {
+          "id": "delta_t_in_range",
+          "oid": "6000000000273",
+          "description": "Within target range?"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000259",
+          "type": "Header",
+          "value": "Record: Temperature Differential (ΔT)",
+          "font_size": 20,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000260",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000261",
+          "type": "Text",
+          "value": "Return Air temp (°C)",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000262",
+          "type": "TextInput",
+          "value": "e.g., 26.5"
+        },
+        {
+          "oid": "6000000000263",
+          "type": "Text",
+          "value": "Supply Air temp (°C)",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000264",
+          "type": "TextInput",
+          "value": "e.g., 16.2"
+        },
+        {
+          "oid": "6000000000265",
+          "type": "Text",
+          "value": "Delta T (°C)",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000266",
+          "type": "TextInput",
+          "value": "e.g., 10.3"
+        },
+        {
+          "oid": "6000000000267",
+          "type": "Text",
+          "value": "Within target range?",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000268",
+          "type": "TextInput",
+          "value": "Yes / No"
+        },
+        {
+          "oid": "6000000000269",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Record: Temperature Differential (ΔT)",
+                "plainText": "Record: Temperature Differential (ΔT)"
+              },
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Return Air temp (°C)",
+                "plainText": "Return Air temp (°C)"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 214,
+              "width": 350,
+              "height": 40,
+              "label": "Return Air temp (°C)",
+              "placeholder": "e.g., 26.5",
+              "fieldName": "return_air_temp_c",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 264,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Supply Air temp (°C)",
+                "plainText": "Supply Air temp (°C)"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 290,
+              "width": 350,
+              "height": 40,
+              "label": "Supply Air temp (°C)",
+              "placeholder": "e.g., 16.2",
+              "fieldName": "supply_air_temp_c",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 340,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Delta T (°C)",
+                "plainText": "Delta T (°C)"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 366,
+              "width": 350,
+              "height": 40,
+              "label": "Delta T (°C)",
+              "placeholder": "e.g., 10.3",
+              "fieldName": "delta_t_c",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 416,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Within target range?",
+                "plainText": "Within target range?"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 442,
+              "width": 350,
+              "height": 40,
+              "label": "Within target range?",
+              "placeholder": "Yes / No",
+              "fieldName": "delta_t_in_range",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 95,
+        "y": 1960
+      }
+    },
+    {
+      "local_id": "Vane Motor Check",
+      "oid": "6000000000286",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.743Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000277",
+          "type": "Header",
+          "value": "Louver / Vane Motor Test",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000278",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000279",
+          "type": "Text",
+          "value": "Use the remote controller to cycle the louvers through full range.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000280",
+          "type": "Text",
+          "value": "Observe horizontal vanes (up/down) through complete travel.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000281",
+          "type": "Text",
+          "value": "Observe vertical vanes (left/right) through complete travel.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000282",
+          "type": "Text",
+          "value": "Listen for clicking, grinding, or sticking during movement.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000283",
+          "type": "Text",
+          "value": "Vanes should move smoothly and return to set position.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000284",
+          "type": "SmallText",
+          "value": "A sticking vane motor usually indicates a worn gear or bearing. Replace the motor before it fails completely — a stuck louver directs all airflow to one zone.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000285",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Louver / Vane Motor Test",
+                "plainText": "Louver / Vane Motor Test"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 120,
+              "content": {
+                "content": "Use the remote controller to cycle the louvers through full range.\nObserve horizontal vanes (up/down) through complete travel.\nObserve vertical vanes (left/right) through complete travel.\nListen for clicking, grinding, or sticking during movement.\nVanes should move smoothly and return to set position.",
+                "plainText": "Use the remote controller to cycle the louvers through full range.\nObserve horizontal vanes (up/down) through complete travel.\nObserve vertical vanes (left/right) through complete travel.\nListen for clicking, grinding, or sticking during movement.\nVanes should move smoothly and return to set position."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 318,
+              "width": 350,
+              "height": 82,
+              "content": {
+                "content": "A sticking vane motor usually indicates a worn gear or bearing. Replace the motor before it fails completely — a stuck louver directs all airflow to one zone.",
+                "plainText": "A sticking vane motor usually indicates a worn gear or bearing. Replace the motor before it fails completely — a stuck louver directs all airflow to one zone."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 95,
+        "y": 2035
+      }
+    },
+    {
+      "local_id": "End",
+      "oid": "6000000000288",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.743Z",
+      "step_type": "END",
+      "position": {
+        "x": 140,
+        "y": 2190
+      }
+    },
+    {
+      "local_id": "Sign Off Work Complete",
+      "oid": "287052703350149120",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:47:30.743Z",
+      "step_type": "USER_INTERACTION",
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "button",
+              "x": 141.75349428208386,
+              "y": 693.7534942820838,
+              "width": 120,
+              "height": 44,
+              "label": "Complete",
+              "outputValue": ""
+            },
+            {
+              "type": "text",
+              "x": 10.247565710071619,
+              "y": 127.0130256661054,
+              "width": 376,
+              "height": 72,
+              "content": {
+                "content": "<p><span style=\"font-family: &quot;Trebuchet MS&quot;, sans-serif; font-size: 28px;\"><strong>Sign Off on work complete</strong></span></p>",
+                "plainText": "Sign Off on work complete"
+              },
+              "align": "center"
+            },
+            {
+              "type": "textInput",
+              "x": 17.268492654747227,
+              "y": 204.7599491135635,
+              "width": 360,
+              "height": 104,
+              "label": "Full Name",
+              "placeholder": "Enter text...",
+              "fieldName": "Text_029248",
+              "outputParameter": "SignoffName.Value"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": [
+            {
+              "type": "button",
+              "x": 299,
+              "y": 854,
+              "width": 236,
+              "height": 53,
+              "label": "Complete",
+              "outputValue": ""
+            },
+            {
+              "type": "text",
+              "x": 126,
+              "y": 214,
+              "width": 394,
+              "height": 49,
+              "content": {
+                "content": "<p><span style=\"font-family: &quot;Trebuchet MS&quot;, sans-serif; font-size: 28px;\"><strong>Sign Off on work complete</strong></span></p>",
+                "plainText": "Sign Off on work complete"
+              }
+            },
+            {
+              "type": "textInput",
+              "x": 95,
+              "y": 311,
+              "width": 591,
+              "height": 73,
+              "label": "Full Name",
+              "placeholder": "Enter text...",
+              "fieldName": "Text_029248"
+            }
+          ]
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": [
+            {
+              "type": "button",
+              "x": 499,
+              "y": 667,
+              "width": 394,
+              "height": 42,
+              "label": "Complete",
+              "outputValue": ""
+            },
+            {
+              "type": "text",
+              "x": 210,
+              "y": 167,
+              "width": 656,
+              "height": 38,
+              "content": {
+                "content": "<p><span style=\"font-family: &quot;Trebuchet MS&quot;, sans-serif; font-size: 28px;\"><strong>Sign Off on work complete</strong></span></p>",
+                "plainText": "Sign Off on work complete"
+              }
+            },
+            {
+              "type": "textInput",
+              "x": 158,
+              "y": 243,
+              "width": 985,
+              "height": 57,
+              "label": "Full Name",
+              "placeholder": "Enter text...",
+              "fieldName": "Text_029248"
+            }
+          ]
+        }
+      ],
+      "position": {
+        "x": 95,
+        "y": 2110
+      }
+    }
+  ],
+  "connections": [
+    {
+      "from_step_id": "6000000000001",
+      "to_step_id": "6000000000010",
+      "connection_id": "6000000000028"
+    },
+    {
+      "from_step_id": "6000000000010",
+      "to_step_id": "6000000000026",
+      "connection_id": "6000000000027"
+    },
+    {
+      "from_step_id": "6000000000026",
+      "to_step_id": "6000000000038",
+      "connection_id": "6000000000039"
+    },
+    {
+      "from_step_id": "6000000000038",
+      "to_step_id": "6000000000054",
+      "connection_id": "6000000000055"
+    },
+    {
+      "from_step_id": "6000000000054",
+      "to_step_id": "6000000000065",
+      "connection_id": "6000000000083"
+    },
+    {
+      "from_step_id": "6000000000065",
+      "to_step_id": "6000000000081",
+      "connection_id": "6000000000082"
+    },
+    {
+      "from_step_id": "6000000000081",
+      "to_step_id": "6000000000089",
+      "connection_id": "6000000000090"
+    },
+    {
+      "from_step_id": "6000000000089",
+      "to_step_id": "6000000000106",
+      "connection_id": "6000000000107",
+      "source_handle_id": "yes"
+    },
+    {
+      "from_step_id": "6000000000106",
+      "to_step_id": "6000000000108",
+      "connection_id": "6000000000109"
+    },
+    {
+      "from_step_id": "6000000000089",
+      "to_step_id": "6000000000108",
+      "connection_id": "6000000000110",
+      "source_handle_id": "no"
+    },
+    {
+      "from_step_id": "6000000000108",
+      "to_step_id": "6000000000124",
+      "connection_id": "6000000000125"
+    },
+    {
+      "from_step_id": "6000000000124",
+      "to_step_id": "6000000000136",
+      "connection_id": "6000000000148"
+    },
+    {
+      "from_step_id": "6000000000136",
+      "to_step_id": "6000000000146",
+      "connection_id": "6000000000147"
+    },
+    {
+      "from_step_id": "6000000000146",
+      "to_step_id": "6000000000158",
+      "connection_id": "6000000000159"
+    },
+    {
+      "from_step_id": "6000000000158",
+      "to_step_id": "6000000000165",
+      "connection_id": "6000000000166"
+    },
+    {
+      "from_step_id": "6000000000165",
+      "to_step_id": "6000000000182",
+      "connection_id": "6000000000183",
+      "source_handle_id": "yes"
+    },
+    {
+      "from_step_id": "6000000000182",
+      "to_step_id": "6000000000184",
+      "connection_id": "6000000000185"
+    },
+    {
+      "from_step_id": "6000000000165",
+      "to_step_id": "6000000000184",
+      "connection_id": "6000000000186",
+      "source_handle_id": "no"
+    },
+    {
+      "from_step_id": "6000000000184",
+      "to_step_id": "6000000000195",
+      "connection_id": "6000000000196"
+    },
+    {
+      "from_step_id": "6000000000195",
+      "to_step_id": "6000000000212",
+      "connection_id": "6000000000213"
+    },
+    {
+      "from_step_id": "6000000000212",
+      "to_step_id": "6000000000224",
+      "connection_id": "6000000000225"
+    },
+    {
+      "from_step_id": "6000000000224",
+      "to_step_id": "6000000000235",
+      "connection_id": "6000000000236"
+    },
+    {
+      "from_step_id": "6000000000235",
+      "to_step_id": "6000000000246",
+      "connection_id": "6000000000247"
+    },
+    {
+      "from_step_id": "6000000000246",
+      "to_step_id": "6000000000258",
+      "connection_id": "6000000000276"
+    },
+    {
+      "from_step_id": "6000000000258",
+      "to_step_id": "6000000000274",
+      "connection_id": "6000000000275"
+    },
+    {
+      "from_step_id": "6000000000274",
+      "to_step_id": "6000000000286",
+      "connection_id": "6000000000287"
+    },
+    {
+      "from_step_id": "6000000000286",
+      "to_step_id": "287052703350149120"
+    },
+    {
+      "from_step_id": "287052703350149120",
+      "to_step_id": "6000000000288"
+    }
+  ]
+}

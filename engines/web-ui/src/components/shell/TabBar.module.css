@@ -1,0 +1,88 @@
+.tabBar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: var(--tab-height, 60px);
+  flex-shrink: 0;
+  background: var(--tab-bar-bg, #fff);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--tab-inactive-color, #999);
+  font-size: 11px;
+  min-width: 56px;
+}
+
+.tabActive {
+  color: var(--tab-active-color, #007aff);
+}
+
+.tabLabel {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* Vertical sidebar variant (tablet/desktop) */
+.tabBarVertical {
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-top: 16px;
+  gap: 4px;
+  width: 100%;
+  /* Take all available vertical space inside a flex-column sidebar so any
+     trailing controls (e.g. graph-toggle button) anchor at the bottom. */
+  flex: 1 1 auto;
+  min-height: 0;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Desktop sidebar: pill-style rows with icon + label, hover, indigo active */
+[data-device="desktop"] .tabBarVertical {
+  padding: 12px 8px;
+  gap: 2px;
+  box-shadow: none;
+  background: transparent;
+}
+
+[data-device="desktop"] .tabBarVertical .tab {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  width: 100%;
+  min-width: 0;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+[data-device="desktop"] .tabBarVertical .tab:hover {
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
+}
+
+[data-device="desktop"] .tabBarVertical .tabActive {
+  background: var(--color-accent-bg);
+  color: var(--color-accent);
+}
+
+[data-device="desktop"] .tabBarVertical .tabActive:hover {
+  background: var(--color-accent-bg);
+  color: var(--color-accent);
+}
+
+[data-device="desktop"] .tabBarVertical .tabLabel {
+  font-size: 13px;
+  font-weight: inherit;
+}

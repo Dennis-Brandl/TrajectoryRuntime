@@ -1,0 +1,493 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 12px 16px;
+  overflow-y: auto;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+
+.loadButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.loadButton:hover { background: var(--color-accent-hover); }
+.loadButton:active { background: #004aaa; }
+
+.loadButton:disabled {
+  background: var(--color-text-muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.hiddenInput { display: none; }
+
+/* Desktop-only drop zone — hidden on phone/tablet */
+.dropZone {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 2px dashed var(--color-border-strong);
+  border-radius: 8px;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  text-align: center;
+  justify-content: center;
+  transition: border-color 200ms ease, background 200ms ease;
+  flex-shrink: 0;
+}
+
+.dropZoneDragOver {
+  border-color: var(--color-accent);
+  background: rgba(0, 122, 255, 0.05);
+}
+
+.dropIcon { color: var(--color-border-strong); }
+
+@container device-frame (min-width: 1000px) {
+  .dropZone { display: flex; }
+}
+
+.error {
+  font-size: 13px;
+  color: #d32f2f;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: #fdecea;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.section { margin-bottom: 16px; }
+.section > .sectionHeader { margin-bottom: 8px; }
+
+.sectionHeader {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+  padding: 8px 12px;
+  background: #444;
+  border-radius: 6px;
+}
+
+.workflowList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.workflowItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+}
+
+.workflowItem:last-child { border-bottom: none; }
+
+.workflowName {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-text);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workflowVersion {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+.runningBadge {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-accent);
+  padding: 4px 10px;
+  background: rgba(0, 122, 255, 0.1);
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.emptySection {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin: 0;
+  padding: 8px 0;
+}
+
+.deleteButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+
+.deleteButton:hover {
+  color: var(--color-danger);
+}
+
+/* Hover-only delete: hidden on phone/tablet (which use swipe), visible on
+   desktop only when the row is hovered. */
+.deleteButtonHoverOnly {
+  display: none;
+}
+
+.swipeContainer {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.swipeContent {
+  position: relative;
+  z-index: 1;
+  background: var(--color-card-bg);
+  transition: transform 0.25s ease;
+}
+
+.swiped {
+  transform: translateX(-80px);
+}
+
+.swipeDeleteZone {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 80px;
+  background: var(--color-danger);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 0;
+}
+
+.swipeDeleteZone:hover {
+  background: var(--color-danger-hover);
+}
+
+.swipeDeleteIcon {
+  color: #fff;
+}
+
+.sectionHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #444;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+}
+
+.sectionHeaderRow .sectionHeader {
+  margin-bottom: 0;
+  padding: 0;
+  background: none;
+  border-radius: 0;
+}
+
+.completedBadge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.completedBadge[data-state="COMPLETED"] {
+  color: #2e7d32;
+  background: rgba(46, 125, 50, 0.1);
+}
+
+.completedBadge[data-state="ABORTED"],
+.completedBadge[data-state="STOPPED"] {
+  color: #e65100;
+  background: rgba(230, 81, 0, 0.1);
+}
+
+.completedBadge[data-state="ERRORED"] {
+  color: #c62828;
+  background: rgba(198, 40, 40, 0.1);
+}
+
+.completedTime {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-left: auto;
+  padding-left: 8px;
+}
+
+.clearButton {
+  font-size: 12px;
+  color: var(--color-border-strong);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: auto;
+}
+
+.clearButton:hover { color: #fff; }
+
+/* Properties overlay/modal */
+.propsOverlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.propsPanel {
+  background: var(--color-card-bg);
+  border-radius: 12px;
+  padding: 16px;
+  max-width: 400px;
+  max-height: 70vh;
+  overflow-y: auto;
+  width: 90%;
+}
+
+.propsTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+
+.propsTable {
+  width: 100%;
+  font-size: 13px;
+  border-collapse: collapse;
+}
+
+.propsTable td {
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: top;
+}
+
+.propsTable td:first-child {
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+@container device-frame (min-width: 769px) {
+  .screen { padding: 16px 24px; }
+  .workflowName { font-size: 16px; }
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   Desktop refresh (Direction A). Phone/tablet styles above unchanged.
+   ────────────────────────────────────────────────────────────────────── */
+[data-device="desktop"] .screen {
+  padding: 24px 32px;
+}
+
+[data-device="desktop"] .toolbar {
+  margin-bottom: 16px;
+}
+
+[data-device="desktop"] .loadButton {
+  background: var(--color-action-primary);
+  color: #fff;
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+[data-device="desktop"] .loadButton:hover {
+  background: var(--color-action-primary-hover);
+}
+
+[data-device="desktop"] .loadButton:disabled {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-muted);
+  box-shadow: none;
+}
+
+[data-device="desktop"] .dropZone {
+  border-radius: 10px;
+  border-color: var(--color-border-strong);
+  font-size: 13px;
+  color: var(--color-text-muted);
+  background: var(--color-card-bg);
+}
+
+[data-device="desktop"] .dropZoneDragOver {
+  border-color: var(--color-accent);
+  background: var(--color-accent-bg);
+  color: var(--color-accent);
+}
+
+[data-device="desktop"] .section {
+  margin-bottom: 24px;
+}
+
+[data-device="desktop"] .sectionHeader,
+[data-device="desktop"] .sectionHeaderRow {
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0 0 6px;
+  margin: 0 0 8px;
+  border-radius: 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+[data-device="desktop"] .sectionHeaderRow .sectionHeader {
+  border-bottom: none;
+  padding: 0;
+  margin: 0;
+}
+
+[data-device="desktop"] .clearButton {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+[data-device="desktop"] .clearButton:hover {
+  color: var(--color-text);
+}
+
+[data-device="desktop"] .workflowList {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+[data-device="desktop"] .swipeContainer {
+  border-radius: 0;
+}
+
+/* Swipe-to-delete is a touch affordance — hide it on desktop where the
+   absolutely-positioned red zone would overlap row content. */
+[data-device="desktop"] .swipeDeleteZone {
+  display: none;
+}
+
+/* Desktop: hover-revealed inline delete button on completed rows. */
+[data-device="desktop"] .deleteButtonHoverOnly {
+  display: inline-flex;
+  opacity: 0;
+  margin-left: 4px;
+  transition: opacity 120ms ease, color 120ms ease;
+}
+
+[data-device="desktop"] .workflowItem:hover .deleteButtonHoverOnly {
+  opacity: 1;
+}
+
+[data-device="desktop"] .workflowItem {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-border);
+  transition: background 120ms ease;
+}
+
+[data-device="desktop"] .workflowList > li:last-child .workflowItem,
+[data-device="desktop"] .workflowList > li:last-child {
+  border-bottom: none;
+}
+
+[data-device="desktop"] .workflowItem:hover {
+  background: var(--color-bg-secondary);
+}
+
+[data-device="desktop"] .workflowName {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+[data-device="desktop"] .workflowVersion {
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+  margin-left: 6px;
+}
+
+[data-device="desktop"] .runningBadge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--color-accent-bg);
+  color: var(--color-accent);
+}
+
+[data-device="desktop"] .completedBadge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+[data-device="desktop"] .completedTime {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+}
+
+[data-device="desktop"] .emptySection {
+  padding: 14px;
+  background: var(--color-card-bg);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: 8px;
+  text-align: center;
+}
+
+[data-device="desktop"] .error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  font-size: 13px;
+}

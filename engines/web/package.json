@@ -1,0 +1,22 @@
+{
+  "name": "@trajectoryruntime/engine-web",
+  "version": "0.1.0",
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "conformance": "node dist/runner.js",
+    "validate": "node dist/validate-file.js",
+    "test": "node --test dist/**/*.test.js"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.16",
+    "ajv": "^8.17.0"
+  },
+  "devDependencies": {
+    "@types/adm-zip": "^0.5.7",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  }
+}

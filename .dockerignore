@@ -1,0 +1,20 @@
+**/node_modules
+**/dist
+.git
+.claude
+.planning
+
+# Native platform builds not needed for web Docker image
+engines/kmp-engine
+engines/android-app
+engines/ios
+engines/ios-ui
+
+# Docs and tests
+docs
+tests
+*.docx
+LICENSE
+*.md
+!engines/web/README.md
+!engines/web-ui/README.md

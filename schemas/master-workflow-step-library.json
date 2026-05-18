@@ -1,0 +1,495 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://saturnis.io/schemas/master-workflow-step-library.json",
+  "title": "Master Workflow Step Library",
+  "description": "A collection of Master Workflow Library Steps.",
+  "allOf": [{ "$ref": "managed-element.json" }],
+  "type": "object",
+  "required": ["library_steps"],
+  "properties": {
+    "library_steps": {
+      "type": "array",
+      "description": "A collection of steps with the same structure as Master Workflow Steps.",
+      "items": {
+        "type": "object",
+        "allOf": [{ "$ref": "managed-element.json" }],
+        "required": ["step_type"],
+        "properties": {
+          "step_type": {
+            "type": "string",
+            "enum": [
+              "START",
+              "END",
+              "ACTION PROXY",
+              "WORKFLOW PROXY",
+              "SELECT 1",
+              "WAIT ANY",
+              "PARALLEL",
+              "WAIT ALL",
+              "SCRIPT",
+              "YES_NO",
+              "USER_INTERACTION"
+            ],
+            "description": "The functional type of the workflow step."
+          },
+          "output_parameter_name": {
+            "type": "string",
+            "description": "Output parameter name for UI steps that capture user input."
+          },
+          "ui_parameter_specifications": {
+            "type": "array",
+            "description": "UI parameters for user interaction steps defining content to display.",
+            "items": {
+              "type": "object",
+              "required": ["type", "value"],
+              "properties": {
+                "oid": {
+                  "type": "string",
+                  "description": "Snowflake OID for this UI parameter."
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "Button",
+                    "Header",
+                    "Text",
+                    "SmallText",
+                    "Image",
+                    "Video",
+                    "TextInput",
+                    "YesNoButtons",
+                    "PickList",
+                    "CheckboxList",
+                    "FormField",
+                    "FormFieldMultiline",
+                    "FormFieldNumeric",
+                    "FormFieldPhone",
+                    "FormFieldEmail",
+                    "Divider"
+                  ],
+                  "description": "The UI element type."
+                },
+                "value": {
+                  "type": "string",
+                  "description": "The content value for this UI element."
+                },
+                "font_size": {
+                  "type": "number",
+                  "description": "Font size for text elements (Header, Text, SmallText)."
+                },
+                "color": {
+                  "type": "string",
+                  "description": "Text color for text elements."
+                },
+                "lines": {
+                  "type": "integer",
+                  "description": "Number of lines for TextInput or FormFieldMultiline."
+                },
+                "align": {
+                  "type": "string",
+                  "enum": ["left", "center", "right"],
+                  "description": "Text alignment for text elements."
+                },
+                "value2": {
+                  "type": "string",
+                  "description": "Secondary value (e.g. No label for YesNoButtons)."
+                }
+              }
+            }
+          },
+          "yes_no_config": {
+            "type": "object",
+            "description": "Configuration for YES_NO step type.",
+            "properties": {
+              "yes_label": {
+                "type": "string",
+                "description": "Custom label for Yes button (default: 'Yes')."
+              },
+              "no_label": {
+                "type": "string",
+                "description": "Custom label for No button (default: 'No')."
+              },
+              "yes_value": {
+                "type": "string",
+                "description": "Output value when Yes is selected (default: 'true')."
+              },
+              "no_value": {
+                "type": "string",
+                "description": "Output value when No is selected (default: 'false')."
+              },
+              "default_selection": {
+                "type": "string",
+                "enum": ["yes", "no", "none"],
+                "description": "Default selection state."
+              }
+            }
+          },
+          "script_config": {
+            "type": "object",
+            "description": "Configuration for SCRIPT step type.",
+            "properties": {
+              "language": { "type": "string", "description": "Script language (e.g. 'python')." },
+              "source": { "type": "string", "description": "Script source code." }
+            }
+          },
+          "select1_config": {
+            "type": "object",
+            "description": "Configuration for SELECT 1 step type.",
+            "properties": {
+              "input_name": { "type": "string" },
+              "input_value_type": { "type": "string", "enum": ["literal", "property"] },
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["id", "label", "operator", "value", "value_type", "is_default"],
+                  "properties": {
+                    "id": { "type": "string" },
+                    "label": { "type": "string" },
+                    "operator": { "type": "string" },
+                    "value": { "type": "string" },
+                    "value_type": { "type": "string", "enum": ["literal", "property"] },
+                    "is_default": { "type": "boolean" }
+                  }
+                }
+              }
+            }
+          },
+          "form_layout_config": {
+            "type": "array",
+            "description": "WYSIWYG form layout configuration for USER_INTERACTION and YES_NO steps.",
+            "items": {
+              "type": "object",
+              "required": ["deviceType", "canvasWidth", "canvasHeight", "elements"],
+              "properties": {
+                "deviceType": { "type": "string", "enum": ["phone", "tablet", "desktop"] },
+                "canvasWidth": { "type": "number" },
+                "canvasHeight": { "type": "number" },
+                "elements": {
+                  "type": "array",
+                  "description": "Form elements placed on this device layout canvas.",
+                  "items": {
+                    "type": "object",
+                    "required": ["type", "x", "y", "width", "height"],
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "button",
+                          "text",
+                          "textInput",
+                          "image",
+                          "header",
+                          "textarea",
+                          "checkbox",
+                          "radio",
+                          "video",
+                          "divider",
+                          "timer"
+                        ],
+                        "description": "Discriminant tag identifying the form element type."
+                      },
+                      "x": { "type": "number", "description": "Horizontal position in logical pixels." },
+                      "y": { "type": "number", "description": "Vertical position in logical pixels." },
+                      "width": { "type": "number", "description": "Element width in logical pixels." },
+                      "height": { "type": "number", "description": "Element height in logical pixels." },
+                      "zIndex": {
+                        "type": "number",
+                        "description": "Z-order for overlapping elements. Higher = on top."
+                      },
+                      "label": {
+                        "type": "string",
+                        "description": "Display label (textInput, textarea, checkbox, radio, button, timer)."
+                      },
+                      "placeholder": { "type": "string", "description": "Placeholder text (textInput, textarea)." },
+                      "fieldName": {
+                        "type": "string",
+                        "description": "JSON key for captured value in step output (textInput, textarea, checkbox, radio, timer)."
+                      },
+                      "required": {
+                        "type": "boolean",
+                        "description": "Whether the field must be filled before submission."
+                      },
+                      "outputParameter": {
+                        "type": "string",
+                        "description": "Value Property reference where this element's value is captured at runtime."
+                      },
+                      "fontSize": { "type": "number", "description": "Font size in logical pixels." },
+                      "content": {
+                        "description": "Text/header content. String (Phase 23+ HTML) or {content,plainText} legacy wrapper.",
+                        "oneOf": [
+                          { "type": "string" },
+                          {
+                            "type": "object",
+                            "required": ["content", "plainText"],
+                            "properties": {
+                              "content": { "type": "string" },
+                              "plainText": { "type": "string" }
+                            }
+                          }
+                        ]
+                      },
+                      "fontWeight": { "type": "string", "enum": ["normal", "bold"] },
+                      "color": { "type": "string", "description": "CSS color string." },
+                      "align": { "type": "string", "enum": ["left", "center", "right"] },
+                      "src": {
+                        "type": "string",
+                        "description": "Image filename or https URL (image), or video URL (video)."
+                      },
+                      "imageOid": {
+                        "type": "string",
+                        "description": "Stable OID for image element, used as namespace prefix in ZIP."
+                      },
+                      "objectFit": { "type": "string", "enum": ["contain", "cover", "fill"] },
+                      "posterUrl": { "type": "string", "description": "Video thumbnail URL." },
+                      "outputValue": { "type": "string", "description": "Value emitted when button is tapped." },
+                      "deletable": {
+                        "type": "boolean",
+                        "description": "Whether this element can be deleted in the designer."
+                      },
+                      "thickness": { "type": "number", "description": "Divider line thickness in logical pixels." },
+                      "rows": { "type": "integer", "description": "Visible text rows for textarea elements." },
+                      "options": {
+                        "type": "array",
+                        "description": "Selectable options for checkbox, radio, dropdown, or combobox.",
+                        "items": {
+                          "type": "object",
+                          "required": ["label", "value"],
+                          "properties": {
+                            "label": { "type": "string", "description": "Display text shown to the user." },
+                            "value": { "type": "string", "description": "Value stored in step output when selected." }
+                          }
+                        }
+                      },
+                      "defaultSource": {
+                        "type": "object",
+                        "description": "Default value source: static text, value property, or input parameter.",
+                        "required": ["mode", "value"],
+                        "properties": {
+                          "mode": { "type": "string", "enum": ["static", "property", "input"] },
+                          "value": { "type": "string" }
+                        }
+                      },
+                      "placeholderSource": {
+                        "type": "object",
+                        "description": "Placeholder source: static text or input parameter reference.",
+                        "required": ["mode", "value"],
+                        "properties": {
+                          "mode": { "type": "string", "enum": ["static", "property", "input"] },
+                          "value": { "type": "string" }
+                        }
+                      },
+                      "durationSeconds": { "type": "integer", "description": "Timer duration in seconds." },
+                      "direction": {
+                        "type": "string",
+                        "enum": ["countdown", "countup"],
+                        "description": "Timer direction."
+                      },
+                      "blockDone": {
+                        "type": "boolean",
+                        "description": "When true, Done button is disabled until timer expires."
+                      },
+                      "inputMode": {
+                        "type": "string",
+                        "enum": ["text", "number", "phone", "password", "dropdown", "combobox"],
+                        "description": "Controls the type of data this textInput accepts. Defaults to 'text'. 'text'=any free-form text, 'number'=digits and +-., only, 'phone'=digits and +-() space, 'password'=masked input, 'dropdown'=read-only pick list, 'combobox'=editable pick list."
+                      },
+                      "listItems": {
+                        "type": "array",
+                        "description": "Fixed list of selectable options for dropdown/combobox inputMode. Each entry has a display label and output value.",
+                        "items": {
+                          "type": "object",
+                          "required": ["label", "value"],
+                          "properties": {
+                            "label": { "type": "string", "description": "Display text shown to the user." },
+                            "value": { "type": "string", "description": "Value stored in step output when selected." }
+                          }
+                        }
+                      },
+                      "listSource": {
+                        "type": "object",
+                        "description": "Source of list items for dropdown/combobox. 'static'=use listItems array, 'input'=populate from named step input parameter (expected: JSON string array).",
+                        "required": ["mode"],
+                        "properties": {
+                          "mode": { "type": "string", "enum": ["static", "input"] },
+                          "value": { "type": "string", "description": "Input parameter name when mode is 'input'." }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "form_element_images": {
+            "type": "array",
+            "description": "Stable image references for form elements. Maps imageOid to filename for runtime resolution.",
+            "items": {
+              "type": "object",
+              "required": ["image_oid", "filename"],
+              "properties": {
+                "image_oid": {
+                  "type": "string",
+                  "description": "Snowflake OID uniquely identifying this image element."
+                },
+                "filename": {
+                  "type": "string",
+                  "description": "Image filename within the images/ folder of the ZIP package."
+                }
+              }
+            }
+          },
+          "resource_command_specifications": {
+            "type": "array",
+            "description": "Commands to acquire or release resources during step execution.",
+            "items": {
+              "type": "object",
+              "required": ["command_type", "resource_name"],
+              "properties": {
+                "oid": { "type": "string" },
+                "command_type": {
+                  "type": "string",
+                  "enum": [
+                    "Acquire",
+                    "Release",
+                    "Acquire Pool Amount",
+                    "Release Pool Amount",
+                    "Send",
+                    "Receive",
+                    "Synchronize"
+                  ],
+                  "description": "The action to perform on the resource."
+                },
+                "resource_name": { "type": "string" },
+                "resource_source_type": {
+                  "type": "string",
+                  "enum": ["workflow", "environment"],
+                  "description": "Whether the resource is defined on a workflow or an environment."
+                },
+                "resource_source_oid": {
+                  "type": "string",
+                  "description": "OID of the workflow or environment that defines the resource."
+                },
+                "amount": {
+                  "type": "integer",
+                  "description": "Used for Pool Amount commands."
+                },
+                "target": { "type": "string", "description": "Value property name to store acquired resource handle." },
+                "source": { "type": "string", "description": "Value property ref for sync send data." }
+              }
+            }
+          },
+          "value_property_specifications": {
+            "type": "array",
+            "description": "Named values used as input/output parameters.",
+            "items": {
+              "type": "object",
+              "required": ["name"],
+              "properties": {
+                "name": { "type": "string" },
+                "oid": { "type": "string" },
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["name", "value"],
+                    "properties": {
+                      "name": { "type": "string" },
+                      "value": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "input_parameter_specifications": {
+            "type": "array",
+            "description": "Parameters passed as strings with optional schema validation.",
+            "items": {
+              "type": "object",
+              "required": ["id", "default_value"],
+              "properties": {
+                "id": { "type": "string" },
+                "oid": { "type": "string" },
+                "description": { "type": "string" },
+                "default_value": { "type": "string" },
+                "json_schema": { "type": "string" },
+                "value_type": {
+                  "type": "string",
+                  "enum": ["literal", "property"],
+                  "description": "Whether value is a literal string or a value property reference."
+                },
+                "entries": {
+                  "type": "array",
+                  "description": "Structured entries defining the parameter data shape.",
+                  "items": {
+                    "type": "object",
+                    "required": ["name", "value"],
+                    "properties": {
+                      "name": { "type": "string" },
+                      "value": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "output_parameter_specifications": {
+            "type": "array",
+            "description": "Named output placeholders.",
+            "items": {
+              "type": "object",
+              "required": ["id"],
+              "properties": {
+                "id": { "type": "string" },
+                "oid": { "type": "string" },
+                "description": { "type": "string" },
+                "target": {
+                  "type": "string",
+                  "description": "Value property name where this output is stored."
+                },
+                "entries": {
+                  "type": "array",
+                  "description": "Structured entries defining the parameter data shape.",
+                  "items": {
+                    "type": "object",
+                    "required": ["name", "value"],
+                    "properties": {
+                      "name": { "type": "string" },
+                      "value": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "connection_references": {
+            "type": "array",
+            "description": "References to Workflow Step Connections that define the execution order.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "position": {
+            "type": "object",
+            "description": "Optional canvas position of this step.",
+            "properties": {
+              "x": { "type": "number" },
+              "y": { "type": "number" }
+            }
+          },
+          "action_visibility": {
+            "type": "string",
+            "enum": ["opaque", "observable"],
+            "description": "Visibility of environment action: opaque (internal) or observable (visible to caller)."
+          }
+        }
+      }
+    },
+    "child_libraries": {
+      "type": "array",
+      "description": "Nested child libraries.",
+      "items": { "$ref": "#" }
+    }
+  }
+}

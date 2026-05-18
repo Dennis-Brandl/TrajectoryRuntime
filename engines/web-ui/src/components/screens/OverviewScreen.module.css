@@ -1,0 +1,148 @@
+/* engines/web-ui/src/components/screens/OverviewScreen.module.css */
+
+.screen {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px;
+  color: #999;
+  gap: 8px;
+}
+
+.emptyIcon { color: #ccc; }
+.emptyText { font-size: 16px; margin: 0; }
+
+/* Carousel */
+.viewport {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.carouselContainer {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.slide {
+  flex: 0 0 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.slideTitle {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+  padding: 6px 0 2px;
+  flex-shrink: 0;
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px;
+  flex-shrink: 0;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d0d0d0;
+  transition: background 0.2s;
+}
+
+.dotActive { background: #2980b9; }
+
+/* Graph container */
+.graphContainer {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.graphSvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  background: #1e293b;
+  color: #e2e8f0;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  padding: 6px 10px;
+  pointer-events: auto;
+  z-index: 5;
+  white-space: nowrap;
+  font-size: 12px;
+}
+
+.tooltipId {
+  font-weight: 600;
+}
+
+.tooltipType {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+/* Zoom controls */
+.zoomControls {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 5;
+}
+
+.zoomBtn {
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zoomBtn:hover {
+  background: #334155;
+  color: #e2e8f0;
+}
+
+.zoomBtn + .zoomBtn {
+  border-top: 1px solid #334155;
+}

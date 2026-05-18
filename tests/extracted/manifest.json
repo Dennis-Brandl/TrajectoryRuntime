@@ -1,0 +1,35 @@
+{
+  "packageVersion": "1.0",
+  "workflowName": "Workflow for Phase 4 testing",
+  "environmentLibraries": [
+    "Kitchen Library"
+  ],
+  "actionLibraries": [],
+  "createdAt": "2026-03-05T14:22:04.031Z",
+  "files": [
+    {
+      "path": "Workflow for Phase 4 testing.WFmaster",
+      "type": "workflow"
+    },
+    {
+      "path": "environments/Kitchen Library.WFenvir",
+      "type": "environment"
+    },
+    {
+      "path": "images/285520497150545920-istockphoto-1189904722-612x612.jpg",
+      "type": "image"
+    },
+    {
+      "path": "images/285520497150545920-Label Printer.png",
+      "type": "image"
+    },
+    {
+      "path": "images/285520927997841408-workout 2.png",
+      "type": "image"
+    },
+    {
+      "path": "images/286134788690038784-Food 1.jpg",
+      "type": "image"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+# OS
+Thumbs.db
+.DS_Store
+~$*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Node (future)
+node_modules/
+dist/
+coverage/
+
+# Worktrees
+.worktrees/
+
+# Superpowers brainstorm sessions
+.superpowers/
+
+# Build artifacts
+*.log
+tsconfig.tsbuildinfo
+
+# Android
+local.properties
+.gradle/
+**/app/build/
+
+# Swift
+.build/

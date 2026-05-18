@@ -1,0 +1,237 @@
+// Copyright (c) 2026 Saturnis.io. All rights reserved.
+// Licensed under the GNU AGPL v3. See LICENSE.md for details.
+import { useState, useCallback, useMemo } from 'react';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { useWorkflowManager } from '../../manager/useWorkflowManager';
+import type { ResourceSnapshotEntry } from '@engine/types.js';
+import styles from './SettingsScreen.module.css';
+
+type ResourceScope = 'environment' | 'workflow';
+
+export function SettingsScreen() {
+  const manager = useWorkflowManager();
+
+  const [notifySteps, setNotifySteps] = useLocalStorage('trajectory-notify-steps', false);
+  const [notifyDenied, setNotifyDenied] = useState(false);
+
+  const handleNotifyToggle = useCallback(async (enabled: boolean) => {
+    if (enabled) {
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        setNotifySteps(true);
+        setNotifyDenied(false);
+      } else {
+        setNotifySteps(false);
+        setNotifyDenied(true);
+      }
+    } else {
+      setNotifySteps(false);
+      setNotifyDenied(false);
+    }
+  }, [setNotifySteps]);
+
+  const [confirmDeleteLoaded, setConfirmDeleteLoaded] = useLocalStorage('trajectory-confirm-delete-loaded', true);
+  const [confirmDeleteCompleted, setConfirmDeleteCompleted] = useLocalStorage('trajectory-confirm-delete-completed', false);
+
+  const handleClearHistory = useCallback(() => {
+    if (window.confirm('Clear all completed workflow history?')) {
+      manager.clearCompleted();
+    }
+  }, [manager]);
+
+  const [dialogScope, setDialogScope] = useState<ResourceScope | null>(null);
+  const [snapshot, setSnapshot] = useState<ResourceSnapshotEntry[]>([]);
+  const [lastReleaseResult, setLastReleaseResult] = useState<string | null>(null);
+
+  const refreshSnapshot = useCallback((scope: ResourceScope) => {
+    setSnapshot(scope === 'environment'
+      ? manager.getEnvironmentResourceSnapshot()
+      : manager.getWorkflowResourceSnapshot());
+  }, [manager]);
+
+  const openDialog = useCallback((scope: ResourceScope) => {
+    setLastReleaseResult(null);
+    setDialogScope(scope);
+    refreshSnapshot(scope);
+  }, [refreshSnapshot]);
+
+  const closeDialog = useCallback(() => setDialogScope(null), []);
+
+  const releaseAll = useCallback(() => {
+    if (!dialogScope) return;
+    const released = dialogScope === 'environment'
+      ? manager.releaseAllEnvironmentResources()
+      : manager.releaseAllWorkflowResources();
+    setDialogScope(null);
+    const label = dialogScope === 'environment' ? 'environment' : 'workflow';
+    setLastReleaseResult(
+      released.length === 0
+        ? `No ${label} resources were held`
+        : `Released ${released.length}: ${released.join(', ')}`,
+    );
+  }, [dialogScope, manager]);
+
+  const releaseOne = useCallback((resourceKey: string) => {
+    manager.resetResource(resourceKey);
+    if (dialogScope) refreshSnapshot(dialogScope);
+  }, [manager, dialogScope, refreshSnapshot]);
+
+  return (
+    <div className={styles.screen}>
+      <h2 className={styles.heading}>Settings</h2>
+
+      <div className={styles.settingGroup}>
+        <h3 className={styles.groupTitle}>Notifications</h3>
+        <label className={styles.settingRow}>
+          <span className={styles.settingLabel}>Notify on new active steps</span>
+          <input
+            type="checkbox"
+            checked={notifySteps}
+            onChange={(e) => handleNotifyToggle(e.target.checked)}
+            className={styles.checkbox}
+          />
+        </label>
+        {notifyDenied && (
+          <p className={styles.permissionDenied}>
+            Notification permission denied. Enable in browser settings.
+          </p>
+        )}
+      </div>
+
+      <div className={styles.settingGroup}>
+        <h3 className={styles.groupTitle}>Confirmations</h3>
+        <label className={styles.settingRow}>
+          <span className={styles.settingLabel}>Confirm delete of loaded workflows</span>
+          <input
+            type="checkbox"
+            checked={confirmDeleteLoaded}
+            onChange={(e) => setConfirmDeleteLoaded(e.target.checked)}
+            className={styles.checkbox}
+          />
+        </label>
+        <label className={styles.settingRow}>
+          <span className={styles.settingLabel}>Confirm delete of completed workflows</span>
+          <input
+            type="checkbox"
+            checked={confirmDeleteCompleted}
+            onChange={(e) => setConfirmDeleteCompleted(e.target.checked)}
+            className={styles.checkbox}
+          />
+        </label>
+      </div>
+
+      <div className={styles.settingGroup}>
+        <h3 className={styles.groupTitle}>Data Management</h3>
+        <button className={styles.dangerButton} onClick={handleClearHistory}>
+          Clear All History
+        </button>
+        <button className={styles.dangerButton} onClick={() => openDialog('environment')}>
+          View All Environment Resources
+        </button>
+        <button className={styles.dangerButton} onClick={() => openDialog('workflow')}>
+          View All Workflow Resources
+        </button>
+        {lastReleaseResult && (
+          <p className={styles.permissionDenied} style={{ color: 'var(--color-text-secondary)' }}>
+            {lastReleaseResult}
+          </p>
+        )}
+      </div>
+
+      <div className={styles.settingGroup}>
+        <h3 className={styles.groupTitle}>About</h3>
+        <p className={styles.aboutName}>Trajectory Desktop</p>
+        <p className={styles.aboutVersion}>Version {__APP_VERSION__}</p>
+      </div>
+
+      {dialogScope && (
+        <ResourcesDialog
+          scope={dialogScope}
+          snapshot={snapshot}
+          onCancel={closeDialog}
+          onReleaseAll={releaseAll}
+          onReleaseOne={releaseOne}
+        />
+      )}
+    </div>
+  );
+}
+
+interface ResourcesDialogProps {
+  scope: ResourceScope;
+  snapshot: ResourceSnapshotEntry[];
+  onCancel: () => void;
+  onReleaseAll: () => void;
+  onReleaseOne: (resourceKey: string) => void;
+}
+
+function ResourcesDialog({ scope, snapshot, onCancel, onReleaseAll, onReleaseOne }: ResourcesDialogProps) {
+  const sorted = useMemo(
+    () => [...snapshot].sort((a, b) => a.resourceName.localeCompare(b.resourceName)),
+    [snapshot],
+  );
+  const title = scope === 'environment' ? 'Environment Resources' : 'Workflow Resources';
+  const emptyText = scope === 'environment'
+    ? 'No environment resources are registered.'
+    : 'No workflow resources are registered.';
+
+  return (
+    <div
+      className={styles.modalBackdrop}
+      onClick={(e) => { if (e.target === e.currentTarget) onCancel(); }}
+      role="dialog"
+      aria-modal="true"
+    >
+      <div className={styles.modal}>
+        <h3 className={styles.modalTitle}>{title}</h3>
+        <div className={styles.modalBody}>
+          {sorted.length === 0 ? (
+            <p className={styles.modalEmpty}>{emptyText}</p>
+          ) : (
+            <table className={styles.resourceTable}>
+              <thead>
+                <tr>
+                  <th>Resource</th>
+                  <th>Type</th>
+                  <th className={styles.numeric}>Total</th>
+                  <th className={styles.numeric}>Acquired</th>
+                  <th className={styles.numeric}>Available</th>
+                  <th className={styles.numeric}>Queued</th>
+                  <th aria-label="Release"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {sorted.map(r => (
+                  <tr key={r.name}>
+                    <td>{r.resourceName}</td>
+                    <td>{r.type}</td>
+                    <td className={styles.numeric}>{r.type === 'sync' ? '—' : r.total}</td>
+                    <td className={styles.numeric}>{r.type === 'sync' ? '—' : r.inUse}</td>
+                    <td className={styles.numeric}>{r.type === 'sync' ? '—' : r.available}</td>
+                    <td className={styles.numeric}>{r.queued}</td>
+                    <td className={styles.numeric}>
+                      <button
+                        className={styles.iconButton}
+                        title="Release this resource"
+                        aria-label={`Release ${r.resourceName}`}
+                        onClick={() => onReleaseOne(r.name)}
+                      >
+                        🗑
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+        <div className={styles.modalActions}>
+          <button className={styles.modalCancel} onClick={onCancel}>Cancel</button>
+          <button className={styles.dangerButton} style={{ width: 'auto' }} onClick={onReleaseAll}>
+            Release All
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

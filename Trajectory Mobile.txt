@@ -1,0 +1,244 @@
+
+
+TESTING:
+E) Editor
+Redo claude.md rules for building workflows. Specify tablet and desktop layout rules.  Specify break into child workflows at natural break points, if there are any. Try to keep each workflow to less than 10 steps, if possible.  Check that the layouts for the phone and tablet sizes.  
+
+
+Add a setting option list list the resources used. Only list the ones used and how many steps are waiting in the queue. For countable show how many have been acquired and hoe many left, for named, show the names of the ones acquired, For SYNC show how many are waiting and the name (label) of the step waiting. 
+
+o summarize what you'll want to adjust in the editor for tablet layouts: 
+- Make radio/checkbox elements taller (their content needs ~48dp minimum per option)
+- Account for the nav rail width reducing available form width
+- Text inputs need enough height for the floating label + input area (~72dp)
+
+
+
+Then we can tackle the scroll regesssion and resume the param gap issues.
+
+
+
+
+  ┌──────────────────────┬──────────────┬─────────────┐                     
+  │       Element        │    Before    │ After (3/4) │
+  ├──────────────────────┼──────────────┼─────────────┤
+  │ Phone frame          │ 430 × 932px  │ 323 × 699px │
+  ├──────────────────────┼──────────────┼─────────────┤
+  │ Phone border-radius  │ 44px         │ 33px        │
+  ├──────────────────────┼──────────────┼─────────────┤
+  │ Phone border         │ 8px          │ 6px         │
+  ├──────────────────────┼──────────────┼─────────────┤
+  │ Dynamic island       │ 126 × 36px   │ 95 × 27px   │
+  ├──────────────────────┼──────────────┼─────────────┤
+  │ Home indicator       │ 134 × 5px    │ 101 × 4px   │
+  ├──────────────────────┼──────────────┼─────────────┤
+  │ Tablet frame         │ 768 × 1024px │ 576 × 768px │
+  ├──────────────────────┼──────────────┼─────────────┤
+  │ Tablet border-radius │ 18px         │ 14px        │
+  ├──────────────────────┼──────────────┼─────────────┤
+  │ Tablet border        │ 10px         │ 8px         │
+  └──────────────────────┴──────────────┴─────────────┘
+
+
+● The Android app (engines/android-app/) uses this architecture:
+
+Pattern: Custom Manager-Coordinator (not standard MVVM/MVI)                   
+- WorkflowManager 
+— central singleton managing all workflow lifecycle (loaded, active, completed) via StateFlow<ManagerState>
+- WorkflowCoordinator 
+	— wraps the KMP engine per-workflow, bridging engine state to reactive StateFlow
+
+UI Layer: Jetpack Compose + Material 3
+  - Bottom navigation with 5 screens: Home, Active, Overview, History, Settings
+  - Compose Navigation (NavController) with single-top and state restoration
+  - Dynamic form rendering via an element registry pattern (TextInput, Checkbox, Image, Video, Timer, etc.)
+  - Adaptive layout using WindowWidthSizeClass
+
+Engine Integration: KMP (Kotlin Multiplatform)
+  - The KMP engine at engines/kmp-engine/ is imported as a direct Gradle project dependency (:engine)
+  - Native Kotlin class usage — WorkflowEngine, WorkflowState, UserAction etc.
+  - No JSON-in/JSON-out facade needed (that's for the JS target)
+
+Persistence: Room Database
+  - 3 entities: LoadedWorkflow, ActiveWorkflow, CompletedWorkflow
+  - Debounced saves (300ms) from coordinator state changes
+
+State Management: StateFlow + collectAsState()
+  - Single source of truth in WorkflowManager.state
+  - All Compose screens observe via collectAsState()
+  - Shared resource managers for cross-workflow data
+
+Key Libraries: 
+	Compose BOM 2025.01.01, 
+	Room 2.6.1, 
+	Media3/ExoPlayer 1.5.1, 
+	Coil3 3.0.4, 
+	Kotlinx Serialization 1.7.3,
+	Coroutines 1.9.0
+
+
+
+
+
+
+ERRORS:
+
+Before making any changes, tell me which specific file(s) and component(s) you plan to modify and why. Wait for my confirmation before editing.
+
+
+/insights - to get a list of what is working and not working
+
+
+1) Timer should start when step entered. 
+2) The app name Trajectory - Mobile is missing on the step screens.
+3) The app name Trajectory - Mobile is too low on the screen, it should be one line higher, just above the workflow name.
+4) The workflow name is duplicated on the screen, at the top and before the step name. Remove the one above the step name, and move screen elements up and not centered in the screen, except for the buttons, they should remain at the bottom of the screen. The current design has too many moving screen pieces between steps and is confusing. 
+5) The overview should not have the step types, or any text in the step symbols.  The overview does not show the currently executing child workflow, only the parent. The overview diagram should start in the middle of the page. 
+6) On the active step screen, the swipe left and swipe right should loop around 
+7) Change the history on an abandoned workflow to Abandoned not Aborted. 
+
+
+
+
+
+
+Changes Made                                                                           
+1. src/types/form-layout.ts — Type definitions                                         
+  - Added TextInputMode type: 'text' | 'number' | 'phone' | 'password' | 'dropdown' | 'combobox'
+  - Added ListItemSource type: { mode: 'static' } | { mode: 'input'; value: string }       
+  - Added 3 new optional fields to TextInputElement:                                         
+  - inputMode?: TextInputMode — defaults to 'text' (backward compatible)                   
+  - listItems?: OptionEntry[] — fixed options for dropdown/combobox (reuses existing OptionEntry) 
+  - listSource?: ListItemSource — static items vs. input parameter sourcing 
+2. src/components/form-designer/inspector/sections/DataSection.tsx — Properties panelg
+  - Added Input Mode dropdown (only for textInput elements) with all 6 options             
+  - When dropdown or combobox is selected, shows a ListItemsEditor with:
+  - List Source toggle: "Fixed Items" vs. "Input Parameter"                                
+  - For fixed items: label/value editor with add/delete (same pattern as checkbox/radio options)
+  - For input parameter: dropdown to select from step input parameters                   
+  - Placeholder section is hidden when mode is dropdown/combobox (not applicable)          
+  - Switching away from list modes clears listItems/listSource; switching to list modes initializes them 
+3. src/components/form-designer/renderers/TextInputRenderer.tsx 
+  — Canvas preview 
+  - Shows mode-appropriate placeholder text (e.g., "••••••••" for password, "(555) 123-4567" for phone)
+  - Shows a chevron-down icon for dropdown/combobox modes                       
+4. docs/schema-change-textinput-modes.md 
+  — Schema documentation  
+  - Full specification of all new fields with examples
+  - Runtime implementation notes for each mode (character restrictions, HTML input types, masking)
+  - Backward compatibility notes
+                                     
+
+
+New options have been added to the Text Input, see the new schema definition in C:/TrajectoryRuntime/schemas 
+1) Any Text - Any text may be entered
+2) Number (numbers + "+-.,")  - any number includeing +-., 
+3) phone number (numbers + "+-() ") - be sure to include a space as valid ie +1-555 1212
+4) Password - show entered text as stars, 
+5) Dropdown List - let the user pick one of the elements in the list
+6) Combo Box - Let the user enter free text or select one of the elements inthe list. 
+1. src/types/form-layout.ts — Type definitions                                         
+  - Added TextInputMode type: 'text' | 'number' | 'phone' | 'password' | 'dropdown' |      'combobox'
+  - Added ListItemSource type: { mode: 'static' } | { mode: 'input'; value: string }       
+  - Added 3 new optional fields to TextInputElement:                                         
+  - inputMode?: TextInputMode — defaults to 'text' (backward compatible)                   
+  - listItems?: OptionEntry[] — fixed options for dropdown/combobox (reuses existing OptionEntry) 
+  - listSource?: ListItemSource — static items  from the listItems or and input parameter 
+
+
+
+
+
+
+
+
+Basic Model of Properties and Parameters:
+1) Steps use Value Properties, input parameters, and output parameters to pass data back and forth. 
+2) Step's input parameter values can be a fixed text string (defined in the workflow), copied from a Workflow Input Parameter, copied from a Workflow Value Property, or copied from an Environment Value Property. 
+3) Step's output parameter values can written to a Workflow Output Parameter, written to a Workflow Value Property, or written to an Environment Value Property. 
+4) Environment Steps use input parameters internally to send to Environment Actions.
+5) Environment Steps receive output parameters from Environment Actions.
+6) UI steps can use Input parameters as place holder source in text box.   
+7) UI steps can put user entered info (text, radio, checkbox) into an output parameter of the step. 
+8) Child workflows pick up their input parameter values from the parent step's input parameters.
+9) Parent steps pick up their output parameter values from the child workflow's output parameters. 
+
+
+
+Create a new branch for the next set of changes. The primary changes are to handle how user entered data is passed between steps using text entry fields and output parameters see the file @.TrajectoryMobileParametersAndTimers.md for details. Ask questions if needed. The build will also include rich text in the Text fields, and a new Timer object that can be a count up or count down timer.  Also, change the Setting, "Step Needs Attention" to off for the default. 
+
+Test the resource systems, especially the SYNC
+
+Fix the dead space at the top of the screen. 
+
+
+Create a new branch to handle state control and polish the UI. When in a workflow screen sweep up should call up a screen to control the workflow. It should show a Pause button that will pause all active steps in the workflow. It should show an Abandon button which will abort all active steps in the workflow and end the workflow. It should show a Repeat Butoon which brings up a list, from history of all of the steps previously executed, in reverse time order. The user should be able to pick a step, and on confirmation stop the current active step and restart the selected history step. 
+Also add a fifth button to the bottom, called Overview. It will call up a screen which shows a miniture simplified version of the workflow, scrollable either vertically and horizontally. The purpose of the overview is to show how much of the workflow was done and how much is remaining. Use colors and filled or hollow squares to indicate completed, current active, and future steps.  
+
+
+
+ Next Up
+
+  
+  
+I want you to spawn an agent team to perform a code review, i am looking for dead code, unreferenced code, poor
+design decisions, anti patterns, etc.  Please build out a plan and the best recommendation to fix errors and issues
+found. Ask me any clarifying questions.
+
+  
+
+Measure the free space on the top of the screen and bottom. Seems that there is extra space at the top.  
+
+
+ Plan: 03-02 Engine Step Completion Wiring                                                                               Progress: 1/2 tasks complete (commit 3be2c76)
+ 
+ http://localhost:56960 
+
+  How to verify:
+
+  1. Android Emulator:
+    - Run npx expo start from apps/mobile
+    - Press a to open on Android emulator
+    - Verify: 5 tabs visible, Home shows "Sample Workflow" card with v1.0.0, Settings shows "Tables: 18", "Schema: 1",
+  "Journal: wal"
+    - Force-kill app, relaunch → data persists
+  2. Android Physical Device:
+    - Scan QR code from Metro terminal with Expo Go
+    - Same checks as emulator + force-kill test
+  3. iOS Simulator:
+    - Press i from Metro terminal
+    - Verify: 5 tabs, seed data visible, Settings shows "Journal: wal"
+    - Force-kill and relaunch → data persists
+  4. Chrome (web):
+    - Press w or run npx expo start --web
+    - Check DevTools Network: Cross-Origin-Embedder-Policy: credentialless and Cross-Origin-Opener-Policy: same-origin
+    - Verify: 5 tabs, seed data visible, Settings shows journal mode (NOT "wal" on web)
+  5. Firefox / Safari / Edge:
+    - Open web URL in each browser
+    - Verify: App loads, 5 tabs, seed data visible, no console errors
+
+
+  
+
+  
+  
+  
+    How to Verify
+
+  1. Start the app: npx expo start
+  2. Verify Home screen shows Active (empty) and Library tabs
+  3. Import a test .WFmasterX file via Library tab import button
+  4. Verify workflow appears in Library with name, version, step count
+  5. Tap workflow -> detail screen with "Start Execution" button
+  6. Tap Start Execution -> execution screen with first step's form
+  7. Verify form elements at absolute positions within scaled canvas
+  8. Swipe horizontally between active steps (if multiple)
+  9. Test Previous/Next wrap-around
+  10. Complete a step -> verify auto-advance
+  11. Test overflow menu state controls (Pause/Resume/Stop/Abort)
+  12. Test Abort -> verify confirmation dialog
+  13. Verify Active tab on Home shows running workflow with state badge
+
+  ──────────────────────────────────────────────────────────────
+  → Type "approved" or describe issues found
+  ──────────────────────────────────────────────────────────────

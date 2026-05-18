@@ -1,0 +1,168 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  --tab-height: 60px;
+  --title-height: 75px;
+}
+
+.reservedArea {
+  height: 60px;
+  flex-shrink: 0;
+}
+
+.topBuffer {
+  height: 3px;
+  flex-shrink: 0;
+}
+
+.workingArea {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.bottomBuffer {
+  height: 3px;
+  flex-shrink: 0;
+}
+
+.screen {
+  height: 100%;
+  overflow-y: auto;
+  flex-direction: column;
+}
+
+/* Tablet overrides */
+.shell--tablet-horizontal,
+.shell--tablet-vertical {
+  --tab-height: 70px;
+  --title-height: 37px;
+}
+
+
+/* Desktop overrides */
+.shell--desktop {
+  --tab-height: 65px;
+  --title-height: 44px;
+  background: var(--color-bg);
+}
+
+.shell--desktop .reservedArea {
+  height: 0;
+}
+
+.shell--desktop .topBuffer,
+.shell--desktop .bottomBuffer {
+  height: 0;
+}
+
+/* Sidebar layout for tablet/desktop: nav on left, content on right */
+.sidebarLayout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 10%;
+  flex-shrink: 0;
+  height: 100%;
+  background: var(--tab-bar-bg, #fff);
+  border-right: 1px solid var(--color-border, #e0e0e0);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Desktop sidebar: narrower than tablet to leave room for the 1024px step canvas.
+   Flex column so the graph-toggle button can sit below the TabBar. */
+.shell--desktop .sidebar {
+  width: 144px;
+  background: var(--color-card-bg);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+}
+
+.shell--desktop .workingArea {
+  background: var(--color-bg);
+}
+
+/* Sidebar divider between TabBar and the graph-toggle button (desktop only) */
+.sidebarDivider {
+  height: 1px;
+  margin: 8px 12px;
+  background: var(--color-border, #e0e0e0);
+  flex-shrink: 0;
+}
+
+/* Graph-toggle button at the bottom of the desktop sidebar */
+.sidebarToggle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 8px;
+  margin: 0 8px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-secondary, #64748b);
+  cursor: pointer;
+  font: inherit;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.sidebarToggle:hover {
+  background: var(--color-card-bg, rgba(0, 0, 0, 0.04));
+  color: var(--color-text, #1e293b);
+}
+
+.sidebarToggleActive {
+  background: var(--color-accent-bg, rgba(59, 130, 246, 0.12));
+  color: var(--color-accent, #2563eb);
+}
+
+.sidebarToggleActive:hover {
+  background: var(--color-accent-bg, rgba(59, 130, 246, 0.18));
+  color: var(--color-accent, #2563eb);
+}
+
+.sidebarToggleLabel {
+  font-size: 11px;
+  line-height: 1;
+}
+
+/* Content column wraps the working area + optional below-pane (BPMN) */
+.contentColumn {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Workflow graph pane on the left (flowchart / isa88 — vertical layouts) */
+.graphPaneSide {
+  width: 320px;
+  flex-shrink: 0;
+  height: 100%;
+  overflow: hidden;
+  border-right: 1px solid var(--color-border, #e0e0e0);
+  background: var(--color-card-bg, #ffffff);
+}
+
+/* Workflow graph pane below the canvas (BPMN — left-to-right layout). Height
+   is ~2.5x the StepCanvas top black bar (51px × 2.5 ≈ 128px). */
+.graphPaneBelow {
+  height: 128px;
+  flex-shrink: 0;
+  width: 100%;
+  overflow: hidden;
+  border-top: 1px solid var(--color-border, #e0e0e0);
+  background: var(--color-card-bg, #ffffff);
+}

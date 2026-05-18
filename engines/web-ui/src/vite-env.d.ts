@@ -1,0 +1,32 @@
+// Copyright (c) 2026 Saturnis.io. All rights reserved.
+// Licensed under the GNU AGPL v3. See LICENSE.md for details.
+/// <reference types="vite/client" />
+
+/** App version string injected by vite.config.ts at build time (e.g. "1.2.1"). */
+declare const __APP_VERSION__: string;
+
+declare module '@kmp-engine/kmp-engine.js' {
+  const kmpEngine: {
+    com: {
+      trajectoryruntime: {
+        engine: {
+          WorkflowEngineFacade: new () => {
+            validate(workflowJson: string): string;
+            create(workflowJson: string, setupJson: string | null): void;
+            start(): void;
+            createAndStart(workflowJson: string, setupJson: string | null): void;
+            submitAction(actionJson: string): void;
+            getTrace(): string;
+            getWorkflowState(): string;
+            getProperties(): string;
+            getAllProperties(): string;
+            getActiveSteps(): string;
+            getActiveInputParameters(): string;
+            getStepParameterSnapshots(): string;
+          };
+        };
+      };
+    };
+  };
+  export = kmpEngine;
+}

@@ -1,0 +1,159 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MasterEnvironmentLibrary",
+  "description": "Schema for Trajectory Environment Library (.WFenvir) export format",
+  "type": "object",
+  "required": ["local_id", "oid", "version", "last_modified_date", "environment_specifications"],
+  "properties": {
+    "local_id": { "type": "string", "description": "Display name of the environment library" },
+    "oid": { "type": "string", "description": "Unique object identifier" },
+    "description": { "type": "string" },
+    "version": { "type": "string", "description": "Semantic version string" },
+    "last_modified_date": { "type": "string", "format": "date-time" },
+    "environment_specifications": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/MasterEnvironmentSpecification" }
+    },
+    "child_libraries": {
+      "type": "array",
+      "items": { "$ref": "#" },
+      "description": "Nested child environment libraries"
+    }
+  },
+  "$defs": {
+    "MasterEnvironmentSpecification": {
+      "type": "object",
+      "required": ["local_id", "oid", "version", "last_modified_date", "included_actions"],
+      "properties": {
+        "local_id": { "type": "string" },
+        "oid": { "type": "string" },
+        "description": { "type": "string" },
+        "version": { "type": "string" },
+        "last_modified_date": { "type": "string", "format": "date-time" },
+        "library_name": { "type": "string", "description": "Name of the parent library" },
+        "included_actions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/IncludedAction" }
+        },
+        "value_property_specifications": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/PropertySpecification" }
+        },
+        "action_property_specifications": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/PropertySpecification" }
+        },
+        "resource_property_specifications": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ResourcePropertySpecification" }
+        }
+      }
+    },
+    "IncludedAction": {
+      "type": "object",
+      "required": ["action_name", "action_library"],
+      "properties": {
+        "action_name": { "type": "string" },
+        "action_library": { "type": "string" },
+        "action_oid": { "type": "string" },
+        "action_version": { "type": "string" },
+        "action_last_modified_date": { "type": "string", "format": "date-time" },
+        "input_parameter_specifications": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ParameterSpecification" }
+        },
+        "output_parameter_specifications": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/OutputParameterSpecification" }
+        },
+        "property_specifications": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/PropertySpecification" }
+        }
+      }
+    },
+    "ParameterSpecification": {
+      "type": "object",
+      "required": ["id", "default_value"],
+      "properties": {
+        "id": { "type": "string" },
+        "oid": { "type": "string" },
+        "description": { "type": "string" },
+        "default_value": { "type": "string" },
+        "value_type": {
+          "type": "string",
+          "enum": ["literal", "property"],
+          "description": "Whether value is a literal string or a value property reference"
+        },
+        "json_schema": { "type": "string" },
+        "entries": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/PropertyEntrySpecification" }
+        }
+      }
+    },
+    "OutputParameterSpecification": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string" },
+        "oid": { "type": "string" },
+        "description": { "type": "string" },
+        "target": { "type": "string", "description": "Value property name where output is stored" },
+        "entries": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/PropertyEntrySpecification" }
+        }
+      }
+    },
+    "PropertySpecification": {
+      "type": "object",
+      "required": ["name", "entries"],
+      "properties": {
+        "name": { "type": "string" },
+        "oid": { "type": "string" },
+        "entries": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/PropertyEntrySpecification" }
+        }
+      }
+    },
+    "PropertyEntrySpecification": {
+      "type": "object",
+      "required": ["name", "value"],
+      "properties": {
+        "name": { "type": "string" },
+        "value": { "type": "string" }
+      }
+    },
+    "ResourcePropertySpecification": {
+      "type": "object",
+      "required": ["name", "resource_type"],
+      "properties": {
+        "name": { "type": "string" },
+        "resource_type": {
+          "type": "string",
+          "enum": [
+            "binary exclusive use",
+            "binary shared use with pool limits",
+            "countable use with pool limits",
+            "named pool",
+            "sync"
+          ]
+        },
+        "scope": {
+          "type": "string",
+          "enum": ["workflow", "environment"],
+          "description": "Whether the resource is defined at workflow or environment level"
+        },
+        "use_limit": { "type": "integer", "description": "Max concurrent users (for pool types)" },
+        "description": { "type": "string" },
+        "names": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Named pool member names (for named pool type)"
+        }
+      }
+    }
+  }
+}

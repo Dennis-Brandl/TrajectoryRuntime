@@ -1,0 +1,46 @@
+// Copyright (c) 2026 Saturnis.io. All rights reserved.
+// Licensed under the GNU AGPL v3. See LICENSE.md for details.
+import { useEffect, useState } from 'react';
+import { DeviceFrame, type DeviceType, type FrameExpansion } from './components/shell/DeviceFrame';
+import { FrameSwitcher } from './components/shell/FrameSwitcher';
+import { AppShell } from './components/shell/AppShell';
+import { WorkflowManagerProvider } from './manager/WorkflowManagerContext';
+import { useLocalStorage } from './hooks/useLocalStorage';
+import './theme.css';
+import './App.css';
+
+export function App() {
+  const [deviceTypeRaw, setDeviceType] = useLocalStorage<string>('trajectory-device-type', 'desktop');
+  const deviceType: DeviceType = (
+    deviceTypeRaw === 'tablet' || deviceTypeRaw === 'tablet-vertical'
+      ? 'tablet-horizontal'
+      : deviceTypeRaw
+  ) as DeviceType;
+  const [showGraph, setShowGraph] = useLocalStorage<boolean>('trajectory-show-graph', false);
+  const [frameExpansion, setFrameExpansion] = useState<FrameExpansion>(null);
+  const [theme] = useLocalStorage<'light' | 'dark'>('trajectory-theme', 'light');
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
+  return (
+    <div className="page">
+      <div className="page-controls">
+        <FrameSwitcher value={deviceType} onChange={setDeviceType} />
+      </div>
+      <div className="page-frame">
+        <DeviceFrame deviceType={deviceType} expanded={frameExpansion}>
+          <WorkflowManagerProvider>
+            <AppShell
+              deviceType={deviceType}
+              showGraph={showGraph}
+              onToggleGraph={() => setShowGraph(!showGraph)}
+              onFrameExpansionChange={setFrameExpansion}
+            />
+          </WorkflowManagerProvider>
+        </DeviceFrame>
+      </div>
+    </div>
+  );
+}

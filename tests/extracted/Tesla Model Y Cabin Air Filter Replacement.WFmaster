@@ -1,0 +1,2242 @@
+{
+  "schemaVersion": "4.0",
+  "local_id": "Tesla Model Y Cabin Air Filter Replacement",
+  "oid": "287056125361156096",
+  "description": "Step-by-step procedure for replacing the cabin air filters on a 2025 Tesla Model Y. Covers preparation, panel removal, filter replacement with orientation verification, reassembly, and final system checks. Based on official Tesla DIY documentation.",
+  "version": "1.0.0",
+  "last_modified_date": "2026-03-03T02:59:49.688Z",
+  "steps": [
+    {
+      "local_id": "Start",
+      "oid": "6000000000001",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:59:53.001Z",
+      "step_type": "START",
+      "position": {
+        "x": 100,
+        "y": 10
+      }
+    },
+    {
+      "local_id": "Prepare Vehicle",
+      "oid": "6000000000011",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:59:53.001Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000002",
+          "type": "Header",
+          "value": "Prepare the Vehicle",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000003",
+          "type": "Image",
+          "value": "car-interior.jpg"
+        },
+        {
+          "oid": "6000000000004",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000005",
+          "type": "Text",
+          "value": "Turn off the climate control system using the touchscreen.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000006",
+          "type": "Text",
+          "value": "Open the front right-hand (passenger) side door.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000007",
+          "type": "Text",
+          "value": "Move the front passenger seat fully rearward.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000008",
+          "type": "Text",
+          "value": "Remove the passenger side floor mat and set it aside.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000009",
+          "type": "SmallText",
+          "value": "Ensure the climate system is completely off to avoid blowing debris into the cabin during filter replacement.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000010",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Prepare the Vehicle",
+                "plainText": "Prepare the Vehicle"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 200,
+              "src": "car-interior.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 386,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 398,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Turn off the climate control system using the touchscreen.\nOpen the front right-hand (passenger) side door.\nMove the front passenger seat fully rearward.\nRemove the passenger side floor mat and set it aside.",
+                "plainText": "Turn off the climate control system using the touchscreen.\nOpen the front right-hand (passenger) side door.\nMove the front passenger seat fully rearward.\nRemove the passenger side floor mat and set it aside."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 506,
+              "width": 350,
+              "height": 64,
+              "content": {
+                "content": "Ensure the climate system is completely off to avoid blowing debris into the cabin during filter replacement.",
+                "plainText": "Ensure the climate system is completely off to avoid blowing debris into the cabin during filter replacement."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 55,
+        "y": 90
+      }
+    },
+    {
+      "local_id": "Remove Side Panel",
+      "oid": "6000000000021",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:59:53.001Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000013",
+          "type": "Header",
+          "value": "Remove Right Side Panel",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000014",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000015",
+          "type": "Text",
+          "value": "Locate the right side panel on the center console (passenger footwell area).",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000016",
+          "type": "Text",
+          "value": "Working from top to bottom, carefully release the panel from the center console.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000017",
+          "type": "Text",
+          "value": "Pull gently — the panel is held by clips along its edge.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000018",
+          "type": "Text",
+          "value": "Set the panel aside in a safe location.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000019",
+          "type": "SmallText",
+          "value": "Work slowly from top to bottom. Pulling too hard or at an angle can break the plastic retaining clips.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000020",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Remove Right Side Panel",
+                "plainText": "Remove Right Side Panel"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Locate the right side panel on the center console (passenger footwell area).\nWorking from top to bottom, carefully release the panel from the center console.\nPull gently — the panel is held by clips along its edge.\nSet the panel aside in a safe location.",
+                "plainText": "Locate the right side panel on the center console (passenger footwell area).\nWorking from top to bottom, carefully release the panel from the center console.\nPull gently — the panel is held by clips along its edge.\nSet the panel aside in a safe location."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 296,
+              "width": 350,
+              "height": 64,
+              "content": {
+                "content": "Work slowly from top to bottom. Pulling too hard or at an angle can break the plastic retaining clips.",
+                "plainText": "Work slowly from top to bottom. Pulling too hard or at an angle can break the plastic retaining clips."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 55,
+        "y": 190
+      }
+    },
+    {
+      "local_id": "Remove Footwell Cover",
+      "oid": "6000000000032",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:59:53.001Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000023",
+          "type": "Header",
+          "value": "Remove Footwell Cover",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000024",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000025",
+          "type": "Text",
+          "value": "Release the push clips (or magnets) securing the front right footwell cover to the instrument panel.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000026",
+          "type": "Text",
+          "value": "Support the footwell cover as you release it — it has electrical connections.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000027",
+          "type": "Text",
+          "value": "Disconnect the light connector by pressing the tab and pulling the plastic connector.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000028",
+          "type": "Text",
+          "value": "Disconnect the speaker connector by angling it to release the small tab.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000029",
+          "type": "Text",
+          "value": "Move the footwell cover aside.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000030",
+          "type": "SmallText",
+          "value": "Do NOT pull on the wires. Always grip and pull from the plastic connector body itself. Pulling wires can damage the connections.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000031",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Remove Footwell Cover",
+                "plainText": "Remove Footwell Cover"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 120,
+              "content": {
+                "content": "Release the push clips (or magnets) securing the front right footwell cover to the instrument panel.\nSupport the footwell cover as you release it — it has electrical connections.\nDisconnect the light connector by pressing the tab and pulling the plastic connector.\nDisconnect the speaker connector by angling it to release the small tab.\nMove the footwell cover aside.",
+                "plainText": "Release the push clips (or magnets) securing the front right footwell cover to the instrument panel.\nSupport the footwell cover as you release it — it has electrical connections.\nDisconnect the light connector by pressing the tab and pulling the plastic connector.\nDisconnect the speaker connector by angling it to release the small tab.\nMove the footwell cover aside."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 318,
+              "width": 350,
+              "height": 64,
+              "content": {
+                "content": "Do NOT pull on the wires. Always grip and pull from the plastic connector body itself. Pulling wires can damage the connections.",
+                "plainText": "Do NOT pull on the wires. Always grip and pull from the plastic connector body itself. Pulling wires can damage the connections."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 55,
+        "y": 290
+      }
+    },
+    {
+      "local_id": "Remove Filter Cover",
+      "oid": "6000000000042",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:59:53.001Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000034",
+          "type": "Header",
+          "value": "Remove Filter Cover",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000035",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000036",
+          "type": "Text",
+          "value": "Locate the cabin filter cover on the HVAC module (now visible behind the removed footwell panel).",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000037",
+          "type": "Text",
+          "value": "Use your index finger and thumb to squeeze the two tabs at the bottom of the filter cover.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000038",
+          "type": "Text",
+          "value": "Tilt the cover outward to remove it.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000039",
+          "type": "Text",
+          "value": "Set the cover aside.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000040",
+          "type": "SmallText",
+          "value": "The cover clips are at the bottom. Squeeze them together firmly before tilting the cover out.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000041",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Remove Filter Cover",
+                "plainText": "Remove Filter Cover"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Locate the cabin filter cover on the HVAC module (now visible behind the removed footwell panel).\nUse your index finger and thumb to squeeze the two tabs at the bottom of the filter cover.\nTilt the cover outward to remove it.\nSet the cover aside.",
+                "plainText": "Locate the cabin filter cover on the HVAC module (now visible behind the removed footwell panel).\nUse your index finger and thumb to squeeze the two tabs at the bottom of the filter cover.\nTilt the cover outward to remove it.\nSet the cover aside."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 296,
+              "width": 350,
+              "height": 64,
+              "content": {
+                "content": "The cover clips are at the bottom. Squeeze them together firmly before tilting the cover out.",
+                "plainText": "The cover clips are at the bottom. Squeeze them together firmly before tilting the cover out."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 55,
+        "y": 390
+      }
+    },
+    {
+      "local_id": "Remove Old Filters",
+      "oid": "6000000000055",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:59:53.001Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000044",
+          "type": "Header",
+          "value": "Remove Old Filters",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000045",
+          "type": "Image",
+          "value": "cabin-filter.jpg"
+        },
+        {
+          "oid": "6000000000046",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000047",
+          "type": "Text",
+          "value": "There are TWO filters stacked inside the HVAC module (upper and lower).",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000048",
+          "type": "Text",
+          "value": "Fold the upper cabin filter's pull tabs outward.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000049",
+          "type": "Text",
+          "value": "Holding the tabs, carefully pull the upper filter straight out.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000050",
+          "type": "Text",
+          "value": "Be careful not to snag nearby wiring connectors.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000051",
+          "type": "Text",
+          "value": "Then pull the lower filter upward and out from the module.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000052",
+          "type": "Text",
+          "value": "Dispose of the old filters.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000053",
+          "type": "SmallText",
+          "value": "Note the direction of the airflow arrows on the old filters before removing them — the new ones must face the same way.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000054",
+          "type": "Button",
+          "value": "Next"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Remove Old Filters",
+                "plainText": "Remove Old Filters"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 200,
+              "src": "cabin-filter.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 386,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 398,
+              "width": 350,
+              "height": 142,
+              "content": {
+                "content": "There are TWO filters stacked inside the HVAC module (upper and lower).\nFold the upper cabin filter's pull tabs outward.\nHolding the tabs, carefully pull the upper filter straight out.\nBe careful not to snag nearby wiring connectors.\nThen pull the lower filter upward and out from the module.\nDispose of the old filters.",
+                "plainText": "There are TWO filters stacked inside the HVAC module (upper and lower).\nFold the upper cabin filter's pull tabs outward.\nHolding the tabs, carefully pull the upper filter straight out.\nBe careful not to snag nearby wiring connectors.\nThen pull the lower filter upward and out from the module.\nDispose of the old filters."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 550,
+              "width": 350,
+              "height": 64,
+              "content": {
+                "content": "Note the direction of the airflow arrows on the old filters before removing them — the new ones must face the same way.",
+                "plainText": "Note the direction of the airflow arrows on the old filters before removing them — the new ones must face the same way."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Next",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 55,
+        "y": 490
+      }
+    },
+    {
+      "local_id": "Remove Old Filters - Record",
+      "oid": "6000000000065",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:59:53.001Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "old_filter_condition",
+          "oid": "6000000000063",
+          "description": "Old filter condition"
+        },
+        {
+          "id": "old_filter_notes",
+          "oid": "6000000000064",
+          "description": "Notes on old filter"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000056",
+          "type": "Header",
+          "value": "Record: Remove Old Filters",
+          "font_size": 20,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000057",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000058",
+          "type": "Text",
+          "value": "Old filter condition",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000059",
+          "type": "TextInput",
+          "value": "Clean / Lightly dirty / Very dirty / Damaged"
+        },
+        {
+          "oid": "6000000000060",
+          "type": "Text",
+          "value": "Notes on old filter",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000061",
+          "type": "TextInput",
+          "value": "Any visible debris, odor, damage..."
+        },
+        {
+          "oid": "6000000000062",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Record: Remove Old Filters",
+                "plainText": "Record: Remove Old Filters"
+              },
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Old filter condition",
+                "plainText": "Old filter condition"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 214,
+              "width": 350,
+              "height": 40,
+              "label": "Old filter condition",
+              "placeholder": "Clean / Lightly dirty / Very dirty / Damaged",
+              "fieldName": "old_filter_condition",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 264,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Notes on old filter",
+                "plainText": "Notes on old filter"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 290,
+              "width": 350,
+              "height": 40,
+              "label": "Notes on old filter",
+              "placeholder": "Any visible debris, odor, damage...",
+              "fieldName": "old_filter_notes",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 55,
+        "y": 590
+      }
+    },
+    {
+      "local_id": "Install New Filters",
+      "oid": "6000000000076",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:59:53.001Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000068",
+          "type": "Header",
+          "value": "Install New Filters",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000069",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000070",
+          "type": "Text",
+          "value": "Ensure the arrows on BOTH new filters face toward the rear of the vehicle.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000071",
+          "type": "Text",
+          "value": "Insert the LOWER filter first — slide it into the bottom slot of the HVAC module.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000072",
+          "type": "Text",
+          "value": "Then insert the UPPER filter above it.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000073",
+          "type": "Text",
+          "value": "Fold the pull tabs inward after insertion to clear the cover.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000074",
+          "type": "SmallText",
+          "value": "The airflow arrow direction is critical. Arrows must point toward the REAR of the vehicle. Reversed filters will not seal properly.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000075",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Install New Filters",
+                "plainText": "Install New Filters"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Ensure the arrows on BOTH new filters face toward the rear of the vehicle.\nInsert the LOWER filter first — slide it into the bottom slot of the HVAC module.\nThen insert the UPPER filter above it.\nFold the pull tabs inward after insertion to clear the cover.",
+                "plainText": "Ensure the arrows on BOTH new filters face toward the rear of the vehicle.\nInsert the LOWER filter first — slide it into the bottom slot of the HVAC module.\nThen insert the UPPER filter above it.\nFold the pull tabs inward after insertion to clear the cover."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 296,
+              "width": 350,
+              "height": 64,
+              "content": {
+                "content": "The airflow arrow direction is critical. Arrows must point toward the REAR of the vehicle. Reversed filters will not seal properly.",
+                "plainText": "The airflow arrow direction is critical. Arrows must point toward the REAR of the vehicle. Reversed filters will not seal properly."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 55,
+        "y": 690
+      }
+    },
+    {
+      "local_id": "Filters Oriented Correctly?",
+      "oid": "6000000000083",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:59:53.001Z",
+      "step_type": "YES_NO",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000078",
+          "type": "Header",
+          "value": "Filter Orientation Check",
+          "font_size": 20,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000079",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000080",
+          "type": "Text",
+          "value": "Do the arrows on BOTH new filters point toward the rear of the vehicle?",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000081",
+          "type": "Text",
+          "value": "This is critical for proper filtration and HVAC performance.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000082",
+          "type": "YesNoButtons",
+          "value": "Yes, Correct",
+          "value2": "No, Need to Fix"
+        }
+      ],
+      "yes_no_config": {
+        "yes_label": "Yes, Correct",
+        "no_label": "No, Need to Fix",
+        "yes_value": "true",
+        "no_value": "false",
+        "default_selection": "none"
+      },
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Filter Orientation Check",
+                "plainText": "Filter Orientation Check"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 60,
+              "content": {
+                "content": "Do the arrows on BOTH new filters point toward the rear of the vehicle?\nThis is critical for proper filtration and HVAC performance.",
+                "plainText": "Do the arrows on BOTH new filters point toward the rear of the vehicle?\nThis is critical for proper filtration and HVAC performance."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 258,
+              "width": 350,
+              "height": 40,
+              "content": {
+                "content": "Reversed filters reduce air quality and may damage the HVAC blower motor.",
+                "plainText": "Reversed filters reduce air quality and may damage the HVAC blower motor."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 20,
+              "y": 700,
+              "width": 160,
+              "height": 44,
+              "label": "Yes, Correct",
+              "outputValue": "true",
+              "deletable": false
+            },
+            {
+              "type": "button",
+              "x": 210,
+              "y": 700,
+              "width": 160,
+              "height": 44,
+              "label": "No, Need to Fix",
+              "outputValue": "false",
+              "deletable": false
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 55,
+        "y": 790
+      }
+    },
+    {
+      "local_id": "Reorient Filters",
+      "oid": "6000000000094",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:59:53.001Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000085",
+          "type": "Header",
+          "value": "Fix Filter Orientation",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000086",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000087",
+          "type": "Text",
+          "value": "Remove both filters from the HVAC module.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000088",
+          "type": "Text",
+          "value": "Rotate them so the arrows point toward the REAR of the vehicle.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000089",
+          "type": "Text",
+          "value": "Reinsert: lower filter first, then upper filter.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000090",
+          "type": "Text",
+          "value": "Fold the pull tabs inward after reinsertion.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000091",
+          "type": "Text",
+          "value": "Double-check the arrow direction before continuing.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000092",
+          "type": "SmallText",
+          "value": "The rear of the vehicle is toward the trunk/hatch. Arrows should point away from the windshield.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000093",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Fix Filter Orientation",
+                "plainText": "Fix Filter Orientation"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 120,
+              "content": {
+                "content": "Remove both filters from the HVAC module.\nRotate them so the arrows point toward the REAR of the vehicle.\nReinsert: lower filter first, then upper filter.\nFold the pull tabs inward after reinsertion.\nDouble-check the arrow direction before continuing.",
+                "plainText": "Remove both filters from the HVAC module.\nRotate them so the arrows point toward the REAR of the vehicle.\nReinsert: lower filter first, then upper filter.\nFold the pull tabs inward after reinsertion.\nDouble-check the arrow direction before continuing."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 318,
+              "width": 350,
+              "height": 64,
+              "content": {
+                "content": "The rear of the vehicle is toward the trunk/hatch. Arrows should point away from the windshield.",
+                "plainText": "The rear of the vehicle is toward the trunk/hatch. Arrows should point away from the windshield."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 180,
+        "y": 890
+      }
+    },
+    {
+      "local_id": "Continue After Filter Check",
+      "oid": "6000000000096",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:59:53.001Z",
+      "step_type": "WAIT ANY",
+      "position": {
+        "x": 65,
+        "y": 980
+      }
+    },
+    {
+      "local_id": "Reinstall Filter Cover",
+      "oid": "6000000000107",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:59:53.001Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000099",
+          "type": "Header",
+          "value": "Reinstall Filter Cover",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000100",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000101",
+          "type": "Text",
+          "value": "Take the cabin filter cover you removed earlier.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000102",
+          "type": "Text",
+          "value": "Engage the upper door tab first by inserting it into the top slot.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000103",
+          "type": "Text",
+          "value": "Rotate the cover downward until the lower tab clicks into place.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000104",
+          "type": "Text",
+          "value": "Verify the cover is flush and secure.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000105",
+          "type": "SmallText",
+          "value": "The cover should snap firmly. If it feels loose, check that the filter pull tabs are folded inward and not blocking the cover.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000106",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Reinstall Filter Cover",
+                "plainText": "Reinstall Filter Cover"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Take the cabin filter cover you removed earlier.\nEngage the upper door tab first by inserting it into the top slot.\nRotate the cover downward until the lower tab clicks into place.\nVerify the cover is flush and secure.",
+                "plainText": "Take the cabin filter cover you removed earlier.\nEngage the upper door tab first by inserting it into the top slot.\nRotate the cover downward until the lower tab clicks into place.\nVerify the cover is flush and secure."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 296,
+              "width": 350,
+              "height": 64,
+              "content": {
+                "content": "The cover should snap firmly. If it feels loose, check that the filter pull tabs are folded inward and not blocking the cover.",
+                "plainText": "The cover should snap firmly. If it feels loose, check that the filter pull tabs are folded inward and not blocking the cover."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 35,
+        "y": 1075
+      }
+    },
+    {
+      "local_id": "Reconnect Footwell Cover",
+      "oid": "6000000000117",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:59:53.001Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000109",
+          "type": "Header",
+          "value": "Reconnect Footwell Cover",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000110",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000111",
+          "type": "Text",
+          "value": "Reconnect the two electrical connectors to the footwell cover.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000112",
+          "type": "Text",
+          "value": "Reconnect the light connector — push until it clicks.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000113",
+          "type": "Text",
+          "value": "Reconnect the speaker connector — align and push until the tab locks.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000114",
+          "type": "Text",
+          "value": "Position the footwell cover and re-secure it with the push clips (or magnets).",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000115",
+          "type": "SmallText",
+          "value": "Listen for a click on each connector to confirm a solid connection. A loose connector may cause the footwell light or speaker to malfunction.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000116",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Reconnect Footwell Cover",
+                "plainText": "Reconnect Footwell Cover"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 98,
+              "content": {
+                "content": "Reconnect the two electrical connectors to the footwell cover.\nReconnect the light connector — push until it clicks.\nReconnect the speaker connector — align and push until the tab locks.\nPosition the footwell cover and re-secure it with the push clips (or magnets).",
+                "plainText": "Reconnect the two electrical connectors to the footwell cover.\nReconnect the light connector — push until it clicks.\nReconnect the speaker connector — align and push until the tab locks.\nPosition the footwell cover and re-secure it with the push clips (or magnets)."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 296,
+              "width": 350,
+              "height": 82,
+              "content": {
+                "content": "Listen for a click on each connector to confirm a solid connection. A loose connector may cause the footwell light or speaker to malfunction.",
+                "plainText": "Listen for a click on each connector to confirm a solid connection. A loose connector may cause the footwell light or speaker to malfunction."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 35,
+        "y": 1155
+      }
+    },
+    {
+      "local_id": "Reinstall Side Panel",
+      "oid": "6000000000126",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:59:53.001Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000119",
+          "type": "Header",
+          "value": "Reinstall Side Panel",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000120",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000121",
+          "type": "Text",
+          "value": "Align the right side panel with the front and rear locator slots on the center console.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000122",
+          "type": "Text",
+          "value": "Apply firm, even pressure until all clips are fully engaged.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000123",
+          "type": "Text",
+          "value": "Run your hand along the edge to confirm the panel is flush with the console.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000124",
+          "type": "SmallText",
+          "value": "Start by aligning the locator slots, then press from center outward. You should hear/feel each clip snap into place.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000125",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Reinstall Side Panel",
+                "plainText": "Reinstall Side Panel"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 76,
+              "content": {
+                "content": "Align the right side panel with the front and rear locator slots on the center console.\nApply firm, even pressure until all clips are fully engaged.\nRun your hand along the edge to confirm the panel is flush with the console.",
+                "plainText": "Align the right side panel with the front and rear locator slots on the center console.\nApply firm, even pressure until all clips are fully engaged.\nRun your hand along the edge to confirm the panel is flush with the console."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 274,
+              "width": 350,
+              "height": 64,
+              "content": {
+                "content": "Start by aligning the locator slots, then press from center outward. You should hear/feel each clip snap into place.",
+                "plainText": "Start by aligning the locator slots, then press from center outward. You should hear/feel each clip snap into place."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 35,
+        "y": 1240
+      }
+    },
+    {
+      "local_id": "Final Checks",
+      "oid": "6000000000139",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:59:53.001Z",
+      "step_type": "USER_INTERACTION",
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000128",
+          "type": "Header",
+          "value": "Final Steps",
+          "font_size": 22,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000129",
+          "type": "Image",
+          "value": "car-ac-vent.jpg"
+        },
+        {
+          "oid": "6000000000130",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000131",
+          "type": "Text",
+          "value": "Reinstall the passenger side floor mat.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000132",
+          "type": "Text",
+          "value": "Move the front passenger seat back to its normal position.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000133",
+          "type": "Text",
+          "value": "Turn on the climate control system.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000134",
+          "type": "Text",
+          "value": "Verify air flows normally from the vents.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000135",
+          "type": "Text",
+          "value": "Reset the cabin filter maintenance interval on the touchscreen:",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000136",
+          "type": "Text",
+          "value": "Controls > Service > Cabin Air Filter > Reset.",
+          "font_size": 15
+        },
+        {
+          "oid": "6000000000137",
+          "type": "SmallText",
+          "value": "After resetting, the maintenance reminder will track the new filter's service life automatically.",
+          "font_size": 13,
+          "color": "#555555"
+        },
+        {
+          "oid": "6000000000138",
+          "type": "Button",
+          "value": "Next"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Final Steps",
+                "plainText": "Final Steps"
+              },
+              "fontSize": 22,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "image",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 200,
+              "src": "car-ac-vent.jpg",
+              "objectFit": "cover"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 386,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 398,
+              "width": 350,
+              "height": 142,
+              "content": {
+                "content": "Reinstall the passenger side floor mat.\nMove the front passenger seat back to its normal position.\nTurn on the climate control system.\nVerify air flows normally from the vents.\nReset the cabin filter maintenance interval on the touchscreen:\nControls > Service > Cabin Air Filter > Reset.",
+                "plainText": "Reinstall the passenger side floor mat.\nMove the front passenger seat back to its normal position.\nTurn on the climate control system.\nVerify air flows normally from the vents.\nReset the cabin filter maintenance interval on the touchscreen:\nControls > Service > Cabin Air Filter > Reset."
+              },
+              "fontSize": 15
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 550,
+              "width": 350,
+              "height": 64,
+              "content": {
+                "content": "After resetting, the maintenance reminder will track the new filter's service life automatically.",
+                "plainText": "After resetting, the maintenance reminder will track the new filter's service life automatically."
+              },
+              "fontSize": 13,
+              "color": "#555555"
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Next",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 35,
+        "y": 1315
+      }
+    },
+    {
+      "local_id": "Final Checks - Record",
+      "oid": "6000000000152",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:59:53.001Z",
+      "step_type": "USER_INTERACTION",
+      "output_parameter_specifications": [
+        {
+          "id": "airflow_confirmed",
+          "oid": "6000000000149",
+          "description": "Air flow confirmed normal?"
+        },
+        {
+          "id": "filter_reset_confirmed",
+          "oid": "6000000000150",
+          "description": "Filter interval reset?"
+        },
+        {
+          "id": "final_notes",
+          "oid": "6000000000151",
+          "description": "Additional notes"
+        }
+      ],
+      "ui_parameter_specifications": [
+        {
+          "oid": "6000000000140",
+          "type": "Header",
+          "value": "Record: Final Steps",
+          "font_size": 20,
+          "align": "center"
+        },
+        {
+          "oid": "6000000000141",
+          "type": "Divider",
+          "value": ""
+        },
+        {
+          "oid": "6000000000142",
+          "type": "Text",
+          "value": "Air flow confirmed normal?",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000143",
+          "type": "TextInput",
+          "value": "Yes / No"
+        },
+        {
+          "oid": "6000000000144",
+          "type": "Text",
+          "value": "Filter interval reset?",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000145",
+          "type": "TextInput",
+          "value": "Yes / No"
+        },
+        {
+          "oid": "6000000000146",
+          "type": "Text",
+          "value": "Additional notes",
+          "font_size": 14
+        },
+        {
+          "oid": "6000000000147",
+          "type": "TextInput",
+          "value": "Any issues or observations..."
+        },
+        {
+          "oid": "6000000000148",
+          "type": "Button",
+          "value": "Done"
+        }
+      ],
+      "form_layout_config": [
+        {
+          "deviceType": "phone",
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "elements": [
+            {
+              "type": "header",
+              "x": 20,
+              "y": 130,
+              "width": 350,
+              "height": 36,
+              "content": {
+                "content": "Record: Final Steps",
+                "plainText": "Record: Final Steps"
+              },
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "divider",
+              "x": 20,
+              "y": 176,
+              "width": 350,
+              "height": 2,
+              "thickness": 1,
+              "color": "#e2e8f0"
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 188,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Air flow confirmed normal?",
+                "plainText": "Air flow confirmed normal?"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 214,
+              "width": 350,
+              "height": 40,
+              "label": "Air flow confirmed normal?",
+              "placeholder": "Yes / No",
+              "fieldName": "airflow_confirmed",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 264,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Filter interval reset?",
+                "plainText": "Filter interval reset?"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 290,
+              "width": 350,
+              "height": 40,
+              "label": "Filter interval reset?",
+              "placeholder": "Yes / No",
+              "fieldName": "filter_reset_confirmed",
+              "required": true
+            },
+            {
+              "type": "text",
+              "x": 20,
+              "y": 340,
+              "width": 350,
+              "height": 22,
+              "content": {
+                "content": "Additional notes",
+                "plainText": "Additional notes"
+              },
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textInput",
+              "x": 20,
+              "y": 366,
+              "width": 350,
+              "height": 40,
+              "label": "Additional notes",
+              "placeholder": "Any issues or observations...",
+              "fieldName": "final_notes",
+              "required": true
+            },
+            {
+              "type": "button",
+              "x": 95,
+              "y": 680,
+              "width": 200,
+              "height": 44,
+              "label": "Done",
+              "outputValue": "done"
+            }
+          ]
+        },
+        {
+          "deviceType": "tablet",
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "elements": []
+        },
+        {
+          "deviceType": "desktop",
+          "canvasWidth": 1280,
+          "canvasHeight": 800,
+          "elements": []
+        }
+      ],
+      "position": {
+        "x": 35,
+        "y": 1395
+      }
+    },
+    {
+      "local_id": "End",
+      "oid": "6000000000155",
+      "version": "1.0.0",
+      "last_modified_date": "2026-03-03T02:59:53.001Z",
+      "step_type": "END",
+      "position": {
+        "x": 80,
+        "y": 1470
+      }
+    }
+  ],
+  "connections": [
+    {
+      "from_step_id": "6000000000001",
+      "to_step_id": "6000000000011",
+      "connection_id": "6000000000012"
+    },
+    {
+      "from_step_id": "6000000000011",
+      "to_step_id": "6000000000021",
+      "connection_id": "6000000000022"
+    },
+    {
+      "from_step_id": "6000000000021",
+      "to_step_id": "6000000000032",
+      "connection_id": "6000000000033"
+    },
+    {
+      "from_step_id": "6000000000032",
+      "to_step_id": "6000000000042",
+      "connection_id": "6000000000043"
+    },
+    {
+      "from_step_id": "6000000000042",
+      "to_step_id": "6000000000055",
+      "connection_id": "6000000000067"
+    },
+    {
+      "from_step_id": "6000000000055",
+      "to_step_id": "6000000000065",
+      "connection_id": "6000000000066"
+    },
+    {
+      "from_step_id": "6000000000065",
+      "to_step_id": "6000000000076",
+      "connection_id": "6000000000077"
+    },
+    {
+      "from_step_id": "6000000000076",
+      "to_step_id": "6000000000083",
+      "connection_id": "6000000000084"
+    },
+    {
+      "from_step_id": "6000000000083",
+      "to_step_id": "6000000000094",
+      "connection_id": "6000000000095",
+      "source_handle_id": "no"
+    },
+    {
+      "from_step_id": "6000000000094",
+      "to_step_id": "6000000000096",
+      "connection_id": "6000000000097"
+    },
+    {
+      "from_step_id": "6000000000083",
+      "to_step_id": "6000000000096",
+      "connection_id": "6000000000098",
+      "source_handle_id": "yes"
+    },
+    {
+      "from_step_id": "6000000000096",
+      "to_step_id": "6000000000107",
+      "connection_id": "6000000000108"
+    },
+    {
+      "from_step_id": "6000000000107",
+      "to_step_id": "6000000000117",
+      "connection_id": "6000000000118"
+    },
+    {
+      "from_step_id": "6000000000117",
+      "to_step_id": "6000000000126",
+      "connection_id": "6000000000127"
+    },
+    {
+      "from_step_id": "6000000000126",
+      "to_step_id": "6000000000139",
+      "connection_id": "6000000000154"
+    },
+    {
+      "from_step_id": "6000000000139",
+      "to_step_id": "6000000000152",
+      "connection_id": "6000000000153"
+    },
+    {
+      "from_step_id": "6000000000152",
+      "to_step_id": "6000000000155",
+      "connection_id": "6000000000156"
+    }
+  ]
+}
