@@ -7,6 +7,7 @@ import { resolveDefaultValue } from '@engine/properties.js';
 import { useWorkflowManager } from '../manager/useWorkflowManager';
 import { FormRenderer } from './FormRenderer';
 import type { StepCanvasHeader } from './StepCanvas';
+import { ActionProxyStepCard } from './ActionProxyStepCard.js';
 
 const REQUIRED_TOOLTIP = 'Please complete all required fields before proceeding';
 
@@ -55,6 +56,9 @@ export function StepRenderer({ step, onAction, workflowId, properties, inputPara
   }
   if (step.stepType === 'USER_INTERACTION') {
     return <UserInteractionRenderer step={step} onAction={onAction} workflowId={workflowId} properties={properties} inputParameters={inputParameters} viewportOverride={viewportOverride} mediaMap={mediaMap} header={header} />;
+  }
+  if (step.stepType === 'ACTION PROXY') {
+    return <ActionProxyStepCard step={step} inputParameters={inputParameters} />;
   }
   return (
     <div className="step-unknown">
