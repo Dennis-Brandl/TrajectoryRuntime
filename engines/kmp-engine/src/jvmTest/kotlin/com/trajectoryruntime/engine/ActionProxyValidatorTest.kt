@@ -3,6 +3,7 @@
 package com.trajectoryruntime.engine
 
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class ActionProxyValidatorTest {
@@ -31,5 +32,68 @@ class ActionProxyValidatorTest {
         }""".trimIndent()
         val result = validate(parseWorkflow(workflow))
         assertTrue(result.valid, "expected valid, got ${result.error_code}: ${result.error_message}")
+    }
+
+    @Test
+    fun `ACTION PROXY without action_proxy_config is rejected`() {
+        val workflow = """{
+          "local_id":"wf","oid":"wf-oid","version":"1.0.0","last_modified_date":"2026-05-19T00:00:00Z",
+          "steps":[
+            {"local_id":"start","oid":"step-start","version":"1.0.0","last_modified_date":"2026-05-19T00:00:00Z","step_type":"START"},
+            {"local_id":"act","oid":"step-act","version":"1.0.0","last_modified_date":"2026-05-19T00:00:00Z","step_type":"ACTION PROXY"},
+            {"local_id":"end","oid":"step-end","version":"1.0.0","last_modified_date":"2026-05-19T00:00:00Z","step_type":"END"}
+          ],
+          "connections":[
+            {"from_step_id":"step-start","to_step_id":"step-act"},
+            {"from_step_id":"step-act","to_step_id":"step-end"}
+          ]
+        }""".trimIndent()
+        val result = validate(parseWorkflow(workflow))
+        assertEquals(false, result.valid)
+        assertEquals("INVALID_VALIDATION", result.error_code)
+        assertTrue(result.error_message!!.contains("missing action_proxy_config"))
+    }
+
+    @Test
+    fun `ACTION PROXY with unknown environment_oid is rejected`() {
+        val workflow = """{
+          "local_id":"wf","oid":"wf-oid","version":"1.0.0","last_modified_date":"2026-05-19T00:00:00Z",
+          "steps":[
+            {"local_id":"start","oid":"step-start","version":"1.0.0","last_modified_date":"2026-05-19T00:00:00Z","step_type":"START"},
+            {"local_id":"act","oid":"step-act","version":"1.0.0","last_modified_date":"2026-05-19T00:00:00Z","step_type":"ACTION PROXY","action_proxy_config":{"action_oid":"act-1","environment_oid":"env-missing"}},
+            {"local_id":"end","oid":"step-end","version":"1.0.0","last_modified_date":"2026-05-19T00:00:00Z","step_type":"END"}
+          ],
+          "connections":[
+            {"from_step_id":"step-start","to_step_id":"step-act"},
+            {"from_step_id":"step-act","to_step_id":"step-end"}
+          ]
+        }""".trimIndent()
+        val result = validate(parseWorkflow(workflow))
+        assertEquals(false, result.valid)
+        assertEquals("INVALID_VALIDATION", result.error_code)
+        assertTrue(result.error_message!!.contains("env-missing"))
+    }
+
+    @Test
+    fun `ACTION PROXY with unknown action_oid is rejected`() {
+        val workflow = """{
+          "local_id":"wf","oid":"wf-oid","version":"1.0.0","last_modified_date":"2026-05-19T00:00:00Z",
+          "steps":[
+            {"local_id":"start","oid":"step-start","version":"1.0.0","last_modified_date":"2026-05-19T00:00:00Z","step_type":"START"},
+            {"local_id":"act","oid":"step-act","version":"1.0.0","last_modified_date":"2026-05-19T00:00:00Z","step_type":"ACTION PROXY","action_proxy_config":{"action_oid":"act-missing","environment_oid":"env-1"}},
+            {"local_id":"end","oid":"step-end","version":"1.0.0","last_modified_date":"2026-05-19T00:00:00Z","step_type":"END"}
+          ],
+          "connections":[
+            {"from_step_id":"step-start","to_step_id":"step-act"},
+            {"from_step_id":"step-act","to_step_id":"step-end"}
+          ],
+          "environment_specifications":[
+            {"local_id":"env","oid":"env-1","version":"1.0.0","last_modified_date":"2026-05-19T00:00:00Z","included_actions":[{"action_oid":"act-1"}]}
+          ]
+        }""".trimIndent()
+        val result = validate(parseWorkflow(workflow))
+        assertEquals(false, result.valid)
+        assertEquals("INVALID_VALIDATION", result.error_code)
+        assertTrue(result.error_message!!.contains("act-missing"))
     }
 }
