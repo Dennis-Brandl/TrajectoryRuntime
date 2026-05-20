@@ -443,6 +443,53 @@ export class WorkflowCoordinator {
     }
 
     const resources = this.engine.getResourceSnapshot();
+
+    // Auto-launch ACTION PROXY controllers when the engine surfaces new active steps.
+    // NOTE: Integration test coverage (engine + container) is deferred to manual testing.
+    // Unit tests construct ActionProxyController directly and don't exercise this path.
+    for (const info of activeSteps) {
+      const step = info.step;
+      if (step.stepType !== 'ACTION PROXY') continue;
+      if (this._actionControllers.has(step.oid)) continue;
+      const cfg = step.step.action_proxy_config;
+      if (!cfg) continue;
+      // In this engine, StepInstance.oid === StepInstance.step.oid (set from MasterWorkflowStep.oid
+      // at construction time), so we use step.oid for both the controller key and the engine signal.
+      const inputs = stepParamsMap.get(step.oid)?.inputParameters ?? {};
+      const inputArr = Object.entries(inputs).map(([name, value]) => ({ name, value }));
+      this.startActionProxy(
+        step.oid,
+        step.oid,
+        cfg.action_oid,
+        cfg.environment_oid,
+        inputArr,
+        t => {
+          if (!this.engine) return;
+          if (t.state === 'COMPLETED') {
+            try {
+              this.engine.submitAction({ step_oid: step.oid, action: 'submit', form_values: t.outputs }, this.actionIndex++);
+              this.sync();
+            } catch (e) {
+              this.publish({ ...this.snapshot, error: String(e) });
+            }
+          } else {
+            // ERRORED: The engine has no per-step failure signal (UserAction only supports
+            // 'submit' | 'button_press' | 'yes' | 'no' | 'pause' | 'resume').
+            // Phase 1 fallback: log the error and submit with empty form_values so the step
+            // nominally completes and the workflow can continue.
+            // TODO(Phase 2): add a per-step fail signal to the engine and propagate ERRORED state.
+            console.warn(`[ActionProxy] step ${step.oid} terminated as ERRORED: ${t.errorMessage}`);
+            try {
+              this.engine.submitAction({ step_oid: step.oid, action: 'submit', form_values: {} }, this.actionIndex++);
+              this.sync();
+            } catch (e) {
+              this.publish({ ...this.snapshot, error: String(e) });
+            }
+          }
+        },
+      );
+    }
+
     this.publish({ workflowState, activeSteps, trace, properties, inputParameters, error: null, mediaMap: this._mediaMap, stepParams, resources });
   }
 
