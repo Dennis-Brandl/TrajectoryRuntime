@@ -81,7 +81,7 @@ export function StateCommandMenu({ workflowId }: StateCommandMenuProps) {
   const handleConfirm = useCallback(() => {
     if (!workflowId) return;
     if (confirmAction === 'abandon') {
-      manager.getCoordinator(workflowId)?.abort();
+      void manager.getCoordinator(workflowId)?.abortWithActionCleanup();
     } else if (confirmAction === 'restartAll') {
       manager.getCoordinator(workflowId)?.restart();
     }
