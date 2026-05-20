@@ -308,6 +308,13 @@ export interface CompletedStepInfo {
   completedAt: number;
 }
 
+export interface ActionServerSpecification {
+  name: string;
+  uri: string;
+  description?: string;
+  connection_type: string;
+}
+
 export interface MasterEnvironmentSpecification {
   local_id: string;
   oid: string;
@@ -319,6 +326,7 @@ export interface MasterEnvironmentSpecification {
   value_property_specifications?: PropertySpecification[];
   action_property_specifications?: PropertySpecification[];
   resource_property_specifications?: ResourcePropertySpecification[];
+  action_server_specifications?: ActionServerSpecification[];
 }
 
 export interface MasterEnvironmentLibrary {
@@ -329,6 +337,12 @@ export interface MasterEnvironmentLibrary {
   last_modified_date: string;
   environment_specifications: MasterEnvironmentSpecification[];
   child_libraries?: MasterEnvironmentLibrary[];
+}
+
+export interface ActionProxyConfig {
+  action_oid: string;
+  environment_oid: string;
+  timeout_ms?: number;
 }
 
 export interface MasterWorkflowStep extends ManagedElement {
@@ -342,6 +356,7 @@ export interface MasterWorkflowStep extends ManagedElement {
   yes_no_config?: YesNoConfig;
   script_config?: ScriptConfig;
   select1_config?: Select1Config;
+  action_proxy_config?: ActionProxyConfig;
 }
 
 export type DisplayStyle = 'flowchart' | 'bpmn' | 'isa88';

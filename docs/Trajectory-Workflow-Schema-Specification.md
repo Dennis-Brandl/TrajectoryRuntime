@@ -1243,3 +1243,54 @@ The `form_layout_config` is a declarative UI specification. Each platform implem
 2. Scale the logical pixel canvas to actual screen dimensions
 3. For each element: switch on `type`, emit a native widget at `(x, y)` with `(width, height)`
 4. Apply `zIndex` for element overlap ordering
+
+## ACTION PROXY step
+
+An `ACTION PROXY` step delegates execution to an external action server (Trajectory Action Container) over the Trajectory REST protocol (`docs/2026-05-18-trajectory-rest-protocol-design.md`).
+
+### Step block
+
+```json
+{
+  "local_id": "pick-and-place",
+  "oid": "step-pick-001",
+  "version": "1.0.0",
+  "last_modified_date": "2026-05-19T00:00:00Z",
+  "step_type": "ACTION PROXY",
+  "action_proxy_config": {
+    "action_oid": "act-pick-001",
+    "environment_oid": "env-warehouse",
+    "timeout_ms": 30000
+  }
+}
+```
+
+- `action_proxy_config.action_oid` MUST match an entry in `environment_specifications[environment_oid].included_actions[].action_oid`.
+- `action_proxy_config.environment_oid` MUST match an `environment_specifications[].oid`.
+- `action_proxy_config.timeout_ms` is optional; passed through to the action server's invoke endpoint.
+
+### `action_server_specifications` on an environment
+
+Environments declare the servers that can execute their actions:
+
+```json
+{
+  "oid": "env-warehouse",
+  "local_id": "warehouse",
+  "version": "1.0.0",
+  "last_modified_date": "2026-05-19T00:00:00Z",
+  "action_server_specifications": [
+    {
+      "name": "warehouse-controller-01",
+      "uri": "http://warehouse-01.lan:3002",
+      "description": "Primary warehouse controller",
+      "connection_type": "REST"
+    }
+  ],
+  "included_actions": [
+    { "action_oid": "act-pick-001", "action_name": "PickAndPlace", "action_library": "warehouse-lib" }
+  ]
+}
+```
+
+At workflow start, if an environment has multiple registered servers AND at least one ACTION PROXY step references it, the runtime prompts the user to choose a server. The chosen server is used for every ACTION PROXY invocation referencing that environment for the lifetime of the workflow instance.

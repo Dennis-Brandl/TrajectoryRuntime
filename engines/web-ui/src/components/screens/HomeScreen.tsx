@@ -6,6 +6,8 @@ import { processWorkflowFile, isProcessingError } from '../../manager/fileProces
 import { useWorkflowManager, useManagerSnapshot } from '../../manager/useWorkflowManager';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { WorkflowStartDialog } from '../WorkflowStartDialog';
+import { ActionServerPicker } from '../ActionServerPicker';
+import { useServerBindings } from '../../actionProxy/useServerBindings';
 import type { HomeMenuAction } from '../shell/homeMenuTypes';
 import type { LoadedWorkflow, CompletedWorkflow } from '../../manager/types';
 import type { ResourceSnapshotEntry } from '@engine/types.js';
@@ -30,6 +32,9 @@ export function HomeScreen({ onNavigateToActive, menuAction, onMenuActionHandled
   const [startTarget, setStartTarget] = useState<LoadedWorkflow | null>(null);
   const [swipedId, setSwipedId] = useState<string | null>(null);
   const touchStartX = useRef(0);
+  /** instanceId of the workflow that has been prepared but not yet started (picker flow). */
+  const [pendingInstanceId, setPendingInstanceId] = useState<string | null>(null);
+  const bindings = useServerBindings();
 
   // Delete confirmation settings
   const [confirmDeleteLoaded] = useLocalStorage('trajectory-confirm-delete-loaded', true);
@@ -106,12 +111,46 @@ export function HomeScreen({ onNavigateToActive, menuAction, onMenuActionHandled
   }, []);
 
   const handleStartConfirm = useCallback((id: string, startingParams?: Record<string, string>) => {
-    manager.startWorkflow(id, startingParams);
     setStartTarget(null);
-    onNavigateToActive();
-  }, [manager, onNavigateToActive]);
+    const instanceId = manager.prepareWorkflow(id, startingParams);
+    if (!instanceId) return;
+    const coordinator = manager.getCoordinator(instanceId);
+    const envs = coordinator?.envsNeedingBinding() ?? [];
+    if (envs.length === 0) {
+      manager.runWorkflow(instanceId);
+      onNavigateToActive();
+    } else {
+      setPendingInstanceId(instanceId);
+      bindings.begin(envs);
+    }
+  }, [manager, onNavigateToActive, bindings]);
 
   const handleStartCancel = useCallback(() => { setStartTarget(null); }, []);
+
+  // React to binding phase transitions
+  useEffect(() => {
+    if (!pendingInstanceId) return;
+    if (bindings.state.phase === 'done') {
+      const coordinator = manager.getCoordinator(pendingInstanceId);
+      if (coordinator) {
+        coordinator.setServerBindings(
+          pendingInstanceId,
+          bindings.state.result.bindings,
+          bindings.state.result.capabilities,
+        );
+      }
+      manager.runWorkflow(pendingInstanceId);
+      setPendingInstanceId(null);
+      bindings.reset();
+      onNavigateToActive();
+    } else if (bindings.state.phase === 'abandoned') {
+      // User declined — abort the prepared (but not yet started) workflow
+      const coordinator = manager.getCoordinator(pendingInstanceId);
+      coordinator?.abort();
+      setPendingInstanceId(null);
+      bindings.reset();
+    }
+  }, [bindings.state.phase, pendingInstanceId, manager, onNavigateToActive, bindings]);
 
   const handleActiveWorkflowClick = useCallback((wfId: string) => {
     manager.focusWorkflow(wfId);
@@ -346,6 +385,33 @@ export function HomeScreen({ onNavigateToActive, menuAction, onMenuActionHandled
           onStart={handleStartConfirm}
           onCancel={handleStartCancel}
         />
+      )}
+
+      {bindings.state.phase === 'picking' && (() => {
+        const env = bindings.state.envs[bindings.state.envIndex];
+        return (
+          <ActionServerPicker
+            environmentName={env.local_id}
+            servers={env.action_server_specifications ?? []}
+            onUse={bindings.selectServer}
+            onAbandon={bindings.abandon}
+          />
+        );
+      })()}
+
+      {bindings.state.phase === 'fetching-capabilities' && (
+        <div className={styles.pickerOverlay}>
+          <div className={styles.pickerStatus}>Connecting to {bindings.state.envName}&hellip;</div>
+        </div>
+      )}
+
+      {bindings.state.phase === 'error' && (
+        <div className={styles.pickerOverlay}>
+          <div className={styles.pickerError}>
+            <p>Could not connect to <strong>{bindings.state.envName}</strong>: {bindings.state.message}</p>
+            <button className={styles.pickerErrorBtn} onClick={bindings.abandon}>Cancel</button>
+          </div>
+        </div>
       )}
 
       {/* Value Properties & Resources Modal */}

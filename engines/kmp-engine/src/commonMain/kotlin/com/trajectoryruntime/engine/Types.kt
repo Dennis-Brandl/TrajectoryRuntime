@@ -138,6 +138,13 @@ data class ResourcePropertySpecification(
 )
 
 @Serializable
+data class ActionProxyConfig(
+    val action_oid: String,
+    val environment_oid: String,
+    val timeout_ms: Long? = null,
+)
+
+@Serializable
 data class MasterWorkflowStep(
     val local_id: String,
     val oid: String,
@@ -154,6 +161,7 @@ data class MasterWorkflowStep(
     val yes_no_config: YesNoConfig? = null,
     val script_config: ScriptConfig? = null,
     val select1_config: Select1Config? = null,
+    val action_proxy_config: ActionProxyConfig? = null,
 )
 
 @Serializable
@@ -227,6 +235,14 @@ data class ChildWorkflowExport(
 }
 
 @Serializable
+data class ActionServerSpecification(
+    val name: String,
+    val uri: String,
+    val description: String? = null,
+    val connection_type: String,  // "REST" only in v1
+)
+
+@Serializable
 data class MasterEnvironmentSpecification(
     val local_id: String,
     val oid: String,
@@ -238,6 +254,7 @@ data class MasterEnvironmentSpecification(
     val value_property_specifications: List<PropertySpecification>? = null,
     val action_property_specifications: List<PropertySpecification>? = null,
     val resource_property_specifications: List<ResourcePropertySpecification>? = null,
+    val action_server_specifications: List<ActionServerSpecification>? = null,
 )
 
 // ── Engine Runtime Types ──

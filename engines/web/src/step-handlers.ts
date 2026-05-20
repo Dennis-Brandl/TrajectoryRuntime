@@ -24,7 +24,7 @@ export function isAutoCompleting(stepType: string): boolean {
 }
 
 export function needsUserAction(stepType: string): boolean {
-  return ['USER_INTERACTION', 'YES_NO'].includes(stepType);
+  return ['USER_INTERACTION', 'YES_NO', 'ACTION PROXY'].includes(stepType);
 }
 
 export function getFormElements(step: MasterWorkflowStep): FormElement[] {

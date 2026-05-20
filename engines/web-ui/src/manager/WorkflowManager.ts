@@ -137,8 +137,13 @@ export class WorkflowManager {
     return rm;
   }
 
-  /** Start a new instance from a loaded workflow spec. */
-  startWorkflow(loadedId: string, startingParams?: Record<string, string>): string | null {
+  /**
+   * Prepare a new workflow instance from a loaded spec: creates the coordinator,
+   * calls coordinator.load(), adds to the active list, subscribes for completion —
+   * but does NOT call coordinator.start(). Call runWorkflow(instanceId) to start.
+   * Returns the new instanceId, or null if loadedId is not found.
+   */
+  prepareWorkflow(loadedId: string, startingParams?: Record<string, string>): string | null {
     const loaded = this._loaded.find(w => w.id === loadedId);
     if (!loaded) return null;
 
@@ -180,11 +185,26 @@ export class WorkflowManager {
     });
     this._coordinatorUnsubs.set(instanceId, unsub);
 
-    // Start execution
-    coordinator.start();
-    // After start, pump siblings in case this workflow's activation granted resources for others
+    this.publish();
+    return instanceId;
+  }
+
+  /**
+   * Start execution of a prepared workflow instance (call after prepareWorkflow and
+   * any server binding setup). Pumps siblings after start.
+   */
+  runWorkflow(instanceId: string): void {
+    const active = this._active.find(w => w.id === instanceId);
+    if (!active) return;
+    active.coordinator.start();
     this.pumpSiblingCoordinators(instanceId);
     this.publish();
+  }
+
+  /** Prepare and immediately start a workflow instance. Preserves original behavior. */
+  startWorkflow(loadedId: string, startingParams?: Record<string, string>): string | null {
+    const instanceId = this.prepareWorkflow(loadedId, startingParams);
+    if (instanceId) this.runWorkflow(instanceId);
     return instanceId;
   }
 

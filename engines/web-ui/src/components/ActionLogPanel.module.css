@@ -1,0 +1,5 @@
+.panel { display: flex; flex-direction: column; gap: 4px; max-height: 240px; overflow-y: auto; font-family: var(--font-mono, monospace); font-size: 12px; }
+.entry { padding: 4px 8px; border-radius: 3px; }
+.stderr { color: var(--error, #c00); background: var(--error-bg, #fff5f5); }
+.empty { color: var(--text-muted, #888); padding: 12px; text-align: center; font-style: italic; }
+.ts { color: var(--text-muted, #888); margin-right: 8px; }

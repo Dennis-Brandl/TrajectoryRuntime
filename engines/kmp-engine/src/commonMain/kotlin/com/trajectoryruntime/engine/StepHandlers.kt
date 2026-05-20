@@ -17,7 +17,7 @@ fun isAutoCompleting(stepType: String): Boolean {
 }
 
 fun needsUserAction(stepType: String): Boolean {
-    return stepType in listOf("USER_INTERACTION", "YES_NO")
+    return stepType in listOf("USER_INTERACTION", "YES_NO", "ACTION PROXY")
 }
 
 fun getFormElements(step: MasterWorkflowStep): List<JsonObject> {

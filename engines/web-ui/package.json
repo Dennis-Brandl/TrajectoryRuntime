@@ -8,7 +8,9 @@
     "dev": "vite --port 5173",
     "dev:all": "vite --port 5173 --host",
     "build": "tsc -b && vite build",
-    "preview": "vite preview --port 3001"
+    "preview": "vite preview --port 3001",
+    "test": "tsc -b && node --import tsx --test \"src/**/*.test.ts\"",
+    "test:integration": "tsc -b && node --import tsx --test \"test/integration/*.test.ts\""
   },
   "dependencies": {
     "@trajectory/tokens": "file:../../../TrajectoryEditor/packages/tokens",
@@ -20,9 +22,11 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@types/node": "^25.9.1",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "@vitejs/plugin-react": "^4.4.1",
+    "tsx": "^4.22.3",
     "typescript": "^5.7.0",
     "vite": "^6.3.5"
   }

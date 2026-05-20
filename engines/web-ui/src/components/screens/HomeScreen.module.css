@@ -491,3 +491,44 @@
   border-radius: 6px;
   font-size: 13px;
 }
+
+/* Picker overlay — fetching / error states during server binding */
+.pickerOverlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.pickerStatus {
+  background: var(--color-card-bg);
+  border-radius: 12px;
+  padding: 24px 32px;
+  font-size: 15px;
+  color: var(--color-text-secondary);
+}
+
+.pickerError {
+  background: var(--color-card-bg);
+  border-radius: 12px;
+  padding: 24px 32px;
+  max-width: 360px;
+  text-align: center;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pickerErrorBtn {
+  align-self: center;
+  padding: 8px 24px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+}

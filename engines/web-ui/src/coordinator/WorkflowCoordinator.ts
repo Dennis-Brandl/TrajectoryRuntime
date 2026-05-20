@@ -6,6 +6,7 @@ import { loadEnvironmentLibrary } from '@engine/environment-loader.js';
 import type {
   MasterWorkflowSpecification,
   MasterEnvironmentLibrary,
+  MasterEnvironmentSpecification,
   WorkflowState,
   TraceEntry,
   UserAction,
@@ -13,6 +14,11 @@ import type {
   ResourceSnapshotEntry,
 } from '@engine/types.js';
 import { KmpWorkflowEngine, initKmpEngine, isKmpReady } from './KmpEngineAdapter.js';
+import { ActionProxyController } from '../actionProxy/ActionProxyController.js';
+import { PersistenceStore } from '../actionProxy/persistence.js';
+import { SseObserver } from '../actionProxy/SseObserver.js';
+import type { ActionCapability, ActionInstanceObserver } from '../actionProxy/types.js';
+import { environmentsNeedingBinding } from '../actionProxy/environmentScan.js';
 
 const USE_KMP_ENGINE = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_USE_KMP_ENGINE === 'true');
 
@@ -51,6 +57,12 @@ export class WorkflowCoordinator {
   private _sharedResourceManager: InstanceType<typeof InMemoryResourceManager> | null = null;
   private listeners = new Set<Listener>();
   private _formValues: Record<string, Record<string, unknown>> = {};
+  private _actionControllers = new Map<string, ActionProxyController>();
+  private _serverBindings: Record<string, string> = {};
+  private _capabilities = new Map<string, Map<string, ActionCapability>>();
+  private _persistence = new PersistenceStore();
+  private _observer: ActionInstanceObserver = new SseObserver();
+  private _workflowInstanceId: string = '';
 
   getSnapshot = (): CoordinatorSnapshot => this.snapshot;
 
@@ -136,10 +148,140 @@ export class WorkflowCoordinator {
     return this.workflow;
   }
 
+  /** List environments that need server binding before the engine schedules any ACTION PROXY step. */
+  envsNeedingBinding(): MasterEnvironmentSpecification[] {
+    if (!this.workflow) return [];
+    return environmentsNeedingBinding(this.workflow);
+  }
+
   /** Return the deepest active child spec, or the parent spec if no child is active. */
   getActiveSpec(): MasterWorkflowSpecification | null {
     if (!this.engine) return this.workflow;
     return this.engine.getActiveSpec();
+  }
+
+  /** Register server bindings + capabilities for the active workflow (called by picker flow). */
+  setServerBindings(workflowInstanceId: string, bindings: Record<string, string>, capabilities: Map<string, Map<string, ActionCapability>>): void {
+    this._workflowInstanceId = workflowInstanceId;
+    this._serverBindings = bindings;
+    this._capabilities = capabilities;
+  }
+
+  /** Get the controller for an active ACTION PROXY step (returns null if none). */
+  getActionController(stepInstanceId: string): ActionProxyController | null {
+    return this._actionControllers.get(stepInstanceId) ?? null;
+  }
+
+  /** Start a controller for an active ACTION PROXY step. */
+  startActionProxy(
+    stepInstanceId: string,
+    stepOid: string,
+    actionOid: string,
+    environmentOid: string,
+    inputs: Array<{ name: string; value: string }>,
+    onTerminal: (t: { state: 'COMPLETED' | 'ERRORED'; outputs: Record<string, string>; errorMessage: string | null }) => void,
+  ): ActionProxyController {
+    const serverUri = this._serverBindings[environmentOid];
+    if (!serverUri) throw new Error(`No server bound for environment ${environmentOid}`);
+    const cap = this._capabilities.get(serverUri)?.get(actionOid);
+    if (!cap) throw new Error(`No capability cached for action ${actionOid} on ${serverUri}`);
+    const controller = new ActionProxyController({
+      serverUri,
+      actionOid,
+      invokeRequest: {
+        environment_oid: environmentOid,
+        workflow_instance_id: this._workflowInstanceId,
+        step_instance_id: stepInstanceId,
+        step_oid: stepOid,
+        input_parameters: inputs,
+      },
+      visibility: cap.visibility,
+      supportedCommands: cap.supported_commands,
+      persistence: this._persistence,
+      observer: this._observer,
+      onTerminal: t => {
+        this._actionControllers.delete(stepInstanceId);
+        onTerminal(t);
+      },
+    });
+    this._actionControllers.set(stepInstanceId, controller);
+    controller.start().catch(e => {
+      this._actionControllers.delete(stepInstanceId);
+      onTerminal({ state: 'ERRORED', outputs: {}, errorMessage: String(e instanceof Error ? e.message : e) });
+    });
+    return controller;
+  }
+
+  /**
+   * After load() but before start(), call this to detect persisted in-flight
+   * instances for this workflow and reconnect them. Terminal instances apply
+   * their outputs to the engine; non-terminal ones resume SSE.
+   */
+  async reconnectPersistedInstances(): Promise<Set<string>> {
+    const active = new Set<string>();
+    if (!this._workflowInstanceId) return active;
+    const persisted = this._persistence.readAll().filter(e => e.workflowInstanceId === this._workflowInstanceId);
+    for (const entry of persisted) {
+      const capMap = this._capabilities.get(entry.serverUri);
+      if (!capMap) continue;
+      const controller = new ActionProxyController({
+        serverUri: entry.serverUri,
+        actionOid: '',
+        invokeRequest: {
+          environment_oid: entry.environmentOid,
+          workflow_instance_id: entry.workflowInstanceId,
+          step_instance_id: entry.stepInstanceId,
+          step_oid: entry.stepOid,
+          input_parameters: [],
+        },
+        visibility: 'observable',
+        supportedCommands: [],
+        persistence: this._persistence,
+        observer: this._observer,
+        onTerminal: _t => {
+          this._actionControllers.delete(entry.stepInstanceId);
+        },
+      });
+      this._actionControllers.set(entry.stepInstanceId, controller);
+      await controller.reconnect(entry.instanceId, entry.lastEventId);
+      const snap = controller.getSnapshot();
+      if (snap.serverState && !(['COMPLETED', 'ABORTED', 'STOPPED', 'ERRORED'] as const).includes(snap.serverState as 'COMPLETED' | 'ABORTED' | 'STOPPED' | 'ERRORED')) {
+        active.add(entry.stepInstanceId);
+      }
+    }
+    return active;
+  }
+
+  /** Abandon workflow: ABORT then DELETE all active instances, then engine abort. */
+  async abortWithActionCleanup(): Promise<void> {
+    const active = [...this._actionControllers.values()];
+    const entries = active
+      .map(c => {
+        const id = c.getSnapshot().instanceId;
+        if (!id) return null;
+        const persisted = this._persistence.readAll().find(e => e.instanceId === id);
+        if (!persisted) return null;
+        return { id, serverUri: persisted.serverUri };
+      })
+      .filter((x): x is { id: string; serverUri: string } => x !== null);
+
+    await Promise.allSettled(entries.map(({ id, serverUri }) =>
+      fetch(`${serverUri}/trajectory/v1/instances/${encodeURIComponent(id)}/command`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ command: 'ABORT' }),
+      }),
+    ));
+
+    await Promise.allSettled(entries.map(({ id, serverUri }) =>
+      fetch(`${serverUri}/trajectory/v1/instances/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+    ));
+
+    for (const c of active) c.dispose();
+    this._actionControllers.clear();
+    if (this._workflowInstanceId) this._persistence.removeWorkflow(this._workflowInstanceId);
+    this._persistence.flushSync();
+    this.abort();
   }
 
   submitAction(action: UserAction): void {
@@ -171,6 +313,12 @@ export class WorkflowCoordinator {
 
   /** Abort the workflow (for ABANDON command). */
   abort(): void {
+    for (const c of this._actionControllers.values()) c.dispose();
+    this._actionControllers.clear();
+    if (this._workflowInstanceId) {
+      this._persistence.removeWorkflow(this._workflowInstanceId);
+      this._persistence.flushSync();
+    }
     if (!this.engine) return;
     this.engine = null;
     this._formValues = {};
@@ -295,6 +443,53 @@ export class WorkflowCoordinator {
     }
 
     const resources = this.engine.getResourceSnapshot();
+
+    // Auto-launch ACTION PROXY controllers when the engine surfaces new active steps.
+    // NOTE: Integration test coverage (engine + container) is deferred to manual testing.
+    // Unit tests construct ActionProxyController directly and don't exercise this path.
+    for (const info of activeSteps) {
+      const step = info.step;
+      if (step.stepType !== 'ACTION PROXY') continue;
+      if (this._actionControllers.has(step.oid)) continue;
+      const cfg = step.step.action_proxy_config;
+      if (!cfg) continue;
+      // In this engine, StepInstance.oid === StepInstance.step.oid (set from MasterWorkflowStep.oid
+      // at construction time), so we use step.oid for both the controller key and the engine signal.
+      const inputs = stepParamsMap.get(step.oid)?.inputParameters ?? {};
+      const inputArr = Object.entries(inputs).map(([name, value]) => ({ name, value }));
+      this.startActionProxy(
+        step.oid,
+        step.oid,
+        cfg.action_oid,
+        cfg.environment_oid,
+        inputArr,
+        t => {
+          if (!this.engine) return;
+          if (t.state === 'COMPLETED') {
+            try {
+              this.engine.submitAction({ step_oid: step.oid, action: 'submit', form_values: t.outputs }, this.actionIndex++);
+              this.sync();
+            } catch (e) {
+              this.publish({ ...this.snapshot, error: String(e) });
+            }
+          } else {
+            // ERRORED: The engine has no per-step failure signal (UserAction only supports
+            // 'submit' | 'button_press' | 'yes' | 'no' | 'pause' | 'resume').
+            // Phase 1 fallback: log the error and submit with empty form_values so the step
+            // nominally completes and the workflow can continue.
+            // TODO(Phase 2): add a per-step fail signal to the engine and propagate ERRORED state.
+            console.warn(`[ActionProxy] step ${step.oid} terminated as ERRORED: ${t.errorMessage}`);
+            try {
+              this.engine.submitAction({ step_oid: step.oid, action: 'submit', form_values: {} }, this.actionIndex++);
+              this.sync();
+            } catch (e) {
+              this.publish({ ...this.snapshot, error: String(e) });
+            }
+          }
+        },
+      );
+    }
+
     this.publish({ workflowState, activeSteps, trace, properties, inputParameters, error: null, mediaMap: this._mediaMap, stepParams, resources });
   }
 

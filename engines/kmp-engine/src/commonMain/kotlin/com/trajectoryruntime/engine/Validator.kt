@@ -178,7 +178,7 @@ private val VALID_STEP_TYPES = setOf(
     "START", "END", "PARALLEL", "WAIT ALL", "WAIT ANY",
     "SELECT 1", "SELECT_1", "SCRIPT", "MATH",
     "USER_INTERACTION", "YES_NO", "WORKFLOW PROXY",
-    "WAIT ACTION PROXY",
+    "WAIT ACTION PROXY", "ACTION PROXY",
 )
 
 private val VALID_FORM_ELEMENT_TYPES = setOf(
@@ -391,6 +391,45 @@ private fun resourceValidation(workflow: Map<String, Any?>): ValidationResult? {
     return validateSpecResourceShape(workflow)
 }
 
+@Suppress("UNCHECKED_CAST")
+private fun actionProxyValidation(workflow: Map<String, Any?>): ValidationResult? {
+    val steps = workflow["steps"] as? List<Map<String, Any?>> ?: return null
+    val envSpecs = workflow["environment_specifications"] as? List<Map<String, Any?>> ?: emptyList()
+
+    val envActions = mutableMapOf<String, Set<String>>()
+    for (env in envSpecs) {
+        val envOid = env["oid"] as? String ?: continue
+        val included = env["included_actions"] as? List<Map<String, Any?>> ?: emptyList()
+        envActions[envOid] = included.mapNotNull { it["action_oid"] as? String }.toSet()
+    }
+
+    for (step in steps) {
+        val stepType = step["step_type"] as? String ?: continue
+        if (stepType != "ACTION PROXY") continue
+
+        val stepOid = step["oid"] as? String ?: "<unknown>"
+        val config = step["action_proxy_config"] as? Map<String, Any?>
+        if (config == null) {
+            return ValidationResult(false, "INVALID_VALIDATION", "ACTION PROXY step $stepOid missing action_proxy_config")
+        }
+
+        val envOid = config["environment_oid"] as? String
+        val actionOid = config["action_oid"] as? String
+        if (envOid == null || actionOid == null) {
+            return ValidationResult(false, "INVALID_VALIDATION", "ACTION PROXY step $stepOid action_proxy_config missing required field")
+        }
+
+        if (envOid !in envActions) {
+            return ValidationResult(false, "INVALID_VALIDATION", "ACTION PROXY step $stepOid references unknown environment_oid $envOid")
+        }
+        val actions = envActions[envOid]!!
+        if (actionOid !in actions) {
+            return ValidationResult(false, "INVALID_VALIDATION", "ACTION PROXY step $stepOid action_oid $actionOid not in environment $envOid")
+        }
+    }
+    return null
+}
+
 fun validate(workflow: Map<String, Any?>): ValidationResult {
     // Phase 0: Pre-structural (missing required fields on steps/connections)
     preStructuralChecks(workflow)?.let { return it }
@@ -403,6 +442,9 @@ fun validate(workflow: Map<String, Any?>): ValidationResult {
 
     // Phase B: Structural validation (step types and form elements)
     structuralValidation(workflow)?.let { return it }
+
+    // Phase C: ACTION PROXY config validation (§14.2 rules)
+    actionProxyValidation(workflow)?.let { return it }
 
     return ValidationResult(valid = true)
 }

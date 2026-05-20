@@ -164,6 +164,7 @@ export function HistoryScreen() {
 
         {selectedStep && (
           <StepDetailPopup
+            stepOid={selectedStep.stepOid}
             stepType={selectedStep.stepType}
             description={selectedStep.description}
             completedAt={selectedStep.completedAt}
