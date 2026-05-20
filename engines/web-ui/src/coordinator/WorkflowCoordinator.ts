@@ -6,6 +6,7 @@ import { loadEnvironmentLibrary } from '@engine/environment-loader.js';
 import type {
   MasterWorkflowSpecification,
   MasterEnvironmentLibrary,
+  MasterEnvironmentSpecification,
   WorkflowState,
   TraceEntry,
   UserAction,
@@ -17,6 +18,7 @@ import { ActionProxyController } from '../actionProxy/ActionProxyController.js';
 import { PersistenceStore } from '../actionProxy/persistence.js';
 import { SseObserver } from '../actionProxy/SseObserver.js';
 import type { ActionCapability, ActionInstanceObserver } from '../actionProxy/types.js';
+import { environmentsNeedingBinding } from '../actionProxy/environmentScan.js';
 
 const USE_KMP_ENGINE = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_USE_KMP_ENGINE === 'true');
 
@@ -144,6 +146,12 @@ export class WorkflowCoordinator {
   /** Return the stored workflow spec, or null if not loaded. */
   getSpec(): MasterWorkflowSpecification | null {
     return this.workflow;
+  }
+
+  /** List environments that need server binding before the engine schedules any ACTION PROXY step. */
+  envsNeedingBinding(): MasterEnvironmentSpecification[] {
+    if (!this.workflow) return [];
+    return environmentsNeedingBinding(this.workflow);
   }
 
   /** Return the deepest active child spec, or the parent spec if no child is active. */
