@@ -212,6 +212,46 @@ export class WorkflowCoordinator {
     return controller;
   }
 
+  /**
+   * After load() but before start(), call this to detect persisted in-flight
+   * instances for this workflow and reconnect them. Terminal instances apply
+   * their outputs to the engine; non-terminal ones resume SSE.
+   */
+  async reconnectPersistedInstances(): Promise<Set<string>> {
+    const active = new Set<string>();
+    if (!this._workflowInstanceId) return active;
+    const persisted = this._persistence.readAll().filter(e => e.workflowInstanceId === this._workflowInstanceId);
+    for (const entry of persisted) {
+      const capMap = this._capabilities.get(entry.serverUri);
+      if (!capMap) continue;
+      const controller = new ActionProxyController({
+        serverUri: entry.serverUri,
+        actionOid: '',
+        invokeRequest: {
+          environment_oid: entry.environmentOid,
+          workflow_instance_id: entry.workflowInstanceId,
+          step_instance_id: entry.stepInstanceId,
+          step_oid: entry.stepOid,
+          input_parameters: [],
+        },
+        visibility: 'observable',
+        supportedCommands: [],
+        persistence: this._persistence,
+        observer: this._observer,
+        onTerminal: _t => {
+          this._actionControllers.delete(entry.stepInstanceId);
+        },
+      });
+      this._actionControllers.set(entry.stepInstanceId, controller);
+      await controller.reconnect(entry.instanceId, entry.lastEventId);
+      const snap = controller.getSnapshot();
+      if (snap.serverState && !(['COMPLETED', 'ABORTED', 'STOPPED', 'ERRORED'] as const).includes(snap.serverState as 'COMPLETED' | 'ABORTED' | 'STOPPED' | 'ERRORED')) {
+        active.add(entry.stepInstanceId);
+      }
+    }
+    return active;
+  }
+
   /** Abandon workflow: ABORT then DELETE all active instances, then engine abort. */
   async abortWithActionCleanup(): Promise<void> {
     const active = [...this._actionControllers.values()];
