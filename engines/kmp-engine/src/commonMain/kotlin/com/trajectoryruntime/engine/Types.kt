@@ -138,6 +138,13 @@ data class ResourcePropertySpecification(
 )
 
 @Serializable
+data class ActionProxyConfig(
+    val action_oid: String,
+    val environment_oid: String,
+    val timeout_ms: Long? = null,
+)
+
+@Serializable
 data class MasterWorkflowStep(
     val local_id: String,
     val oid: String,
@@ -154,6 +161,7 @@ data class MasterWorkflowStep(
     val yes_no_config: YesNoConfig? = null,
     val script_config: ScriptConfig? = null,
     val select1_config: Select1Config? = null,
+    val action_proxy_config: ActionProxyConfig? = null,
 )
 
 @Serializable
