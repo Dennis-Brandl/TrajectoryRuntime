@@ -227,6 +227,14 @@ data class ChildWorkflowExport(
 }
 
 @Serializable
+data class ActionServerSpecification(
+    val name: String,
+    val uri: String,
+    val description: String? = null,
+    val connection_type: String,  // "REST" only in v1
+)
+
+@Serializable
 data class MasterEnvironmentSpecification(
     val local_id: String,
     val oid: String,
@@ -238,6 +246,7 @@ data class MasterEnvironmentSpecification(
     val value_property_specifications: List<PropertySpecification>? = null,
     val action_property_specifications: List<PropertySpecification>? = null,
     val resource_property_specifications: List<ResourcePropertySpecification>? = null,
+    val action_server_specifications: List<ActionServerSpecification>? = null,
 )
 
 // ── Engine Runtime Types ──
