@@ -4,7 +4,7 @@ package com.trajectoryruntime.engine
 
 import kotlin.test.Test
 import kotlin.test.assertNull
-import kotlin.test.assertFails
+import kotlin.test.assertFailsWith
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 
@@ -44,7 +44,7 @@ class ValidatorTest {
             ]
           }
         """.trimIndent()
-        assertFails {
+        assertFailsWith<SerializationException> {
             strictJson.decodeFromString<MasterWorkflowSpecification>(legacyJson)
         }
     }
