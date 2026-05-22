@@ -29,7 +29,7 @@ function findStepByLocalId(
   for (const step of spec.steps) {
     if (step.local_id === localId) return step;
   }
-  const children = spec.children ?? spec.child_workflows ?? [];
+  const children = spec.children ?? [];
   for (const child of children) {
     const found = findStepByLocalId(child as MasterWorkflowSpecification, localId);
     if (found) return found;

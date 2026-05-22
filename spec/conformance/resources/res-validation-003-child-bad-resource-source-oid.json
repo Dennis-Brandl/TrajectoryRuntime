@@ -27,7 +27,7 @@
         "local_id": "child-wf",
         "oid": "child-wf-actual-oid",
         "version": "1.0.0",
-        "state": "Draft",
+        "state": "Effective",
         "last_modified_date": "2026-04-30",
         "parentChildSpecId": null,
         "resource_property_specifications": [

@@ -1216,13 +1216,15 @@
       ]
     }
   ],
-  "child_workflows": [
+  "children": [
     {
       "schemaVersion": "4.0",
       "local_id": "Workflow Phase 4 Child",
       "oid": "286134080901246976",
       "version": "1.0.0",
       "last_modified_date": "2026-03-06T17:55:08.992Z",
+      "parentChildSpecId": null,
+      "state": "Effective",
       "steps": [
         {
           "local_id": "START",
@@ -1510,13 +1512,15 @@
         "y": -80,
         "zoom": 2
       },
-      "child_workflows": [
+      "children": [
         {
           "schemaVersion": "4.0",
           "local_id": "GrandChild Step",
           "oid": "287687434295078912",
           "version": "1.0.0",
           "last_modified_date": "2026-03-06T17:23:51.443Z",
+          "parentChildSpecId": null,
+          "state": "Effective",
           "steps": [
             {
               "local_id": "START",
@@ -1680,6 +1684,8 @@
           "oid": "288368827417260032",
           "version": "1.0.0",
           "last_modified_date": "2026-03-06T17:54:46.090Z",
+          "parentChildSpecId": null,
+          "state": "Effective",
           "steps": [
             {
               "local_id": "START",

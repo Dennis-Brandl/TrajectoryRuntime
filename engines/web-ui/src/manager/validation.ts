@@ -197,7 +197,7 @@ function resourceValidation(workflow: Record<string, unknown>): ValidationResult
     }
   }
 
-  const childWorkflows = (workflow['children'] ?? workflow['child_workflows']) as Record<string, unknown>[] | undefined;
+  const childWorkflows = workflow['children'] as Record<string, unknown>[] | undefined;
   if (childWorkflows) {
     for (const cw of childWorkflows) {
       const cwSpecs = cw['resource_property_specifications'] as Record<string, unknown>[] | undefined;
