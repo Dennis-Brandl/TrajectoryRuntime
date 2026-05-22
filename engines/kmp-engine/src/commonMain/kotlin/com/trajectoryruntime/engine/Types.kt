@@ -182,7 +182,6 @@ data class MasterWorkflowSpecification(
     val resource_property_specifications: List<ResourcePropertySpecification>? = null,
     val environment_specifications: List<MasterEnvironmentSpecification>? = null,
     val children: List<ChildWorkflowExport>? = null,
-    val child_workflows: List<MasterWorkflowSpecification>? = null,
     val viewport: JsonElement? = null,
     val display_style: String? = null,
 )
@@ -206,7 +205,6 @@ data class ChildWorkflowExport(
     val resource_property_specifications: List<ResourcePropertySpecification>? = null,
     val environment_specifications: List<MasterEnvironmentSpecification>? = null,
     val children: List<ChildWorkflowExport>? = null,
-    val child_workflows: List<MasterWorkflowSpecification>? = null,
     val viewport: JsonElement? = null,
     val display_style: String? = null,
 ) {
@@ -228,7 +226,6 @@ data class ChildWorkflowExport(
         resource_property_specifications = resource_property_specifications,
         environment_specifications = environment_specifications,
         children = children,
-        child_workflows = child_workflows,
         viewport = viewport,
         display_style = display_style,
     )

@@ -268,7 +268,7 @@ private fun resourceValidation(workflow: Map<String, Any?>): ValidationResult? {
         }
 
         @Suppress("UNCHECKED_CAST")
-        val childSpecs = (spec["children"] ?: spec["child_workflows"]) as? List<Map<String, Any?>>
+        val childSpecs = spec["children"] as? List<Map<String, Any?>>
         if (childSpecs != null) {
             for (c in childSpecs) gatherOwners(c)
         }
@@ -344,7 +344,7 @@ private fun resourceValidation(workflow: Map<String, Any?>): ValidationResult? {
         }
 
         @Suppress("UNCHECKED_CAST")
-        val childSpecs = (spec["children"] ?: spec["child_workflows"]) as? List<Map<String, Any?>>
+        val childSpecs = spec["children"] as? List<Map<String, Any?>>
         if (childSpecs != null) {
             for (c in childSpecs) {
                 val err = validateSpecSteps(c)
@@ -378,7 +378,7 @@ private fun resourceValidation(workflow: Map<String, Any?>): ValidationResult? {
             }
         }
         @Suppress("UNCHECKED_CAST")
-        val childSpecs = (spec["children"] ?: spec["child_workflows"]) as? List<Map<String, Any?>>
+        val childSpecs = spec["children"] as? List<Map<String, Any?>>
         if (childSpecs != null) {
             for (c in childSpecs) {
                 val err = validateSpecResourceShape(c)
