@@ -258,7 +258,7 @@ function resourceValidation(workflow: Record<string, unknown>): ValidationResult
       }
     }
 
-    const childSpecs = (spec['children'] ?? spec['child_workflows']) as Record<string, unknown>[] | undefined;
+    const childSpecs = spec['children'] as Record<string, unknown>[] | undefined;
     if (Array.isArray(childSpecs)) {
       for (const c of childSpecs) gatherOwners(c);
     }
@@ -331,7 +331,7 @@ function resourceValidation(workflow: Record<string, unknown>): ValidationResult
       }
     }
 
-    const childSpecs = (spec['children'] ?? spec['child_workflows']) as Record<string, unknown>[] | undefined;
+    const childSpecs = spec['children'] as Record<string, unknown>[] | undefined;
     if (Array.isArray(childSpecs)) {
       for (const c of childSpecs) {
         const err = validateSpecSteps(c);
@@ -362,7 +362,7 @@ function resourceValidation(workflow: Record<string, unknown>): ValidationResult
         }
       }
     }
-    const childSpecs = (spec['children'] ?? spec['child_workflows']) as Record<string, unknown>[] | undefined;
+    const childSpecs = spec['children'] as Record<string, unknown>[] | undefined;
     if (Array.isArray(childSpecs)) {
       for (const c of childSpecs) {
         const err = validateSpecResourceShape(c);

@@ -374,7 +374,6 @@ export interface MasterWorkflowSpecification extends ManagedElement {
   resource_property_specifications?: ResourcePropertySpecification[];
   environment_specifications?: MasterEnvironmentSpecification[];
   children?: ChildWorkflowExport[];
-  child_workflows?: MasterWorkflowSpecification[];
   viewport?: { x: number; y: number; zoom: number };
 }
 

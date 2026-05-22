@@ -35,12 +35,13 @@ function makeSpec(): MasterWorkflowSpecification {
 function makeSpecWithChildren(): MasterWorkflowSpecification {
   return {
     ...makeSpec(),
-    child_workflows: [
+    children: [
       {
         local_id: 'child-wf',
         oid: 'child-oid',
         version: '1.0.0',
         last_modified_date: '2026-03-26',
+        parentChildSpecId: null,
         steps: [
           { local_id: 'c-start', oid: 'child-step-1', version: '1.0.0', last_modified_date: '2026-03-26', step_type: 'START' },
           { local_id: 'c-end', oid: 'child-step-2', version: '1.0.0', last_modified_date: '2026-03-26', step_type: 'END' },
@@ -115,7 +116,7 @@ describe('deepCopySpec', () => {
 
   it('recurses into child workflows with new OIDs', () => {
     const copy = deepCopySpec(makeSpecWithChildren());
-    const child = copy.child_workflows![0];
+    const child = copy.children![0];
 
     // Child steps have new OIDs
     for (const step of child.steps) {
@@ -135,8 +136,8 @@ describe('deepCopySpec', () => {
     const copy1 = deepCopySpec(spec);
     const copy2 = deepCopySpec(spec);
 
-    const allOids1 = [...copy1.steps.map(s => s.oid), ...copy1.child_workflows![0].steps.map(s => s.oid)];
-    const allOids2 = [...copy2.steps.map(s => s.oid), ...copy2.child_workflows![0].steps.map(s => s.oid)];
+    const allOids1 = [...copy1.steps.map(s => s.oid), ...copy1.children![0].steps.map(s => s.oid)];
+    const allOids2 = [...copy2.steps.map(s => s.oid), ...copy2.children![0].steps.map(s => s.oid)];
 
     // No overlap between copies
     const set1 = new Set(allOids1);
@@ -162,7 +163,7 @@ describe('deepCopySpec', () => {
 
   it('regenerates spec OID for child workflows', () => {
     const copy = deepCopySpec(makeSpecWithChildren());
-    const child = copy.child_workflows![0];
+    const child = copy.children![0];
     assert.ok(child.oid.startsWith('rt_'), `Child spec OID should be regenerated`);
     assert.notEqual(child.oid, 'child-oid');
     assert.equal(child.local_id, 'child-wf');
@@ -171,8 +172,9 @@ describe('deepCopySpec', () => {
   it('remaps resource_source_oid for workflow-scoped resources', () => {
     const spec: MasterWorkflowSpecification = {
       ...makeSpec(),
-      child_workflows: [{
+      children: [{
         local_id: 'child-wf', oid: 'child-oid', version: '1.0.0', last_modified_date: '2026-03-26',
+        parentChildSpecId: null,
         steps: [
           { local_id: 'c-start', oid: 'cs1', version: '1.0.0', last_modified_date: '2026-03-26', step_type: 'START' },
           { local_id: 'c-acquire', oid: 'cs2', version: '1.0.0', last_modified_date: '2026-03-26', step_type: 'USER_INTERACTION',
@@ -192,12 +194,12 @@ describe('deepCopySpec', () => {
     };
 
     const copy = deepCopySpec(spec);
-    const childStep = copy.child_workflows![0].steps[1];
+    const childStep = copy.children![0].steps[1];
     const cmds = childStep.resource_command_specifications!;
 
     // Workflow-scoped: remapped to new spec OIDs
     assert.equal(cmds[0].resource_source_oid, copy.oid); // parent resource → new parent oid
-    assert.equal(cmds[1].resource_source_oid, copy.child_workflows![0].oid); // child resource → new child oid
+    assert.equal(cmds[1].resource_source_oid, copy.children![0].oid); // child resource → new child oid
     // Environment-scoped: preserved
     assert.equal(cmds[2].resource_source_oid, 'env-123');
   });
@@ -207,6 +209,6 @@ describe('deepCopySpec', () => {
     const copy1 = deepCopySpec(spec);
     const copy2 = deepCopySpec(spec);
     assert.notEqual(copy1.oid, copy2.oid);
-    assert.notEqual(copy1.child_workflows![0].oid, copy2.child_workflows![0].oid);
+    assert.notEqual(copy1.children![0].oid, copy2.children![0].oid);
   });
 });

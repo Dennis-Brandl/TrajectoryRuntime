@@ -78,8 +78,8 @@ export class WorkflowEngine {
       this.stepDefinitionOrder.push(step.oid);
     }
 
-    // Index child workflows by local_id (prefer v7.0 children over deprecated child_workflows)
-    const childSpecs = workflow.children ?? workflow.child_workflows;
+    // Index child workflows by local_id
+    const childSpecs = workflow.children;
     if (childSpecs) {
       for (const cw of childSpecs) {
         this.childWorkflows.set(cw.local_id, cw);
@@ -106,7 +106,7 @@ export class WorkflowEngine {
     if (!this.resourceManager) {
       const hasResourceSpecs = !!this.workflow.resource_property_specifications?.length;
       const hasResourceCmds = this.workflow.steps.some(s => s.resource_command_specifications?.length);
-      const allChildren = this.workflow.children ?? this.workflow.child_workflows;
+      const allChildren = this.workflow.children;
       const childHasResourceCmds = allChildren?.some(cw =>
         cw.steps.some(s => s.resource_command_specifications?.length),
       );
