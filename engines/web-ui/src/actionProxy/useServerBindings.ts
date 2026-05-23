@@ -2,7 +2,7 @@
 // Licensed under the GNU AGPL v3. See LICENSE.md for details.
 import { useState, useCallback } from 'react';
 import type { MasterEnvironmentSpecification } from '@engine/types.js';
-import type { ActionCapability } from './types.js';
+import type { ActionCapability, EnvironmentCapability } from './types.js';
 import { ActionApiClient } from './ActionApiClient.js';
 
 export interface BindingResult {
@@ -78,9 +78,13 @@ async function fetchAllCapabilities(
     if (capabilities.has(uri)) continue;
     setState({ phase: 'fetching-capabilities', envName: uri });
     try {
-      const caps = await api.getCapabilities(uri);
+      const envs: EnvironmentCapability[] = await api.getCapabilities(uri);
       const map = new Map<string, ActionCapability>();
-      for (const c of caps) map.set(c.action_oid, c);
+      for (const env of envs) {
+        for (const action of env.actions) {
+          map.set(action.action_oid, action);
+        }
+      }
       capabilities.set(uri, map);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);

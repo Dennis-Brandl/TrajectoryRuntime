@@ -73,13 +73,41 @@ test('deleteInstance tolerates 404', async () => {
   await client.deleteInstance('http://localhost:3002', 'ai-1');
 });
 
-test('getCapabilities returns the list', async () => {
+test('getCapabilities returns env-grouped list', async () => {
   const client = new ActionApiClient(makeFetchOnce(() => ({
     status: 200,
-    body: { data: [{ action_oid: 'act-1', environment_oid: 'env-1', local_id: 'PickAndPlace', version: '1.0', description: null, visibility: 'observable', supported_commands: ['PAUSE','RESUME','HOLD','UNHOLD','ABORT','STOP','CLEAR'], input_parameters: [], output_parameters: [] }], meta: { total: 1 } },
+    body: {
+      data: {
+        environments: [
+          {
+            environment_oid: 'env-1',
+            environment_name: 'Production',
+            environment_state: 'Effective',
+            action_properties: [],
+            actions: [
+              {
+                action_oid: 'act-1',
+                action_name: 'PickAndPlace',
+                action_state: 'Effective',
+                local_id: 'PickAndPlace',
+                version: '1.0',
+                description: null,
+                visibility: 'observable',
+                input_parameters: [],
+                output_parameters: [],
+                supported_commands: ['PAUSE', 'RESUME', 'HOLD', 'UNHOLD', 'ABORT', 'STOP', 'CLEAR'],
+              },
+            ],
+          },
+        ],
+      },
+      meta: { total: 1 },
+    },
   })));
-  const caps = await client.getCapabilities('http://localhost:3002');
-  assert.equal(caps.length, 1);
-  assert.equal(caps[0].action_oid, 'act-1');
-  assert.equal(caps[0].visibility, 'observable');
+  const envs = await client.getCapabilities('http://localhost:3002');
+  assert.equal(envs.length, 1);
+  assert.equal(envs[0].environment_oid, 'env-1');
+  assert.equal(envs[0].actions.length, 1);
+  assert.equal(envs[0].actions[0].action_oid, 'act-1');
+  assert.equal(envs[0].actions[0].visibility, 'observable');
 });

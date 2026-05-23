@@ -2,8 +2,8 @@
 // Licensed under the GNU AGPL v3. See LICENSE.md for details.
 import type {
   ActionApiError,
-  ActionCapability,
   ActionCommand,
+  EnvironmentCapability,
   InstanceSnapshot,
   InvokeRequest,
 } from './types.js';
@@ -75,10 +75,10 @@ export class ActionApiClient {
     throw await unwrapError(resp);
   }
 
-  async getCapabilities(serverUri: string): Promise<ActionCapability[]> {
+  async getCapabilities(serverUri: string): Promise<EnvironmentCapability[]> {
     const resp = await this.fetchImpl(`${serverUri}/trajectory/v1/capabilities`);
     if (resp.status !== 200) throw await unwrapError(resp);
-    const json = (await readJson(resp)) as { data: ActionCapability[] };
-    return json.data;
+    const json = (await readJson(resp)) as { data: { environments: EnvironmentCapability[] } };
+    return json.data.environments;
   }
 }

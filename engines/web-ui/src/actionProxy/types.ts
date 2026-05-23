@@ -22,14 +22,46 @@ export type ActionCommand =
 
 export type Visibility = 'opaque' | 'observable';
 
+export type LifecycleState =
+  | 'Draft'
+  | 'InTest'
+  | 'InReview'
+  | 'Approved'
+  | 'Effective'
+  | 'Superseded'
+  | 'Obsolete';
+
+export interface NormalizedParameterSpec {
+  name: string;
+  type?: string;
+  description?: string | null;
+  required?: boolean;
+}
+
 export interface ActionCapability {
   action_oid: string;
-  environment_oid: string;
+  action_name: string;
+  action_state: LifecycleState;
   local_id: string;
   version: string;
   description: string | null;
   visibility: Visibility;
+  input_parameters: NormalizedParameterSpec[];
+  output_parameters: NormalizedParameterSpec[];
   supported_commands: ActionCommand[];
+}
+
+export interface EnvironmentCapability {
+  environment_oid: string;
+  environment_name: string;
+  environment_state: LifecycleState;
+  action_properties: Array<{
+    name: string;
+    oid?: string;
+    description?: string;
+    entries: Array<{ name: string; value: string }>;
+  }>;
+  actions: ActionCapability[];
 }
 
 export interface ActionEventStateChange {
