@@ -176,7 +176,6 @@ interface MasterWorkflowSpecification extends ManagedElement {
 
   // Embedded dependencies
   environment_specifications?: MasterEnvironmentSpecification[];
-  child_workflows?: MasterWorkflowSpecification[];
 
   // Editor viewport (informational, not used at runtime)
   viewport?: { x: number; y: number; zoom: number };
@@ -926,19 +925,7 @@ interface MasterActionLibrary extends ManagedElement {
 
 ---
 
-## 19. Child Workflows
-
-Workflows can contain embedded child workflows, invoked via `WORKFLOW PROXY` steps:
-
-```typescript
-child_workflows: MasterWorkflowSpecification[]
-```
-
-Each child workflow has the same complete structure as the root workflow (steps, connections, parameters, resources, etc.). Child workflows can be nested recursively.
-
----
-
-## 20. Runtime State Model
+## 19. Runtime State Model
 
 ### 20.1 Workflow States
 
