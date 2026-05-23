@@ -34,7 +34,7 @@ export function HomeScreen({ onNavigateToActive, menuAction, onMenuActionHandled
   const touchStartX = useRef(0);
   /** instanceId of the workflow that has been prepared but not yet started (picker flow). */
   const [pendingInstanceId, setPendingInstanceId] = useState<string | null>(null);
-  const bindings = useServerBindings();
+  const { state: bindingsState, begin: bindingsBegin, selectServer: bindingsSelectServer, resolveConflict, abandon: bindingsAbandon, reset: bindingsReset } = useServerBindings();
 
   // Delete confirmation settings
   const [confirmDeleteLoaded] = useLocalStorage('trajectory-confirm-delete-loaded', true);
@@ -121,36 +121,36 @@ export function HomeScreen({ onNavigateToActive, menuAction, onMenuActionHandled
       onNavigateToActive();
     } else {
       setPendingInstanceId(instanceId);
-      bindings.begin(envs);
+      bindingsBegin(envs);
     }
-  }, [manager, onNavigateToActive, bindings]);
+  }, [manager, onNavigateToActive, bindingsBegin]);
 
   const handleStartCancel = useCallback(() => { setStartTarget(null); }, []);
 
   // React to binding phase transitions
   useEffect(() => {
     if (!pendingInstanceId) return;
-    if (bindings.state.phase === 'done') {
+    if (bindingsState.phase === 'done') {
       const coordinator = manager.getCoordinator(pendingInstanceId);
       if (coordinator) {
         coordinator.setServerBindings(
           pendingInstanceId,
-          bindings.state.result.bindings,
-          bindings.state.result.capabilities,
+          bindingsState.result.bindings,
+          bindingsState.result.capabilities,
         );
       }
       manager.runWorkflow(pendingInstanceId);
       setPendingInstanceId(null);
-      bindings.reset();
+      bindingsReset();
       onNavigateToActive();
-    } else if (bindings.state.phase === 'abandoned') {
+    } else if (bindingsState.phase === 'abandoned') {
       // User declined — abort the prepared (but not yet started) workflow
       const coordinator = manager.getCoordinator(pendingInstanceId);
       coordinator?.abort();
       setPendingInstanceId(null);
-      bindings.reset();
+      bindingsReset();
     }
-  }, [bindings.state.phase, pendingInstanceId, manager, onNavigateToActive, bindings]);
+  }, [bindingsState.phase, pendingInstanceId, manager, onNavigateToActive, bindingsReset]);
 
   const handleActiveWorkflowClick = useCallback((wfId: string) => {
     manager.focusWorkflow(wfId);
@@ -387,29 +387,72 @@ export function HomeScreen({ onNavigateToActive, menuAction, onMenuActionHandled
         />
       )}
 
-      {bindings.state.phase === 'picking' && (() => {
-        const env = bindings.state.envs[bindings.state.envIndex];
+      {bindingsState.phase === 'picking' && (() => {
+        const env = bindingsState.envs[bindingsState.envIndex];
         return (
           <ActionServerPicker
             environmentName={env.local_id}
             servers={env.action_server_specifications ?? []}
-            onUse={bindings.selectServer}
-            onAbandon={bindings.abandon}
+            onUse={bindingsSelectServer}
+            onAbandon={bindingsAbandon}
           />
         );
       })()}
 
-      {bindings.state.phase === 'fetching-capabilities' && (
+      {bindingsState.phase === 'fetching-capabilities' && (
         <div className={styles.pickerOverlay}>
-          <div className={styles.pickerStatus}>Connecting to {bindings.state.envName}&hellip;</div>
+          <div className={styles.pickerStatus}>Connecting to {bindingsState.envName}&hellip;</div>
         </div>
       )}
 
-      {bindings.state.phase === 'error' && (
+      {bindingsState.phase === 'error' && (
         <div className={styles.pickerOverlay}>
           <div className={styles.pickerError}>
-            <p>Could not connect to <strong>{bindings.state.envName}</strong>: {bindings.state.message}</p>
-            <button className={styles.pickerErrorBtn} onClick={bindings.abandon}>Cancel</button>
+            <p>Could not connect to <strong>{bindingsState.envName}</strong>: {bindingsState.message}</p>
+            <button className={styles.pickerErrorBtn} onClick={bindingsAbandon}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {bindingsState.phase === 'mapping-error' && (
+        <div className={styles.pickerOverlay}>
+          <div className={styles.mappingError}>
+            <h3 className={styles.mappingErrorTitle}>Cannot start workflow</h3>
+            <p className={styles.mappingErrorMessage}>{bindingsState.message}</p>
+            <button className={styles.pickerErrorBtn} onClick={bindingsReset}>Dismiss</button>
+          </div>
+        </div>
+      )}
+
+      {bindingsState.phase === 'resolving-name-conflict' && (
+        <div className={styles.pickerOverlay}>
+          <div className={styles.conflictModal}>
+            <h3 className={styles.conflictModalTitle}>Multiple action servers offer this environment</h3>
+            {bindingsState.conflicts.map((c) => {
+              const pickedUri = bindingsState.selections.get(c.envOid);
+              return (
+                <div key={c.envOid} className={styles.conflictEnv}>
+                  <strong className={styles.conflictEnvName}>{c.envName}</strong>
+                  <ul className={styles.conflictCandidates}>
+                    {c.candidates.map((cand) => {
+                      const isPicked = pickedUri === cand.serverUri;
+                      return (
+                        <li key={cand.serverUri} className={isPicked ? styles.conflictCandidatePicked : undefined}>
+                          <button
+                            className={isPicked ? styles.conflictBtnPicked : styles.conflictBtn}
+                            onClick={() => resolveConflict(c.envOid, cand.serverUri)}
+                            disabled={isPicked}
+                          >
+                            {cand.serverUri}
+                          </button>
+                          {isPicked && <span className={styles.conflictPickedLabel}>Selected</span>}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
