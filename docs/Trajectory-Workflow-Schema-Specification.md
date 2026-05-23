@@ -30,7 +30,7 @@ This document is a complete specification of the DRAFT Distributed Workflow Inte
 16. [Resource Specifications](#16-resource-specifications)
 17. [Environment Specifications](#17-environment-specifications)
 18. [Action Specifications](#18-action-specifications)
-19. [Child Workflows](#19-child-workflows)
+19. [Children (Nested Workflow Specifications)](#19-children-nested-workflow-specifications)
 20. [Runtime State Model](#20-runtime-state-model)
 21. [Execution Semantics](#21-execution-semantics)
 22. [Image Handling](#22-image-handling)
@@ -176,6 +176,7 @@ interface MasterWorkflowSpecification extends ManagedElement {
 
   // Embedded dependencies
   environment_specifications?: MasterEnvironmentSpecification[];
+  children?: ChildWorkflowExport[];
 
   // Editor viewport (informational, not used at runtime)
   viewport?: { x: number; y: number; zoom: number };
@@ -925,7 +926,28 @@ interface MasterActionLibrary extends ManagedElement {
 
 ---
 
-## 19. Runtime State Model
+## 19. Children (Nested Workflow Specifications)
+
+Workflows may contain nested child workflows. Each nested workflow is represented as a `ChildWorkflowExport` — a wrapper that identifies the workflow specification being instantiated and carries the full embedded workflow body.
+
+```typescript
+children?: ChildWorkflowExport[];
+
+interface ChildWorkflowExport {
+  parentChildSpecId: string;   // OID of the spec being instantiated
+  version: string;
+  state: 'Draft' | 'InTest' | 'InReview' | 'Approved' | 'Effective' | 'Superseded' | 'Obsolete';
+  // ... plus the embedded workflow body (steps, connections, children — recursive)
+}
+```
+
+`ChildWorkflowExport` carries the nested workflow's complete structure: its own steps, connections, parameter specifications, resource specifications, and — recursively — any further `children`. The `parentChildSpecId` identifies the workflow specification OID being instantiated, while `version` and `state` reflect the lifecycle state of that specification at the time the package was exported.
+
+> **Deprecation note:** The deprecated `child_workflows` field was removed on 2026-05-22. See `docs/v7.0-package-format-changes.md` for migration guidance.
+
+---
+
+## 20. Runtime State Model
 
 ### 20.1 Workflow States
 
