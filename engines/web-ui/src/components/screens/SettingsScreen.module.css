@@ -163,3 +163,9 @@
   color: var(--color-text-secondary);
   margin: 4px 0 0;
 }
+
+.settingHelp {
+  margin: 0 0 12px;
+  color: var(--text-muted, #777);
+  font-size: 0.85rem;
+}
