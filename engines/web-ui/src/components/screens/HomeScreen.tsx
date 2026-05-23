@@ -133,6 +133,7 @@ export function HomeScreen({ onNavigateToActive, menuAction, onMenuActionHandled
     if (bindingsState.phase === 'done') {
       const coordinator = manager.getCoordinator(pendingInstanceId);
       if (coordinator) {
+        coordinator.applyOidRewrites(bindingsState.result.rewrittenOids);
         coordinator.setServerBindings(
           pendingInstanceId,
           bindingsState.result.bindings,

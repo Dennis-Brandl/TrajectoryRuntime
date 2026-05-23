@@ -19,6 +19,7 @@ import { PersistenceStore } from '../actionProxy/persistence.js';
 import { SseObserver } from '../actionProxy/SseObserver.js';
 import type { ActionCapability, ActionInstanceObserver } from '../actionProxy/types.js';
 import { environmentsNeedingBinding } from '../actionProxy/environmentScan.js';
+import { rewriteWorkflowOids } from '../actionProxy/rewriteWorkflowOids.js';
 
 const USE_KMP_ENGINE = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_USE_KMP_ENGINE === 'true');
 
@@ -165,6 +166,16 @@ export class WorkflowCoordinator {
     this._workflowInstanceId = workflowInstanceId;
     this._serverBindings = bindings;
     this._capabilities = capabilities;
+  }
+
+  /**
+   * Rewrite authored OIDs in the loaded workflow spec to server-assigned OIDs.
+   * Must be called after load() and before start().
+   * No-op when rewrites is empty.
+   */
+  applyOidRewrites(rewrites: Map<string, string>): void {
+    if (!this.workflow || rewrites.size === 0) return;
+    this.workflow = rewriteWorkflowOids(this.workflow, rewrites);
   }
 
   /** Get the controller for an active ACTION PROXY step (returns null if none). */
