@@ -6,8 +6,7 @@ private func normalizeStepType(_ t: String) -> String {
 
 // Valid step types — includes SELECT_1 as accepted alias for SELECT 1
 private let validStepTypes: Set<String> = [
-    "START", "END", "ACTION PROXY", "WAIT ACTION PROXY",
-    "NOWAIT ACTION PROXY", "WORKFLOW PROXY", "SELECT 1", "SELECT_1",
+    "START", "END", "ACTION PROXY", "WORKFLOW PROXY", "SELECT 1", "SELECT_1",
     "WAIT ANY", "PARALLEL", "WAIT ALL", "MATH", "SCRIPT",
     "YES_NO", "USER_INTERACTION"
 ]
