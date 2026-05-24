@@ -90,4 +90,42 @@ describe('HttpActionInvoker', () => {
       globalThis.fetch = originalFetch;
     }
   });
+
+  it('polling delivers state changes when status changes between ticks', async () => {
+    const originalFetch = globalThis.fetch;
+    const statusSeq = ['POSTED', 'EXECUTING', 'COMPLETED'];
+    let i = 0;
+    globalThis.fetch = (async (input: any) => {
+      const url = String(input);
+      if (url.endsWith('/invoke')) {
+        return {
+          ok: true, status: 201,
+          json: async () => ({ data: { runtime_action_instance_id: 'rai-9', status: 'POSTED' } }),
+        } as any;
+      }
+      const status = statusSeq[Math.min(i++, statusSeq.length - 1)];
+      const body = status === 'COMPLETED'
+        ? { data: { status, output_parameters: { x: '1' } } }
+        : { data: { status } };
+      return { ok: true, status: 200, json: async () => body } as any;
+    }) as typeof fetch;
+
+    const seen: Array<{ s: string; o?: any }> = [];
+    const inv = new HttpActionInvoker();
+    await inv.invoke({
+      stepOid: 'sx', workflow_instance_id: 'wf', serverUri: 'http://s/', action_oid: 'a',
+      inputs: {}, mode: 'poll-only', pollIntervalMs: 5,
+    }, { onStateChange: (_oid, s, o) => seen.push({ s, o }), onConnectivityChange: () => {} });
+
+    await new Promise(r => setTimeout(r, 100));
+    inv.release('sx');
+    globalThis.fetch = originalFetch;
+
+    const states = seen.map(e => e.s);
+    assert.ok(states.includes('POSTED'), 'should see POSTED');
+    assert.ok(states.includes('EXECUTING'), 'should see EXECUTING');
+    assert.ok(states.includes('COMPLETED'), 'should see COMPLETED');
+    const completed = seen.find(e => e.s === 'COMPLETED');
+    assert.deepEqual(completed?.o, { x: '1' });
+  });
 });
