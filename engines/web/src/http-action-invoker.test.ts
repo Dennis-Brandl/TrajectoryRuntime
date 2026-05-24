@@ -166,4 +166,29 @@ describe('HttpActionInvoker', () => {
     assert.ok(seen.includes('STARTING'));
     assert.ok(seen.includes('COMPLETED'));
   });
+
+  it('invoke retries on network error and eventually succeeds', async () => {
+    const originalFetch = globalThis.fetch;
+    let calls = 0;
+    globalThis.fetch = (async (input: any) => {
+      calls++;
+      if (String(input).endsWith('/invoke') && calls < 3) {
+        throw new Error('econnrefused');
+      }
+      return { ok: true, status: 201, json: async () => ({ data: { runtime_action_instance_id: 'rai-r', status: 'POSTED' } }) } as any;
+    }) as typeof fetch;
+
+    try {
+      const inv = new HttpActionInvoker();
+      const id = await inv.invoke({
+        stepOid: 'sr', workflow_instance_id: 'w', serverUri: 'http://s/', action_oid: 'a',
+        inputs: {}, mode: 'poll-only', pollIntervalMs: 1000,
+      }, { onStateChange: () => {}, onConnectivityChange: () => {} });
+      assert.equal(id, 'rai-r');
+      assert.ok(calls >= 3);
+      inv.release('sr');
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
 });

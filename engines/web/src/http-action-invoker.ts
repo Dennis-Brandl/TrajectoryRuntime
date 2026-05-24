@@ -60,7 +60,7 @@ export class HttpActionInvoker implements ActionInvoker {
       input_parameters: req.inputs,
     };
 
-    const res = await fetch(url, {
+    const res = await this.fetchWithRetry(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
@@ -155,6 +155,29 @@ export class HttpActionInvoker implements ActionInvoker {
 
     state.pollTimer = setTimeout(tick, intervalMs);
   }
+  private async fetchWithRetry(
+    url: string,
+    init: RequestInit,
+  ): Promise<Response> {
+    const delays = [100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600, 30000];
+    let attempt = 0;
+    for (;;) {
+      try {
+        const res = await fetch(url, init);
+        if (res.status >= 500 && res.status < 600) {
+          // retry
+        } else {
+          return res;
+        }
+      } catch {
+        // retry
+      }
+      const wait = delays[Math.min(attempt, delays.length - 1)];
+      attempt++;
+      await new Promise(r => setTimeout(r, wait));
+    }
+  }
+
   private startSse(
     stepOid: string,
     serverUri: string,
