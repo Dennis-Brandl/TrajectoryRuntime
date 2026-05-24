@@ -227,6 +227,14 @@ data class ChildWorkflowExport(
 }
 
 @Serializable
+data class ActionServerSpecification(
+    val name: String,
+    val uri: String,
+    val description: String? = null,
+    val connection_type: String,
+)
+
+@Serializable
 data class MasterEnvironmentSpecification(
     val local_id: String,
     val oid: String,
@@ -238,11 +246,15 @@ data class MasterEnvironmentSpecification(
     val value_property_specifications: List<PropertySpecification>? = null,
     val action_property_specifications: List<PropertySpecification>? = null,
     val resource_property_specifications: List<ResourcePropertySpecification>? = null,
+    val action_server_specifications: List<ActionServerSpecification>? = null,
 )
 
 // ── Engine Runtime Types ──
 
-enum class StepState { IDLE, WAITING, STARTING, EXECUTING, COMPLETING, COMPLETED, ERRORED, PAUSED }
+enum class StepState {
+    IDLE, WAITING, STARTING, EXECUTING, COMPLETING, COMPLETED, ERRORED, PAUSED,
+    HELD, POSTED, RECEIVED, IN_PROGRESS, ABORTED,
+}
 enum class WorkflowState { IDLE, RUNNING, COMPLETED, ABORTED, STOPPED, ERRORED }
 
 data class StepInstance(
@@ -314,7 +326,11 @@ data class CompletedStepInfo(
     val completedOrder: Int,
 )
 
-val ACTIVE_STEP_STATES = setOf(StepState.EXECUTING, StepState.WAITING, StepState.PAUSED)
+val ACTIVE_STEP_STATES = setOf(
+    StepState.EXECUTING, StepState.WAITING, StepState.PAUSED,
+    StepState.STARTING, StepState.COMPLETING,
+    StepState.HELD, StepState.POSTED, StepState.RECEIVED, StepState.IN_PROGRESS, StepState.ABORTED,
+)
 
 // ── Test Fixture Types ──
 
