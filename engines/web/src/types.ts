@@ -308,6 +308,13 @@ export interface CompletedStepInfo {
   completedAt: number;
 }
 
+export interface ActionServerSpecification {
+  name: string;
+  uri: string;
+  description?: string;
+  connection_type: string; // "REST" for now
+}
+
 export interface MasterEnvironmentSpecification {
   local_id: string;
   oid: string;
@@ -319,6 +326,7 @@ export interface MasterEnvironmentSpecification {
   value_property_specifications?: PropertySpecification[];
   action_property_specifications?: PropertySpecification[];
   resource_property_specifications?: ResourcePropertySpecification[];
+  action_server_specifications?: ActionServerSpecification[];
 }
 
 export interface MasterEnvironmentLibrary {
@@ -377,6 +385,7 @@ export type StepState =
 /** States that represent an active step visible in the UI (not auto-completing, not finished). */
 export const ACTIVE_STEP_STATES: ReadonlySet<StepState> = new Set<StepState>([
   'EXECUTING', 'WAITING', 'PAUSED',
+  'STARTING', 'COMPLETING',
   'HELD', 'POSTED', 'RECEIVED', 'IN_PROGRESS', 'ABORTED',
 ]);
 export type WorkflowState = 'IDLE' | 'RUNNING' | 'COMPLETED' | 'ABORTED' | 'STOPPED' | 'ERRORED';
