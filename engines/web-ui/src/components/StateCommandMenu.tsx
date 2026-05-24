@@ -36,6 +36,12 @@ export function StateCommandMenu({ workflowId }: StateCommandMenuProps) {
   const canAbandon = isRunning;
   const canRestartAll = isRunning;
 
+  const ACTION_PROXY_NON_TERMINAL = new Set(['STARTING', 'EXECUTING', 'POSTED', 'IN_PROGRESS', 'RECEIVED', 'HELD', 'PAUSED']);
+  const stoppableActionProxyOids = (snapshot?.activeSteps ?? [])
+    .filter(s => s.step.stepType === 'ACTION PROXY' && ACTION_PROXY_NON_TERMINAL.has(s.step.state))
+    .map(s => s.step.oid);
+  const canStop = isRunning && stoppableActionProxyOids.length > 0;
+
   // Close dropdown on click outside
   useEffect(() => {
     if (!open) return;
@@ -47,6 +53,16 @@ export function StateCommandMenu({ workflowId }: StateCommandMenuProps) {
     document.addEventListener('click', handleClick);
     return () => document.removeEventListener('click', handleClick);
   }, [open]);
+
+  const handleStop = useCallback(() => {
+    if (workflowId) {
+      const coord = manager.getCoordinator(workflowId);
+      for (const oid of stoppableActionProxyOids) {
+        coord?.stopStep(oid);
+      }
+    }
+    setOpen(false);
+  }, [manager, workflowId, stoppableActionProxyOids]);
 
   const handlePause = useCallback(() => {
     if (workflowId) manager.getCoordinator(workflowId)?.pauseAll();
@@ -113,6 +129,9 @@ export function StateCommandMenu({ workflowId }: StateCommandMenuProps) {
           </button>
           <button className={styles.commandBtn} disabled={!canResume} onClick={handleResume}>
             Resume
+          </button>
+          <button className={styles.commandBtn} disabled={!canStop} onClick={handleStop}>
+            Stop
           </button>
           <button className={styles.commandBtn} disabled={!canRestartFromStep} onClick={handleRestartFromStep}>
             Restart from Step
