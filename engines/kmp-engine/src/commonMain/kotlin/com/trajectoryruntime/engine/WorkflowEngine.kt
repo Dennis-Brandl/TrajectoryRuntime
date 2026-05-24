@@ -3,6 +3,11 @@
 package com.trajectoryruntime.engine
 
 import kotlin.random.Random
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 class WorkflowEngine(
     private val workflow: MasterWorkflowSpecification,
@@ -31,10 +36,32 @@ class WorkflowEngine(
     private val childWorkflows = mutableMapOf<String, MasterWorkflowSpecification>()  // local_id -> spec
     private val activeChildEngines = mutableMapOf<String, WorkflowEngine>()  // parent step OID -> child engine
 
+    // ACTION PROXY support
+    private var actionInvoker: ActionInvoker? = null
+    private var serverByEnvOid: Map<String, ActionServerSpecification> = emptyMap()
+    private var pollIntervalMs: Long = 4000
+    private val actionInstanceIdByStep = mutableMapOf<String, String>()
+    private val activeActionProxyServers = mutableMapOf<String, String>()
+    private val connectivityListeners = mutableListOf<(String, String) -> Unit>()
+
     private data class WaitAllTracker(
         val expected: Set<String>,
         val completed: MutableSet<String>,
     )
+
+    fun setActionInvoker(invoker: ActionInvoker, servers: Map<String, ActionServerSpecification>) {
+        actionInvoker = invoker
+        serverByEnvOid = servers
+    }
+
+    fun setActionInvokerOptions(pollMs: Long) {
+        pollIntervalMs = pollMs
+    }
+
+    fun subscribeConnectivity(fn: (String, String) -> Unit): () -> Unit {
+        connectivityListeners.add(fn)
+        return { connectivityListeners.remove(fn) }
+    }
 
     init {
         // Initialize steps
@@ -67,6 +94,21 @@ class WorkflowEngine(
         } else {
             workflow.child_workflows?.forEach { cw ->
                 childWorkflows[cw.local_id] = cw
+            }
+        }
+
+        // Validate: action local_ids unique across environments
+        val seenActionLocalIds = mutableMapOf<String, String>()
+        for (env in workflow.environment_specifications ?: emptyList()) {
+            for (a in env.included_actions ?: emptyList()) {
+                val lid = (a as? JsonObject)?.get("local_id")?.jsonPrimitive?.content ?: continue
+                val prior = seenActionLocalIds[lid]
+                if (prior != null) {
+                    throw IllegalStateException(
+                        "Workflow has duplicate action local_id \"$lid\" in environments \"$prior\" and \"${env.local_id}\""
+                    )
+                }
+                seenActionLocalIds[lid] = env.local_id
             }
         }
     }
@@ -382,6 +424,11 @@ class WorkflowEngine(
             label = target.step.local_id,
             stepType = target.stepType,
         )
+
+        if (target.stepType == "ACTION PROXY") {
+            activateActionProxy(target)
+            return
+        }
 
         if (target.stepType == "WORKFLOW PROXY") {
             activateWorkflowProxy(target)
@@ -885,10 +932,19 @@ class WorkflowEngine(
         }
     }
 
-    // ── Pause / Resume ──
+    // ── Pause / Resume / Stop / Abort ──
 
     fun pauseStep(stepOid: String) {
         val step = steps[stepOid]
+        if (step != null && step.stepType == "ACTION PROXY") {
+            val uri = activeActionProxyServers[stepOid] ?: return
+            val id = actionInstanceIdByStep[stepOid] ?: return
+            val inv = actionInvoker ?: return
+            GlobalScope.launch {
+                try { inv.sendCommand(uri, id, ActionServerCommand.PAUSE) } catch (_: Throwable) {}
+            }
+            return
+        }
         if (step != null && step.state == StepState.EXECUTING) {
             step.state = StepState.PAUSED
             recordTrace(stepOid, "PAUSED")
@@ -901,6 +957,15 @@ class WorkflowEngine(
 
     fun resumeStep(stepOid: String) {
         val step = steps[stepOid]
+        if (step != null && step.stepType == "ACTION PROXY") {
+            val uri = activeActionProxyServers[stepOid] ?: return
+            val id = actionInstanceIdByStep[stepOid] ?: return
+            val inv = actionInvoker ?: return
+            GlobalScope.launch {
+                try { inv.sendCommand(uri, id, ActionServerCommand.RESUME) } catch (_: Throwable) {}
+            }
+            return
+        }
         if (step != null && step.state == StepState.PAUSED) {
             step.state = StepState.EXECUTING
             recordTrace(stepOid, "EXECUTING")
@@ -908,6 +973,157 @@ class WorkflowEngine(
             for (child in activeChildEngines.values) {
                 child.resumeStep(stepOid)
             }
+        }
+    }
+
+    fun stopStep(stepOid: String) {
+        val step = steps[stepOid] ?: return
+        if (step.stepType != "ACTION PROXY") return
+        val uri = activeActionProxyServers[stepOid] ?: return
+        val id = actionInstanceIdByStep[stepOid] ?: return
+        val inv = actionInvoker ?: return
+        GlobalScope.launch {
+            try { inv.sendCommand(uri, id, ActionServerCommand.STOP) } catch (_: Throwable) {}
+        }
+    }
+
+    fun abortWorkflow() {
+        val inv = actionInvoker
+        for ((stepOid, uri) in activeActionProxyServers) {
+            val id = actionInstanceIdByStep[stepOid]
+            if (id != null && inv != null) {
+                GlobalScope.launch { try { inv.abort(uri, id) } catch (_: Throwable) {} }
+            }
+            inv?.release(stepOid)
+        }
+        actionInstanceIdByStep.clear()
+        activeActionProxyServers.clear()
+        for (child in activeChildEngines.values) child.abortWorkflow()
+        workflowState = WorkflowState.ABORTED
+    }
+
+    // ── ACTION PROXY ──
+
+    private fun activateActionProxy(target: StepInstance) {
+        val invoker = actionInvoker
+        if (invoker == null) {
+            recordTrace(target.oid, "ERRORED", error = "No ActionInvoker configured")
+            target.state = StepState.ERRORED
+            workflowState = WorkflowState.ERRORED
+            return
+        }
+
+        val env = findEnvForActionLocalId(target.step.local_id)
+        if (env == null) {
+            recordTrace(target.oid, "ERRORED",
+                error = "No environment contains action local_id \"${target.step.local_id}\"")
+            target.state = StepState.ERRORED
+            workflowState = WorkflowState.ERRORED
+            return
+        }
+
+        val server = serverByEnvOid[env.oid]
+        if (server == null) {
+            recordTrace(target.oid, "ERRORED",
+                error = "No action server selected for environment \"${env.local_id}\"")
+            target.state = StepState.ERRORED
+            workflowState = WorkflowState.ERRORED
+            return
+        }
+
+        val included = env.included_actions ?: emptyList()
+        val match = included.firstOrNull {
+            (it as? JsonObject)?.get("local_id")?.jsonPrimitive?.content == target.step.local_id
+        } as? JsonObject
+        val actionOid = match?.get("oid")?.jsonPrimitive?.content
+        if (actionOid == null) {
+            recordTrace(target.oid, "ERRORED",
+                error = "Environment \"${env.local_id}\" does not include action \"${target.step.local_id}\"")
+            target.state = StepState.ERRORED
+            workflowState = WorkflowState.ERRORED
+            return
+        }
+
+        val inputs = stepParameterSnapshots[target.oid]?.inputParameters ?: emptyMap()
+
+        recordTrace(target.oid, "STARTING")
+        target.state = StepState.STARTING
+        activeActionProxyServers[target.oid] = server.uri.trim()
+
+        val req = InvokeRequestKmp(
+            stepOid = target.oid,
+            workflowInstanceId = instanceId,
+            serverUri = server.uri.trim(),
+            actionOid = actionOid,
+            inputs = inputs,
+            pollIntervalMs = pollIntervalMs,
+        )
+        val callbacks = object : ActionInvokerCallbacks {
+            override fun onStateChange(stepOid: String, newState: StepState, outputs: Map<String, String>?) {
+                onExternalStateChange(stepOid, newState, outputs)
+            }
+            override fun onConnectivityChange(stepOid: String, status: String) {
+                connectivityListeners.forEach { it(stepOid, status) }
+            }
+        }
+
+        GlobalScope.launch {
+            try {
+                val instId = invoker.invoke(req, callbacks)
+                actionInstanceIdByStep[target.oid] = instId
+            } catch (e: Throwable) {
+                recordTrace(target.oid, "ERRORED", error = e.message ?: "invoke failed")
+                steps[target.oid]?.state = StepState.ERRORED
+                workflowState = WorkflowState.ERRORED
+            }
+        }
+    }
+
+    private fun findEnvForActionLocalId(localId: String): MasterEnvironmentSpecification? {
+        val envs = workflow.environment_specifications ?: return null
+        return envs.firstOrNull { env ->
+            (env.included_actions ?: emptyList()).any {
+                (it as? JsonObject)?.get("local_id")?.jsonPrimitive?.content == localId
+            }
+        }
+    }
+
+    fun onExternalStateChange(
+        stepOid: String,
+        newState: StepState,
+        outputs: Map<String, String>?,
+    ) {
+        val step = steps[stepOid] ?: return
+        if (workflowState == WorkflowState.ABORTED || workflowState == WorkflowState.COMPLETED) return
+
+        recordTrace(stepOid, newState.name)
+        step.state = newState
+
+        if (outputs != null) {
+            for (spec in step.step.output_parameter_specifications ?: emptyList()) {
+                val v = outputs[spec.id]
+                if (v != null && spec.target != null) propertyStore.set(spec.target!!, v)
+            }
+        }
+
+        when (newState) {
+            StepState.COMPLETED -> {
+                actionInvoker?.release(stepOid)
+                actionInstanceIdByStep.remove(stepOid)
+                activeActionProxyServers.remove(stepOid)
+                completionQueue.addLast(stepOid)
+                drainCompletionQueue()
+            }
+            StepState.ABORTED -> {
+                actionInvoker?.release(stepOid)
+                actionInstanceIdByStep.remove(stepOid)
+                activeActionProxyServers.remove(stepOid)
+            }
+            StepState.ERRORED -> {
+                actionInvoker?.release(stepOid)
+                workflowState = WorkflowState.ERRORED
+            }
+            else -> { /* intermediate */ }
         }
     }
 
