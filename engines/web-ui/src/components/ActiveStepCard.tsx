@@ -15,6 +15,7 @@ export interface ActiveStepCardProps {
   mediaMap: Record<string, string>;
   deviceType?: 'phone' | 'tablet-vertical' | 'tablet-horizontal' | 'desktop';
   header?: StepCanvasHeader;
+  connectivityStatus?: 'ok' | 'reconnecting' | 'never_connected';
 }
 
 /** Step types that require user interaction. */
@@ -32,7 +33,7 @@ function formatState(state: string): string {
   return state.replace(/_/g, ' ');
 }
 
-export function ActiveStepCard({ step, onAction, workflowId, properties, inputParameters, mediaMap, deviceType, header }: ActiveStepCardProps) {
+export function ActiveStepCard({ step, onAction, workflowId, properties, inputParameters, mediaMap, deviceType, header, connectivityStatus }: ActiveStepCardProps) {
   const { step: instance } = step;
   const { state, stepType } = instance;
 
@@ -46,6 +47,20 @@ export function ActiveStepCard({ step, onAction, workflowId, properties, inputPa
 
   const label = instance.step.description ?? stepType;
   const isInteractive = INTERACTIVE_TYPES.has(stepType);
+
+  const connectivityPill = connectivityStatus && connectivityStatus !== 'ok' ? (
+    <div style={{
+      display: 'inline-block',
+      padding: '2px 8px',
+      borderRadius: 12,
+      background: '#f0ad4e',
+      color: 'white',
+      fontSize: 11,
+      marginTop: 4,
+    }}>
+      {connectivityStatus === 'reconnecting' ? 'Reconnecting…' : 'Connecting…'}
+    </div>
+  ) : null;
 
   // 1. Interactive mode: EXECUTING + interactive step type
   if (state === 'EXECUTING' && isInteractive) {
@@ -94,6 +109,7 @@ export function ActiveStepCard({ step, onAction, workflowId, properties, inputPa
         <div className={styles.infoLabel}>{label}</div>
         <div className={styles.infoState}>{formatState(state)}</div>
         <div className={styles.infoTimestamp}>{formatTime(timestamp)}</div>
+        {connectivityPill}
       </div>
     );
   }
@@ -105,6 +121,7 @@ export function ActiveStepCard({ step, onAction, workflowId, properties, inputPa
         <div className={styles.infoLabel}>{label}</div>
         <div className={styles.infoState}>Processing...</div>
         <div className={styles.infoTimestamp}>{formatTime(timestamp)}</div>
+        {connectivityPill}
       </div>
     );
   }
@@ -116,6 +133,7 @@ export function ActiveStepCard({ step, onAction, workflowId, properties, inputPa
         <div className={styles.infoLabel}>{label}</div>
         <div className={styles.infoState}>{formatState(state)}</div>
         <div className={styles.infoTimestamp}>{formatTime(timestamp)}</div>
+        {connectivityPill}
       </div>
     );
   }
@@ -125,6 +143,7 @@ export function ActiveStepCard({ step, onAction, workflowId, properties, inputPa
     <div className={styles.infoCard}>
       <div className={styles.infoLabel}>{label}</div>
       <div className={styles.infoState}>{formatState(state)}</div>
+      {connectivityPill}
     </div>
   );
 }
