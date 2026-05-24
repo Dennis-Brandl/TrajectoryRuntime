@@ -24,6 +24,16 @@
         "YES_NO", "USER_INTERACTION"
       ]
     },
+    "ActionServerSpecification": {
+      "type": "object",
+      "required": ["name", "uri", "connection_type"],
+      "properties": {
+        "name": { "type": "string" },
+        "uri": { "type": "string" },
+        "description": { "type": "string" },
+        "connection_type": { "type": "string", "enum": ["REST"] }
+      }
+    },
     "WorkflowConnection": {
       "type": "object",
       "properties": {
@@ -513,6 +523,10 @@
             "resource_property_specifications": {
               "type": "array",
               "items": { "$ref": "#/$defs/ResourcePropertySpecification" }
+            },
+            "action_server_specifications": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/ActionServerSpecification" }
             }
           },
           "required": ["included_actions"]
