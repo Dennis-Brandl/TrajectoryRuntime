@@ -587,9 +587,13 @@ export class WorkflowEngine {
     target.state = 'STARTING';
     this.activeActionProxyServers.set(target.oid, server.uri.trim());
 
+    const stepInstanceId = `${target.oid}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
     void this.actionInvoker.invoke({
       stepOid: target.oid,
       workflow_instance_id: this.instanceId,
+      environment_oid: env.oid,
+      step_instance_id: stepInstanceId,
+      step_oid: target.oid,
       serverUri: server.uri.trim(),
       action_oid: match.oid,
       inputs,
@@ -660,6 +664,22 @@ export class WorkflowEngine {
         this.workflowState = 'ERRORED';
       }
     }
+
+    // Notify external-update subscribers so the coordinator can re-publish
+    // its snapshot. Async state transitions (from the invoker callback)
+    // don't trigger the usual synchronous sync path.
+    for (const fn of this.externalUpdateListeners) fn();
+  }
+
+  private externalUpdateListeners: Array<() => void> = [];
+
+  /** Subscribe to async state updates pushed in via onExternalStateChange. */
+  subscribeExternalUpdate(fn: () => void): () => void {
+    this.externalUpdateListeners.push(fn);
+    return () => {
+      const idx = this.externalUpdateListeners.indexOf(fn);
+      if (idx >= 0) this.externalUpdateListeners.splice(idx, 1);
+    };
   }
 
   private connectivityListeners: Array<(stepOid: string, status: 'ok' | 'reconnecting' | 'never_connected') => void> = [];

@@ -57,7 +57,10 @@ export class HttpActionInvoker implements ActionInvoker {
     const url = `${base}actions/${encodeURIComponent(req.action_oid)}/invoke`;
     const body = {
       workflow_instance_id: req.workflow_instance_id,
-      input_parameters: req.inputs,
+      environment_oid: req.environment_oid,
+      step_instance_id: req.step_instance_id,
+      step_oid: req.step_oid,
+      input_parameters: Object.entries(req.inputs).map(([name, value]) => ({ name, value })),
     };
 
     const res = await this.fetchWithRetry(url, {
@@ -72,14 +75,15 @@ export class HttpActionInvoker implements ActionInvoker {
     }
 
     const parsed = await res.json() as {
-      data?: { runtime_action_instance_id?: string; status?: string; sse_endpoint?: string };
+      data?: { instance_id?: string; runtime_action_instance_id?: string; state?: { current?: string }; status?: string; sse_endpoint?: string };
     };
     const data = parsed.data ?? {};
-    const instanceId = data.runtime_action_instance_id;
-    if (!instanceId) throw new Error('invoke response missing runtime_action_instance_id');
+    const instanceId = data.instance_id ?? data.runtime_action_instance_id;
+    if (!instanceId) throw new Error('invoke response missing instance_id');
 
-    if (data.status) {
-      callbacks.onStateChange(req.stepOid, data.status as any);
+    const initialStatus = data.state?.current ?? data.status;
+    if (initialStatus) {
+      callbacks.onStateChange(req.stepOid, initialStatus as any);
     }
 
     this.active.set(req.stepOid, {
@@ -87,7 +91,7 @@ export class HttpActionInvoker implements ActionInvoker {
       instanceId,
       pollTimer: null,
       eventSource: null,
-      lastStatus: data.status ?? null,
+      lastStatus: initialStatus ?? null,
       cancelled: false,
     });
 
@@ -138,15 +142,29 @@ export class HttpActionInvoker implements ActionInvoker {
             callbacks.onConnectivityChange(stepOid, 'ok');
           }
           const parsed = await res.json() as {
-            data?: { status?: string; output_parameters?: Record<string, string> };
+            data?: {
+              status?: string;
+              state?: { current?: string };
+              output_parameters?: Record<string, string>;
+              outputs?: Array<{ key?: string; name?: string; value?: string }>;
+            };
           };
           const data = parsed.data ?? {};
-          if (data.status && data.status !== state.lastStatus) {
-            state.lastStatus = data.status;
-            callbacks.onStateChange(stepOid, data.status as any, data.output_parameters);
+          const status = data.state?.current ?? data.status;
+          let outputs: Record<string, string> | undefined = data.output_parameters;
+          if (!outputs && Array.isArray(data.outputs) && data.outputs.length > 0) {
+            outputs = {};
+            for (const o of data.outputs) {
+              const k = o.key ?? o.name;
+              if (k != null && o.value != null) outputs[k] = o.value;
+            }
           }
-          const TERMINAL = ['COMPLETED', 'ABORTED', 'ERRORED'];
-          if (data.status && TERMINAL.includes(data.status)) {
+          if (status && status !== state.lastStatus) {
+            state.lastStatus = status;
+            callbacks.onStateChange(stepOid, status as any, outputs);
+          }
+          const TERMINAL = ['COMPLETED', 'ABORTED', 'ERRORED', 'STOPPED'];
+          if (status && TERMINAL.includes(status)) {
             this.release(stepOid);
             return;
           }

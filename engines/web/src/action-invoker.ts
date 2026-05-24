@@ -13,6 +13,9 @@ export interface ServerCapabilities {
 export interface InvokeRequest {
   stepOid: string;
   workflow_instance_id: string;
+  environment_oid: string;
+  step_instance_id: string;
+  step_oid: string;
   serverUri: string;
   action_oid: string;
   inputs: Record<string, string>;

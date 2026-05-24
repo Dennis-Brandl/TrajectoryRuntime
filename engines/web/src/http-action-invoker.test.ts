@@ -74,7 +74,7 @@ describe('HttpActionInvoker', () => {
     try {
       const inv = new HttpActionInvoker();
       const id = await inv.invoke({
-        stepOid: 'step-1', workflow_instance_id: 'wf-1',
+        stepOid: 'step-1', workflow_instance_id: 'wf-1', environment_oid: "env-x", step_instance_id: "si-x", step_oid: "so-x",
         serverUri: 'http://server/trajectory/v1/', action_oid: 'a1',
         inputs: { foo: 'bar' }, mode: 'poll-only', pollIntervalMs: 4000,
       }, {
@@ -84,7 +84,7 @@ describe('HttpActionInvoker', () => {
       assert.equal(id, 'rai-123');
       assert.match(capturedUrl, /\/actions\/a1\/invoke$/);
       assert.equal(capturedBody.workflow_instance_id, 'wf-1');
-      assert.deepEqual(capturedBody.input_parameters, { foo: 'bar' });
+      assert.deepEqual(capturedBody.input_parameters, [{ name: 'foo', value: 'bar' }]);
       inv.release('step-1'); // stop background polling
     } finally {
       globalThis.fetch = originalFetch;
@@ -113,7 +113,7 @@ describe('HttpActionInvoker', () => {
     const seen: Array<{ s: string; o?: any }> = [];
     const inv = new HttpActionInvoker();
     await inv.invoke({
-      stepOid: 'sx', workflow_instance_id: 'wf', serverUri: 'http://s/', action_oid: 'a',
+      stepOid: 'sx', workflow_instance_id: 'wf', environment_oid: "env-x", step_instance_id: "si-x", step_oid: "so-x", serverUri: 'http://s/', action_oid: 'a',
       inputs: {}, mode: 'poll-only', pollIntervalMs: 5,
     }, { onStateChange: (_oid, s, o) => seen.push({ s, o }), onConnectivityChange: () => {} });
 
@@ -151,7 +151,7 @@ describe('HttpActionInvoker', () => {
     inv.setCapabilities('http://s/', { sse_supported: true, actions: new Map([['a', { visibility: 'observable' }]]) });
 
     await inv.invoke({
-      stepOid: 'sx', workflow_instance_id: 'wf', serverUri: 'http://s/', action_oid: 'a',
+      stepOid: 'sx', workflow_instance_id: 'wf', environment_oid: "env-x", step_instance_id: "si-x", step_oid: "so-x", serverUri: 'http://s/', action_oid: 'a',
       inputs: {}, mode: 'sse-preferred', pollIntervalMs: 4000,
     }, { onStateChange: (_oid, s) => seen.push(s), onConnectivityChange: () => {} });
 
@@ -181,7 +181,7 @@ describe('HttpActionInvoker', () => {
     try {
       const inv = new HttpActionInvoker();
       const id = await inv.invoke({
-        stepOid: 'sr', workflow_instance_id: 'w', serverUri: 'http://s/', action_oid: 'a',
+        stepOid: 'sr', workflow_instance_id: 'w', environment_oid: "env-x", step_instance_id: "si-x", step_oid: "so-x", serverUri: 'http://s/', action_oid: 'a',
         inputs: {}, mode: 'poll-only', pollIntervalMs: 1000,
       }, { onStateChange: () => {}, onConnectivityChange: () => {} });
       assert.equal(id, 'rai-r');
@@ -245,7 +245,7 @@ describe('HttpActionInvoker', () => {
     const events: string[] = [];
     const inv = new HttpActionInvoker();
     await inv.invoke({
-      stepOid: 'sc', workflow_instance_id: 'w', serverUri: 'http://s/', action_oid: 'a',
+      stepOid: 'sc', workflow_instance_id: 'w', environment_oid: "env-x", step_instance_id: "si-x", step_oid: "so-x", serverUri: 'http://s/', action_oid: 'a',
       inputs: {}, mode: 'poll-only', pollIntervalMs: 5,
     }, { onStateChange: () => {}, onConnectivityChange: (_oid, s) => events.push(s) });
 

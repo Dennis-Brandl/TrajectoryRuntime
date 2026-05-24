@@ -149,6 +149,13 @@ export class WorkflowCoordinator {
       this.publish(this.snapshot);
     });
 
+    // Async state changes (from the invoker callback) don't go through the
+    // synchronous sync() path. Re-sync whenever the engine signals external
+    // update so the UI sees ACTION PROXY state transitions in real time.
+    this.engine.subscribeExternalUpdate(() => {
+      this.sync();
+    });
+
     try {
       this.engine.start();
     } catch (e) {
