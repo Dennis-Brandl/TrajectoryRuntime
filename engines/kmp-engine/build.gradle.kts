@@ -40,6 +40,9 @@ kotlin {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+                implementation("io.ktor:ktor-client-core:2.3.12")
+                implementation("io.ktor:ktor-client-content-negotiation:2.3.12")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.12")
             }
         }
         val commonTest by getting {
@@ -51,6 +54,7 @@ kotlin {
             dependencies {
                 implementation("com.networknt:json-schema-validator:1.5.4")
                 implementation("org.mozilla:rhino:1.7.15")
+                implementation("io.ktor:ktor-client-cio:2.3.12")
             }
         }
         val jvmTest by getting {
@@ -59,7 +63,11 @@ kotlin {
                 implementation("com.fasterxml.jackson.core:jackson-databind:2.17.0")
             }
         }
-        val jsMain by getting
+        val jsMain by getting {
+            dependencies {
+                implementation("io.ktor:ktor-client-js:2.3.12")
+            }
+        }
         val jsTest by getting
 
         val iosX64Main by getting
@@ -70,6 +78,9 @@ kotlin {
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
+            dependencies {
+                implementation("io.ktor:ktor-client-darwin:2.3.12")
+            }
         }
 
         val iosX64Test by getting
