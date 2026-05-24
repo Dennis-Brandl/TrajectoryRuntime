@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { DeviceFrame, type DeviceType, type FrameExpansion } from './components/shell/DeviceFrame';
 import { FrameSwitcher } from './components/shell/FrameSwitcher';
 import { AppShell } from './components/shell/AppShell';
+import { WelcomeSplash } from './components/shell/WelcomeSplash';
 import { WorkflowManagerProvider } from './manager/WorkflowManagerContext';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import './theme.css';
@@ -19,10 +20,22 @@ export function App() {
   const [showGraph, setShowGraph] = useLocalStorage<boolean>('trajectory-show-graph', false);
   const [frameExpansion, setFrameExpansion] = useState<FrameExpansion>(null);
   const [theme] = useLocalStorage<'light' | 'dark'>('trajectory-theme', 'light');
+  const [splashDismissed, setSplashDismissed] = useLocalStorage<boolean>('trajectory-splash-dismissed', false);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
+
+  if (!splashDismissed) {
+    return (
+      <WelcomeSplash
+        onContinue={() => {
+          setDeviceType('desktop');
+          setSplashDismissed(true);
+        }}
+      />
+    );
+  }
 
   return (
     <div className="page">
