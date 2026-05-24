@@ -15,10 +15,13 @@ import type {
   WaitingStepInfo,
   ActiveStepInfo,
   CompletedStepInfo,
+  ActionServerSpecification,
+  MasterEnvironmentSpecification,
 } from './types.js';
 import { ACTIVE_STEP_STATES } from './types.js';
 import type { ResourceManager } from './resource-manager.js';
 import { InMemoryResourceManager } from './resource-manager.js';
+import type { ActionInvoker, ConnectionMode } from './action-invoker.js';
 import { PropertyStore } from './properties.js';
 import { isAutoCompleting, needsUserAction, handleSelect1, handleUserAction, getFormElements, canonicalStepType, executeScript } from './step-handlers.js';
 import { splitResourceCommands, sortActivationCommands } from './resource-helpers.js';
@@ -42,6 +45,12 @@ export class WorkflowEngine {
   private resourceManager?: ResourceManager;
   private pendingResources: Map<string, PendingResourceState>;
   private instanceId: string;
+  private actionInvoker: ActionInvoker | null = null;
+  private serverByEnvOid: Map<string, ActionServerSpecification> = new Map();
+  private actionInvokerMode: ConnectionMode = 'sse-preferred';
+  private actionInvokerPollMs = 4000;
+  private actionInstanceIdByStep: Map<string, string> = new Map();
+  private activeActionProxyServers: Map<string, string> = new Map();
 
   constructor(
     workflow: MasterWorkflowSpecification,
@@ -149,6 +158,19 @@ export class WorkflowEngine {
     startStep.state = 'COMPLETED';
     this.completionQueue.push(startStep.oid);
     this.drainCompletionQueue();
+  }
+
+  setActionInvoker(
+    invoker: ActionInvoker,
+    serverByEnvOid: Map<string, ActionServerSpecification>,
+  ): void {
+    this.actionInvoker = invoker;
+    this.serverByEnvOid = serverByEnvOid;
+  }
+
+  setActionInvokerOptions(mode: ConnectionMode, pollIntervalMs: number): void {
+    this.actionInvokerMode = mode;
+    this.actionInvokerPollMs = pollIntervalMs;
   }
 
   submitAction(action: UserAction, _actionIndex: number): void {
