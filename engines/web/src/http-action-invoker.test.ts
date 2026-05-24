@@ -53,4 +53,41 @@ describe('HttpActionInvoker', () => {
       globalThis.fetch = originalFetch;
     }
   });
+
+  it('invoke POSTs to /actions/{oid}/invoke with inputs, returns instance_id', async () => {
+    const originalFetch = globalThis.fetch;
+    let capturedUrl = '';
+    let capturedBody: any = null;
+    globalThis.fetch = (async (input: any, init?: any) => {
+      capturedUrl = String(input);
+      capturedBody = init?.body ? JSON.parse(init.body) : null;
+      // Polling GETs will return EXECUTING then we release before COMPLETED
+      if (capturedUrl.endsWith('/invoke')) {
+        return {
+          ok: true, status: 201,
+          json: async () => ({ data: { runtime_action_instance_id: 'rai-123', status: 'POSTED' } }),
+        } as any;
+      }
+      return { ok: true, status: 200, json: async () => ({ data: { status: 'EXECUTING' } }) } as any;
+    }) as typeof fetch;
+
+    try {
+      const inv = new HttpActionInvoker();
+      const id = await inv.invoke({
+        stepOid: 'step-1', workflow_instance_id: 'wf-1',
+        serverUri: 'http://server/trajectory/v1/', action_oid: 'a1',
+        inputs: { foo: 'bar' }, mode: 'poll-only', pollIntervalMs: 4000,
+      }, {
+        onStateChange: () => {}, onConnectivityChange: () => {},
+      });
+
+      assert.equal(id, 'rai-123');
+      assert.match(capturedUrl, /\/actions\/a1\/invoke$/);
+      assert.equal(capturedBody.workflow_instance_id, 'wf-1');
+      assert.deepEqual(capturedBody.input_parameters, { foo: 'bar' });
+      inv.release('step-1'); // stop background polling
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
 });
