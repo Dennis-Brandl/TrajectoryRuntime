@@ -37,7 +37,7 @@ interface StepCanvasProps {
 /**
  * Runtime port of the editor's FormCanvas + ChromeOverlay (desktop layout).
  *
- * Mirrors C:\BrainpalMD\src\components\form-designer\FormCanvas.tsx and
+ * Mirrors C:\TrajectoryEditor\src\components\form-designer\FormCanvas.tsx and
  * ChromeOverlay.tsx so editor element coordinates (x/y/w/h) land in the
  * same pixel positions at runtime. Elements are absolutely positioned;
  * chrome (51px top bar + 77px left nav rail) is drawn as a visual overlay
