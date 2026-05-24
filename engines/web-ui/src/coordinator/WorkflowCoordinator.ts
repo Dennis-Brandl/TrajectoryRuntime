@@ -12,6 +12,9 @@ import type {
   ActiveStepInfo,
   ResourceSnapshotEntry,
 } from '@engine/types.js';
+import { HttpActionInvoker } from '@engine/http-action-invoker.js';
+import type { ConnectionMode } from '@engine/action-invoker.js';
+import type { ActionServerSpecification } from '@engine/types.js';
 import { KmpWorkflowEngine, initKmpEngine, isKmpReady } from './KmpEngineAdapter.js';
 
 const USE_KMP_ENGINE = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_USE_KMP_ENGINE === 'true');
@@ -51,6 +54,10 @@ export class WorkflowCoordinator {
   private _sharedResourceManager: InstanceType<typeof InMemoryResourceManager> | null = null;
   private listeners = new Set<Listener>();
   private _formValues: Record<string, Record<string, unknown>> = {};
+  private invoker: HttpActionInvoker | null = null;
+  private serverByEnvOid: Map<string, ActionServerSpecification> = new Map();
+  private actionProxyMode: ConnectionMode = 'sse-preferred';
+  private actionProxyPollMs = 4000;
 
   getSnapshot = (): CoordinatorSnapshot => this.snapshot;
 
@@ -69,6 +76,15 @@ export class WorkflowCoordinator {
     this.listeners.add(listener);
     return () => this.listeners.delete(listener);
   };
+
+  setActionProxyOptions(mode: ConnectionMode, pollIntervalMs: number): void {
+    this.actionProxyMode = mode;
+    this.actionProxyPollMs = pollIntervalMs;
+  }
+
+  setServerSelections(map: Map<string, ActionServerSpecification>): void {
+    this.serverByEnvOid = map;
+  }
 
   /** Store spec and setup data without creating or starting the engine. */
   load(
@@ -110,6 +126,19 @@ export class WorkflowCoordinator {
     } else {
       this.engine = new WorkflowEngine(this.workflow, engineSetup);
     }
+    // Construct invoker, probe capabilities, wire to engine
+    this.invoker = new HttpActionInvoker();
+    const uniqueUris = new Set<string>();
+    for (const server of this.serverByEnvOid.values()) uniqueUris.add(server.uri.trim());
+    for (const uri of uniqueUris) {
+      void this.invoker.probeCapabilities(uri).then(caps => {
+        this.invoker?.setCapabilities(uri, caps);
+      });
+    }
+
+    this.engine.setActionInvoker(this.invoker, this.serverByEnvOid);
+    this.engine.setActionInvokerOptions(this.actionProxyMode, this.actionProxyPollMs);
+
     try {
       this.engine.start();
     } catch (e) {
