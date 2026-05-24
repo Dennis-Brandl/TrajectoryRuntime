@@ -13,8 +13,29 @@ export class HttpActionInvoker implements ActionInvoker {
     const trimmed = raw.trim();
     return trimmed.endsWith('/') ? trimmed : trimmed + '/';
   }
-  probeCapabilities(_serverUri: string): Promise<ServerCapabilities> {
-    throw new Error('not implemented');
+  async probeCapabilities(serverUri: string): Promise<ServerCapabilities> {
+    const url = this.normalizeUri(serverUri) + 'capabilities';
+    try {
+      const res = await fetch(url, { method: 'GET' });
+      if (!res.ok) {
+        return { sse_supported: false, actions: new Map() };
+      }
+      const body = await res.json() as {
+        data?: {
+          sse_supported?: boolean;
+          actions?: Array<{ action_oid: string; visibility_support?: string[] }>;
+        };
+      };
+      const data = body.data ?? {};
+      const actions = new Map<string, { visibility: 'observable' | 'opaque' }>();
+      for (const a of data.actions ?? []) {
+        const vis = (a.visibility_support ?? []).includes('observable') ? 'observable' : 'opaque';
+        actions.set(a.action_oid, { visibility: vis });
+      }
+      return { sse_supported: Boolean(data.sse_supported), actions };
+    } catch {
+      return { sse_supported: false, actions: new Map() };
+    }
   }
   invoke(_req: InvokeRequest, _cb: ActionInvokerCallbacks): Promise<string> {
     throw new Error('not implemented');
