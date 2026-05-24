@@ -58,4 +58,25 @@ describe('engine ACTION PROXY — invoker injection', () => {
     assert.ok(proxyStep, 'ACTION PROXY step should be active');
     assert.equal(proxyStep!.step.state, 'STARTING');
   });
+
+  it('mirrors invoker state changes onto the step; COMPLETED queues downstream activation', async () => {
+    const invoker = new MockActionInvoker();
+    const wf = makeActionProxyWorkflow();
+    (wf.steps[1] as any).output_parameter_specifications = [
+      { id: 'received_count', target: 'SomeResult' },
+    ];
+    const engine = new WorkflowEngine(wf);
+    engine.setActionInvoker(invoker, new Map([['env1-oid', SERVER]]));
+    engine.start();
+    await Promise.resolve();
+
+    invoker.emitStateChange('ap-oid', 'EXECUTING');
+    let active = engine.getActiveSteps();
+    assert.equal(active.find(s => s.step.oid === 'ap-oid')!.step.state, 'EXECUTING');
+
+    invoker.emitStateChange('ap-oid', 'COMPLETED', { received_count: '42' });
+
+    assert.equal(engine.getWorkflowState(), 'COMPLETED');
+    assert.equal(engine.getProperties()['SomeResult'], '42');
+  });
 });

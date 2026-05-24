@@ -547,13 +547,51 @@ export class WorkflowEngine {
     );
   }
 
-  // Stub — will be implemented in Task 13
   private onExternalStateChange(
     stepOid: string,
     newState: StepState,
     outputs?: Record<string, string>,
   ): void {
-    void stepOid; void newState; void outputs;
+    const step = this.steps.get(stepOid);
+    if (!step) return;
+    if (this.workflowState === 'ABORTED' || this.workflowState === 'COMPLETED') return;
+
+    // Normalize STOPPED → ABORTED (engine has no STOPPED state in StepState union)
+    const mapped = (newState as string) === 'STOPPED' ? 'ABORTED' : newState;
+
+    this.recordTrace(stepOid, mapped);
+    step.state = mapped as StepState;
+
+    // Write outputs to PropertyStore via output_parameter_specifications[].target
+    if (outputs && step.step.output_parameter_specifications) {
+      for (const spec of step.step.output_parameter_specifications) {
+        const val = outputs[spec.id];
+        if (val !== undefined && spec.target) {
+          this.propertyStore.set(spec.target, val);
+        }
+      }
+      const snap = this.stepParameterSnapshots.get(stepOid);
+      if (snap) {
+        for (const spec of step.step.output_parameter_specifications) {
+          const val = outputs[spec.id];
+          if (val !== undefined) snap.outputParameters[spec.id] = val;
+        }
+      }
+    }
+
+    const TERMINAL: StepState[] = ['COMPLETED', 'ABORTED', 'ERRORED'];
+    if (TERMINAL.includes(mapped as StepState)) {
+      this.actionInvoker?.release(stepOid);
+      this.actionInstanceIdByStep.delete(stepOid);
+      this.activeActionProxyServers.delete(stepOid);
+
+      if (mapped === 'COMPLETED') {
+        this.completionQueue.push(stepOid);
+        this.drainCompletionQueue();
+      } else if (mapped === 'ERRORED') {
+        this.workflowState = 'ERRORED';
+      }
+    }
   }
 
   // Stub — will be implemented later
