@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Saturnis.io. All rights reserved.
 // Licensed under the GNU AGPL v3. See LICENSE.md for details.
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { useWorkflowManager } from '../../manager/useWorkflowManager';
 import type { ResourceSnapshotEntry } from '@engine/types.js';
@@ -29,6 +29,24 @@ export function SettingsScreen() {
       setNotifyDenied(false);
     }
   }, [setNotifySteps]);
+
+  const [actionProxyMode, setActionProxyMode] = useLocalStorage<'sse-preferred' | 'poll-only'>('actionProxy.mode', 'sse-preferred');
+  const [actionProxyPollSec, setActionProxyPollSec] = useLocalStorage<number>('actionProxy.pollSec', 4);
+
+  const [pollSecInput, setPollSecInput] = useState<string>(() => String(actionProxyPollSec));
+
+  // Keep input in sync if the stored value changes externally
+  useEffect(() => {
+    setPollSecInput(String(actionProxyPollSec));
+  }, [actionProxyPollSec]);
+
+  const handlePollSecChange = useCallback((raw: string) => {
+    setPollSecInput(raw);
+    const v = Number(raw);
+    if (Number.isFinite(v) && v >= 1) {
+      setActionProxyPollSec(Math.min(300, Math.max(1, Math.round(v))));
+    }
+  }, [setActionProxyPollSec]);
 
   const [confirmDeleteLoaded, setConfirmDeleteLoaded] = useLocalStorage('trajectory-confirm-delete-loaded', true);
   const [confirmDeleteCompleted, setConfirmDeleteCompleted] = useLocalStorage('trajectory-confirm-delete-completed', false);
@@ -118,6 +136,47 @@ export function SettingsScreen() {
             className={styles.checkbox}
           />
         </label>
+      </div>
+
+      <div className={styles.settingGroup}>
+        <h3 className={styles.groupTitle}>Action Servers</h3>
+        <div className={styles.settingRow} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 4 }}>
+          <span className={styles.settingLabel}>Connection mode</span>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
+            <input
+              type="radio"
+              name="actionProxyMode"
+              checked={actionProxyMode === 'sse-preferred'}
+              onChange={() => setActionProxyMode('sse-preferred')}
+            />
+            Use SSE when available
+          </label>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
+            <input
+              type="radio"
+              name="actionProxyMode"
+              checked={actionProxyMode === 'poll-only'}
+              onChange={() => setActionProxyMode('poll-only')}
+            />
+            Always poll
+          </label>
+        </div>
+        <div className={styles.settingRow} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 4 }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span className={styles.settingLabel}>Poll interval (seconds)</span>
+            <input
+              type="number"
+              min={1}
+              max={300}
+              value={pollSecInput}
+              onChange={(e) => handlePollSecChange(e.target.value)}
+              style={{ width: 64, textAlign: 'right' }}
+            />
+          </label>
+          <p style={{ margin: 0, fontSize: 12, color: 'var(--color-text-secondary)' }}>
+            Used for opaque actions or when SSE is unavailable.
+          </p>
+        </div>
       </div>
 
       <div className={styles.settingGroup}>
