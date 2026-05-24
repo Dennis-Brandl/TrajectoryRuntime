@@ -87,6 +87,25 @@ export class WorkflowEngine {
       this.stepDefinitionOrder.push(step.oid);
     }
 
+    // Validate: action local_ids are unique across all environments
+    {
+      const envs = this.workflow.environment_specifications ?? [];
+      const seenLocalIds = new Map<string, string>();
+      for (const env of envs) {
+        const actions = (env.included_actions ?? []) as Array<{ local_id: string }>;
+        for (const a of actions) {
+          const prior = seenLocalIds.get(a.local_id);
+          if (prior !== undefined) {
+            throw new Error(
+              `Workflow has duplicate action local_id "${a.local_id}" in environments ` +
+              `"${prior}" and "${env.local_id}". Action local_ids must be unique across environments.`
+            );
+          }
+          seenLocalIds.set(a.local_id, env.local_id);
+        }
+      }
+    }
+
     // Index child workflows by local_id (prefer v7.0 children over deprecated child_workflows)
     const childSpecs = workflow.children ?? workflow.child_workflows;
     if (childSpecs) {
@@ -368,32 +387,81 @@ export class WorkflowEngine {
     return result;
   }
 
-  /** Pause an EXECUTING step. */
+  /** Pause an EXECUTING step. For ACTION PROXY steps, forwards PAUSE to invoker. */
   pauseStep(stepOid: string): void {
     const step = this.steps.get(stepOid);
-    if (step && step.state === 'EXECUTING') {
+    if (!step) {
+      for (const child of this.activeChildEngines.values()) child.pauseStep(stepOid);
+      return;
+    }
+    if (step.stepType === 'ACTION PROXY') {
+      const serverUri = this.activeActionProxyServers.get(stepOid);
+      const instanceId = this.actionInstanceIdByStep.get(stepOid);
+      if (serverUri && instanceId && this.actionInvoker) {
+        void this.actionInvoker.sendCommand(serverUri, instanceId, 'PAUSE');
+      }
+      return;
+    }
+    if (step.state === 'EXECUTING') {
       step.state = 'PAUSED';
       this.recordTrace(stepOid, 'PAUSED');
-    } else {
-      // Try child engines
-      for (const child of this.activeChildEngines.values()) {
-        child.pauseStep(stepOid);
-      }
     }
   }
 
-  /** Resume a PAUSED step back to EXECUTING. */
+  /** Resume a PAUSED step back to EXECUTING. For ACTION PROXY steps, forwards RESUME to invoker. */
   resumeStep(stepOid: string): void {
     const step = this.steps.get(stepOid);
-    if (step && step.state === 'PAUSED') {
+    if (!step) {
+      for (const child of this.activeChildEngines.values()) child.resumeStep(stepOid);
+      return;
+    }
+    if (step.stepType === 'ACTION PROXY') {
+      const serverUri = this.activeActionProxyServers.get(stepOid);
+      const instanceId = this.actionInstanceIdByStep.get(stepOid);
+      if (serverUri && instanceId && this.actionInvoker) {
+        void this.actionInvoker.sendCommand(serverUri, instanceId, 'RESUME');
+      }
+      return;
+    }
+    if (step.state === 'PAUSED') {
       step.state = 'EXECUTING';
       this.recordTrace(stepOid, 'EXECUTING');
-    } else {
-      // Try child engines
-      for (const child of this.activeChildEngines.values()) {
-        child.resumeStep(stepOid);
-      }
     }
+  }
+
+  /** Stop an ACTION PROXY step by forwarding STOP to invoker. */
+  stopStep(stepOid: string): void {
+    const step = this.steps.get(stepOid);
+    if (!step) {
+      for (const child of this.activeChildEngines.values()) child.stopStep(stepOid);
+      return;
+    }
+    if (step.stepType !== 'ACTION PROXY') return;
+    const serverUri = this.activeActionProxyServers.get(stepOid);
+    const instanceId = this.actionInstanceIdByStep.get(stepOid);
+    if (serverUri && instanceId && this.actionInvoker) {
+      void this.actionInvoker.sendCommand(serverUri, instanceId, 'STOP');
+    }
+  }
+
+  /** Abort the workflow — aborts all in-flight ACTION PROXY instances and sets state ABORTED. */
+  abortWorkflow(): void {
+    // Abort every in-flight ACTION PROXY instance
+    for (const [stepOid, serverUri] of this.activeActionProxyServers) {
+      const instanceId = this.actionInstanceIdByStep.get(stepOid);
+      if (instanceId && this.actionInvoker) {
+        void this.actionInvoker.abort(serverUri, instanceId);
+      }
+      this.actionInvoker?.release(stepOid);
+    }
+    this.actionInstanceIdByStep.clear();
+    this.activeActionProxyServers.clear();
+
+    for (const child of this.activeChildEngines.values()) {
+      child.abortWorkflow();
+    }
+
+    this.workflowState = 'ABORTED';
   }
 
   /** Get all child engine input parameters (deepest active child wins). */

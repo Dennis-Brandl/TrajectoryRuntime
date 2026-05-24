@@ -79,4 +79,74 @@ describe('engine ACTION PROXY — invoker injection', () => {
     assert.equal(engine.getWorkflowState(), 'COMPLETED');
     assert.equal(engine.getProperties()['SomeResult'], '42');
   });
+
+  it('pauseStep on ACTION PROXY forwards PAUSE command via invoker', async () => {
+    const invoker = new MockActionInvoker();
+    const engine = new WorkflowEngine(makeActionProxyWorkflow());
+    engine.setActionInvoker(invoker, new Map([['env1-oid', SERVER]]));
+    engine.start();
+    await Promise.resolve();
+    invoker.emitStateChange('ap-oid', 'EXECUTING');
+
+    engine.pauseStep('ap-oid');
+
+    assert.equal(invoker.commandsSent.length, 1);
+    assert.equal(invoker.commandsSent[0].command, 'PAUSE');
+    assert.equal(invoker.commandsSent[0].instanceId, invoker.lastInvocation().instanceId);
+  });
+
+  it('resumeStep on ACTION PROXY forwards RESUME command via invoker', async () => {
+    const invoker = new MockActionInvoker();
+    const engine = new WorkflowEngine(makeActionProxyWorkflow());
+    engine.setActionInvoker(invoker, new Map([['env1-oid', SERVER]]));
+    engine.start();
+    await Promise.resolve();
+    invoker.emitStateChange('ap-oid', 'PAUSED');
+
+    engine.resumeStep('ap-oid');
+
+    assert.equal(invoker.commandsSent.length, 1);
+    assert.equal(invoker.commandsSent[0].command, 'RESUME');
+  });
+
+  it('stopStep on ACTION PROXY forwards STOP command via invoker', async () => {
+    const invoker = new MockActionInvoker();
+    const engine = new WorkflowEngine(makeActionProxyWorkflow());
+    engine.setActionInvoker(invoker, new Map([['env1-oid', SERVER]]));
+    engine.start();
+    await Promise.resolve();
+    invoker.emitStateChange('ap-oid', 'EXECUTING');
+
+    engine.stopStep('ap-oid');
+
+    assert.equal(invoker.commandsSent.length, 1);
+    assert.equal(invoker.commandsSent[0].command, 'STOP');
+  });
+
+  it('workflow abort calls invoker.abort for each active ACTION PROXY instance', async () => {
+    const invoker = new MockActionInvoker();
+    const engine = new WorkflowEngine(makeActionProxyWorkflow());
+    engine.setActionInvoker(invoker, new Map([['env1-oid', SERVER]]));
+    engine.start();
+    await Promise.resolve();
+    invoker.emitStateChange('ap-oid', 'EXECUTING');
+    // Wait for instanceId to be recorded (from the async invoke promise)
+    await new Promise(r => setTimeout(r, 10));
+
+    engine.abortWorkflow();
+
+    assert.equal(invoker.aborts.length, 1);
+    assert.equal(invoker.aborts[0].instanceId, invoker.lastInvocation().instanceId);
+    assert.equal(engine.getWorkflowState(), 'ABORTED');
+  });
+
+  it('throws at engine construction if two environments contain the same action local_id', () => {
+    const wf = makeActionProxyWorkflow();
+    (wf.environment_specifications ?? []).push({
+      local_id: 'env2', oid: 'env2-oid', version: '1.0.0', last_modified_date: '2026-05-23',
+      included_actions: [{ local_id: 'A1', oid: 'other-oid' }],
+    } as any);
+
+    assert.throws(() => new WorkflowEngine(wf), /duplicate action local_id "A1"/);
+  });
 });
