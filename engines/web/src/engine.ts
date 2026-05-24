@@ -662,9 +662,20 @@ export class WorkflowEngine {
     }
   }
 
-  // Stub — will be implemented later
+  private connectivityListeners: Array<(stepOid: string, status: 'ok' | 'reconnecting' | 'never_connected') => void> = [];
+
+  subscribeConnectivity(
+    fn: (stepOid: string, status: 'ok' | 'reconnecting' | 'never_connected') => void
+  ): () => void {
+    this.connectivityListeners.push(fn);
+    return () => {
+      const idx = this.connectivityListeners.indexOf(fn);
+      if (idx >= 0) this.connectivityListeners.splice(idx, 1);
+    };
+  }
+
   private onConnectivityChange(stepOid: string, status: 'ok' | 'reconnecting' | 'never_connected'): void {
-    void stepOid; void status;
+    for (const fn of this.connectivityListeners) fn(stepOid, status);
   }
 
   private activateWorkflowProxy(target: StepInstance): void {

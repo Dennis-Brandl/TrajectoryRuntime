@@ -29,6 +29,7 @@ export interface CoordinatorSnapshot {
   mediaMap: Record<string, string>;
   stepParams: Record<string, { inputParameters: Record<string, string>; outputParameters: Record<string, string>; description: string; label: string; stepType: string }>;
   resources: ResourceSnapshotEntry[];
+  connectivityByStep: Record<string, 'ok' | 'reconnecting' | 'never_connected'>;
 }
 
 type Listener = () => void;
@@ -48,6 +49,7 @@ export class WorkflowCoordinator {
     mediaMap: {},
     stepParams: {},
     resources: [],
+    connectivityByStep: {},
   };
   private environments: MasterEnvironmentLibrary[] = [];
   private _setup: { starting_parameters?: Record<string, string>; initial_properties?: Record<string, string> } | undefined;
@@ -139,6 +141,14 @@ export class WorkflowCoordinator {
     this.engine.setActionInvoker(this.invoker, this.serverByEnvOid);
     this.engine.setActionInvokerOptions(this.actionProxyMode, this.actionProxyPollMs);
 
+    this.engine.subscribeConnectivity((stepOid, status) => {
+      this.snapshot = {
+        ...this.snapshot,
+        connectivityByStep: { ...this.snapshot.connectivityByStep, [stepOid]: status },
+      };
+      this.publish(this.snapshot);
+    });
+
     try {
       this.engine.start();
     } catch (e) {
@@ -213,7 +223,13 @@ export class WorkflowCoordinator {
       mediaMap: {},
       stepParams: this.snapshot.stepParams,
       resources: [],
+      connectivityByStep: {},
     });
+  }
+
+  stopStep(stepOid: string): void {
+    this.engine?.stopStep(stepOid);
+    this.sync();
   }
 
   /** Pause all currently EXECUTING steps. */
@@ -324,11 +340,11 @@ export class WorkflowCoordinator {
     }
 
     const resources = this.engine.getResourceSnapshot();
-    this.publish({ workflowState, activeSteps, trace, properties, inputParameters, error: null, mediaMap: this._mediaMap, stepParams, resources });
+    this.publish({ workflowState, activeSteps, trace, properties, inputParameters, error: null, mediaMap: this._mediaMap, stepParams, resources, connectivityByStep: this.snapshot.connectivityByStep });
   }
 
   private idleSnapshot(): CoordinatorSnapshot {
-    return { workflowState: 'IDLE', activeSteps: [], trace: [], properties: {}, inputParameters: {}, error: null, mediaMap: {}, stepParams: {}, resources: [] };
+    return { workflowState: 'IDLE', activeSteps: [], trace: [], properties: {}, inputParameters: {}, error: null, mediaMap: {}, stepParams: {}, resources: [], connectivityByStep: {} };
   }
 
   private publish(next: CoordinatorSnapshot): void {
