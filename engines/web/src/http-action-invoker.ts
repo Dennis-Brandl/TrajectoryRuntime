@@ -118,6 +118,9 @@ export class HttpActionInvoker implements ActionInvoker {
     const state = this.active.get(stepOid);
     if (!state || state.cancelled) return;
 
+    let consecutiveFailures = 0;
+    let connectivityState: 'ok' | 'reconnecting' = 'ok';
+
     const tick = async () => {
       if (state.cancelled) return;
       try {
@@ -129,6 +132,11 @@ export class HttpActionInvoker implements ActionInvoker {
           return;
         }
         if (res.ok) {
+          consecutiveFailures = 0;
+          if (connectivityState !== 'ok') {
+            connectivityState = 'ok';
+            callbacks.onConnectivityChange(stepOid, 'ok');
+          }
           const parsed = await res.json() as {
             data?: { status?: string; output_parameters?: Record<string, string> };
           };
@@ -142,14 +150,17 @@ export class HttpActionInvoker implements ActionInvoker {
             this.release(stepOid);
             return;
           }
+        } else if (res.status >= 500) {
+          throw new Error(`server ${res.status}`);
         }
-        if (!state.cancelled) {
-          state.pollTimer = setTimeout(tick, intervalMs);
-        }
+        if (!state.cancelled) state.pollTimer = setTimeout(tick, intervalMs);
       } catch {
-        if (!state.cancelled) {
-          state.pollTimer = setTimeout(tick, intervalMs);
+        consecutiveFailures++;
+        if (consecutiveFailures >= 3 && connectivityState === 'ok') {
+          connectivityState = 'reconnecting';
+          callbacks.onConnectivityChange(stepOid, 'reconnecting');
         }
+        if (!state.cancelled) state.pollTimer = setTimeout(tick, intervalMs);
       }
     };
 

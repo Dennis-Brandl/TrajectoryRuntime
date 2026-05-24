@@ -227,4 +227,33 @@ describe('HttpActionInvoker', () => {
       globalThis.fetch = originalFetch;
     }
   });
+
+  it('emits reconnecting after 3 consecutive poll failures then ok on recovery', async () => {
+    const originalFetch = globalThis.fetch;
+    let pollCalls = 0;
+    let invokeReturned = false;
+    globalThis.fetch = (async (input: any) => {
+      const url = String(input);
+      if (url.endsWith('/invoke')) {
+        invokeReturned = true;
+        return { ok: true, status: 201, json: async () => ({ data: { runtime_action_instance_id: 'rai-c', status: 'POSTED' } }) } as any;
+      }
+      pollCalls++;
+      if (pollCalls <= 3) throw new Error('net');
+      return { ok: true, status: 200, json: async () => ({ data: { status: 'EXECUTING' } }) } as any;
+    }) as typeof fetch;
+    const events: string[] = [];
+    const inv = new HttpActionInvoker();
+    await inv.invoke({
+      stepOid: 'sc', workflow_instance_id: 'w', serverUri: 'http://s/', action_oid: 'a',
+      inputs: {}, mode: 'poll-only', pollIntervalMs: 5,
+    }, { onStateChange: () => {}, onConnectivityChange: (_oid, s) => events.push(s) });
+
+    await new Promise(r => setTimeout(r, 100));
+    inv.release('sc');
+    globalThis.fetch = originalFetch;
+    assert.ok(invokeReturned);
+    assert.ok(events.includes('reconnecting'), 'should report reconnecting');
+    assert.ok(events.includes('ok'), 'should report ok on recovery');
+  });
 });
