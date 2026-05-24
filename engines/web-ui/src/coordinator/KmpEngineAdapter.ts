@@ -17,8 +17,13 @@ let FacadeClass: any = null;
  */
 export async function initKmpEngine(): Promise<void> {
   if (FacadeClass) return;
-  // Import the KMP JS output — Vite resolves @kmp-engine alias
-  const kmpModule = await import('@kmp-engine/kmp-engine.js');
+  // The KMP JS bundle is only present when the KMP engine has been
+  // built (./gradlew :jsBrowserProductionLibraryDistribution). When
+  // VITE_USE_KMP_ENGINE is unset, this function is never called.
+  // The variable indirection keeps Vite's static import-analyzer from
+  // failing the build when the artifact is absent.
+  const kmpEntry = '@kmp-engine/kmp-engine.js';
+  const kmpModule = await import(/* @vite-ignore */ kmpEntry);
   // The KMP UMD module exports at com.trajectoryruntime.engine.WorkflowEngineFacade
   FacadeClass = kmpModule.com?.trajectoryruntime?.engine?.WorkflowEngineFacade
     ?? kmpModule.default?.com?.trajectoryruntime?.engine?.WorkflowEngineFacade;
