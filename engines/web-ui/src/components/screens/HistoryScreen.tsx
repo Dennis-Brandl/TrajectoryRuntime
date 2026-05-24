@@ -42,19 +42,36 @@ function findScriptSource(loaded: LoadedWorkflow | undefined, localId: string): 
   return findStepByLocalId(loaded.spec, localId)?.script_config?.source;
 }
 
-function formatRelativeTime(ts: number): string {
-  const diff = Date.now() - ts;
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'just now';
-  if (mins < 60) return `${mins}m ago`;
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
-  return new Date(ts).toLocaleDateString();
+/** Exact wall-clock time with millisecond resolution — used for debugging step timing. */
+function formatExactTime(ts: number): string {
+  const d = new Date(ts);
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  const ss = String(d.getSeconds()).padStart(2, '0');
+  const ms = String(d.getMilliseconds()).padStart(3, '0');
+  return `${hh}:${mm}:${ss}.${ms}`;
 }
 
+/** Date + exact time for workflow-finished timestamps. */
 function formatDateTime(ts: number): string {
   const d = new Date(ts);
-  return d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  const date = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  return `${date} ${formatExactTime(ts)}`;
+}
+
+/** Human-friendly label for a trace state. */
+function stateLabel(state: string): string {
+  switch (state) {
+    case 'EXECUTING': return 'Started';
+    case 'STARTING': return 'Starting';
+    case 'COMPLETING': return 'Completing';
+    case 'COMPLETED': return 'Completed';
+    case 'ERRORED': return 'Errored';
+    case 'PAUSED': return 'Paused';
+    case 'ABORTED': return 'Aborted';
+    case 'WAITING': return 'Waiting';
+    default: return state;
+  }
 }
 
 function stateColor(state: string): string {
@@ -82,7 +99,9 @@ function buildStepEntries(wf: CompletedWorkflow): StepEntry[] {
       outputParameters: params.outputParameters,
     });
   }
-  entries.sort((a, b) => b.completedAt - a.completedAt);
+  // Oldest on top — chronological reading of step execution.
+  // Per v2.0 Phase 7 design: "list in time order (oldest on top), scrolled to bottom".
+  entries.sort((a, b) => a.completedAt - b.completedAt);
   return entries;
 }
 
@@ -144,7 +163,7 @@ export function HistoryScreen() {
         {stepEntries.length > 0 ? (
           <ul className={styles.list}>
             {stepEntries.map((entry, i) => (
-              <li key={`${entry.stepOid}-${i}`} className={styles.stepItem} onClick={() => setSelectedStep(entry)}>
+              <li key={`${entry.stepOid}-${entry.state}-${i}`} className={styles.stepItem} onClick={() => setSelectedStep(entry)}>
                 <div className={styles.stepInfo}>
                   <div className={styles.stepType}>
                     {entry.stepType}
@@ -152,9 +171,12 @@ export function HistoryScreen() {
                       <span className={`${styles.stateBadge} ${styles.errored} ${styles.stepStateBadge}`}>ERRORED</span>
                     )}
                   </div>
-                  <div className={styles.stepDesc}>{entry.label}</div>
+                  <div className={styles.stepDesc}>
+                    {entry.label}
+                    <span style={{ marginLeft: 8, fontSize: 11, color: '#888' }}>· {stateLabel(entry.state)}</span>
+                  </div>
                 </div>
-                <span className={styles.stepTime}>{formatRelativeTime(entry.completedAt)}</span>
+                <span className={styles.stepTime} style={{ fontFamily: 'monospace' }}>{formatExactTime(entry.completedAt)}</span>
               </li>
             ))}
           </ul>
@@ -199,7 +221,7 @@ export function HistoryScreen() {
                     </span>
                   </div>
                 </div>
-                <span className={styles.wfTime}>{formatRelativeTime(wf.finishedAt)}</span>
+                <span className={styles.wfTime} style={{ fontFamily: 'monospace' }}>{formatDateTime(wf.finishedAt)}</span>
                 <button
                   className={styles.deleteButton}
                   title="Delete workflow"
