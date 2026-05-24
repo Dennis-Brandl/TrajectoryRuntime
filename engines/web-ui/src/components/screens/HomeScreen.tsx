@@ -6,9 +6,10 @@ import { processWorkflowFile, isProcessingError } from '../../manager/fileProces
 import { useWorkflowManager, useManagerSnapshot } from '../../manager/useWorkflowManager';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { WorkflowStartDialog } from '../WorkflowStartDialog';
+import { WorkflowStartServerPickerDialog } from '../WorkflowStartServerPickerDialog';
 import type { HomeMenuAction } from '../shell/homeMenuTypes';
 import type { LoadedWorkflow, CompletedWorkflow } from '../../manager/types';
-import type { ResourceSnapshotEntry } from '@engine/types.js';
+import type { ResourceSnapshotEntry, ActionServerSpecification } from '@engine/types.js';
 import styles from './HomeScreen.module.css';
 
 function formatTime(ts: number): string {
@@ -28,6 +29,13 @@ export function HomeScreen({ onNavigateToActive, menuAction, onMenuActionHandled
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [startTarget, setStartTarget] = useState<LoadedWorkflow | null>(null);
+  type PendingStart = {
+    loadedId: string;
+    startingParams?: Record<string, string>;
+    autoSelected: Map<string, ActionServerSpecification>;
+    needsPick: Array<{ envOid: string; envLocalId: string; servers: ActionServerSpecification[] }>;
+  } | null;
+  const [pendingStart, setPendingStart] = useState<PendingStart>(null);
   const [swipedId, setSwipedId] = useState<string | null>(null);
   const touchStartX = useRef(0);
 
@@ -106,7 +114,17 @@ export function HomeScreen({ onNavigateToActive, menuAction, onMenuActionHandled
   }, []);
 
   const handleStartConfirm = useCallback((id: string, startingParams?: Record<string, string>) => {
-    manager.startWorkflow(id, startingParams);
+    const { autoSelected, needsPick, missing } = manager.resolveServerSelections(id);
+    if (missing.length > 0) {
+      alert(`Environment "${missing[0].envLocalId}" has no REST action servers registered.`);
+      return;
+    }
+    if (needsPick.length > 0) {
+      setStartTarget(null);
+      setPendingStart({ loadedId: id, startingParams, autoSelected, needsPick });
+      return;
+    }
+    manager.startWorkflow(id, startingParams, autoSelected.size > 0 ? autoSelected : undefined);
     setStartTarget(null);
     onNavigateToActive();
   }, [manager, onNavigateToActive]);
@@ -345,6 +363,19 @@ export function HomeScreen({ onNavigateToActive, menuAction, onMenuActionHandled
           workflow={startTarget}
           onStart={handleStartConfirm}
           onCancel={handleStartCancel}
+        />
+      )}
+
+      {pendingStart && (
+        <WorkflowStartServerPickerDialog
+          picks={pendingStart.needsPick}
+          onCancel={() => setPendingStart(null)}
+          onResolved={(picked) => {
+            const merged = new Map([...pendingStart.autoSelected, ...picked]);
+            manager.startWorkflow(pendingStart.loadedId, pendingStart.startingParams, merged);
+            setPendingStart(null);
+            onNavigateToActive();
+          }}
         />
       )}
 
