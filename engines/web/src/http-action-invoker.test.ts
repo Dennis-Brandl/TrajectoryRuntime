@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Saturnis.io. All rights reserved.
 // Licensed under the GNU AGPL v3. See LICENSE.md for details.
-import { describe, it } from 'node:test';
+import { describe, it, mock } from 'node:test';
 import assert from 'node:assert/strict';
 import { HttpActionInvoker } from './http-action-invoker.js';
 
@@ -127,5 +127,43 @@ describe('HttpActionInvoker', () => {
     assert.ok(states.includes('COMPLETED'), 'should see COMPLETED');
     const completed = seen.find(e => e.s === 'COMPLETED');
     assert.deepEqual(completed?.o, { x: '1' });
+  });
+
+  it('uses SSE when mode=sse-preferred + sse_supported + observable + sse_endpoint', async () => {
+    const listeners: Record<string, Function[]> = {};
+    const closeSpy = mock.fn();
+    (globalThis as any).EventSource = class {
+      url: string;
+      constructor(url: string) { this.url = url; (globalThis as any).__lastES = this; }
+      addEventListener(name: string, fn: Function) { (listeners[name] ??= []).push(fn); }
+      close() { closeSpy(); }
+    };
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = (async (input: any) => {
+      if (String(input).endsWith('/invoke')) {
+        return { ok: true, status: 201, json: async () => ({ data: { runtime_action_instance_id: 'rai-7', status: 'STARTING', sse_endpoint: '/instances/rai-7/events' } }) } as any;
+      }
+      return { ok: true, status: 200, json: async () => ({ data: { status: 'STARTING' } }) } as any;
+    }) as typeof fetch;
+
+    const seen: string[] = [];
+    const inv = new HttpActionInvoker();
+    inv.setCapabilities('http://s/', { sse_supported: true, actions: new Map([['a', { visibility: 'observable' }]]) });
+
+    await inv.invoke({
+      stepOid: 'sx', workflow_instance_id: 'wf', serverUri: 'http://s/', action_oid: 'a',
+      inputs: {}, mode: 'sse-preferred', pollIntervalMs: 4000,
+    }, { onStateChange: (_oid, s) => seen.push(s), onConnectivityChange: () => {} });
+
+    const fn = listeners['state_change']?.[0];
+    assert.ok(fn, 'state_change listener registered');
+    fn({ data: JSON.stringify({ status: 'COMPLETED', output_parameters: { y: '2' } }) });
+
+    inv.release('sx');
+    delete (globalThis as any).EventSource;
+    globalThis.fetch = originalFetch;
+
+    assert.ok(seen.includes('STARTING'));
+    assert.ok(seen.includes('COMPLETED'));
   });
 });

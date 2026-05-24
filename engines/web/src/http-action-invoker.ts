@@ -18,6 +18,12 @@ export class HttpActionInvoker implements ActionInvoker {
     cancelled: boolean;
   }>();
 
+  private capsByServer = new Map<string, ServerCapabilities>();
+
+  setCapabilities(serverUri: string, caps: ServerCapabilities): void {
+    this.capsByServer.set(this.normalizeUri(serverUri), caps);
+  }
+
   normalizeUri(raw: string): string {
     const trimmed = raw.trim();
     return trimmed.endsWith('/') ? trimmed : trimmed + '/';
@@ -85,8 +91,19 @@ export class HttpActionInvoker implements ActionInvoker {
       cancelled: false,
     });
 
-    // For now: always poll. SSE branch added in Task 23.
-    this.startPolling(req.stepOid, base, instanceId, req.pollIntervalMs, callbacks);
+    const caps = this.capsByServer.get(base);
+    const actionVisibility = caps?.actions.get(req.action_oid)?.visibility;
+    const canSse =
+      req.mode === 'sse-preferred'
+      && caps?.sse_supported === true
+      && actionVisibility === 'observable'
+      && typeof data.sse_endpoint === 'string';
+
+    if (canSse) {
+      this.startSse(req.stepOid, base, instanceId, data.sse_endpoint!, req.pollIntervalMs, callbacks);
+    } else {
+      this.startPolling(req.stepOid, base, instanceId, req.pollIntervalMs, callbacks);
+    }
 
     return instanceId;
   }
@@ -138,6 +155,52 @@ export class HttpActionInvoker implements ActionInvoker {
 
     state.pollTimer = setTimeout(tick, intervalMs);
   }
+  private startSse(
+    stepOid: string,
+    serverUri: string,
+    instanceId: string,
+    ssePath: string,
+    fallbackPollMs: number,
+    callbacks: ActionInvokerCallbacks,
+  ): void {
+    const state = this.active.get(stepOid);
+    if (!state || state.cancelled) return;
+
+    const url = ssePath.startsWith('http') ? ssePath : serverUri.replace(/\/$/, '') + ssePath;
+    const EventSourceCtor = (globalThis as any).EventSource;
+    if (!EventSourceCtor) {
+      this.startPolling(stepOid, serverUri, instanceId, fallbackPollMs, callbacks);
+      return;
+    }
+    const es = new EventSourceCtor(url);
+    state.eventSource = es;
+
+    es.addEventListener('state_change', (ev: MessageEvent) => {
+      try {
+        const data = JSON.parse(ev.data);
+        callbacks.onStateChange(stepOid, data.status, data.output_parameters);
+        const TERMINAL = ['COMPLETED', 'ABORTED', 'ERRORED'];
+        if (TERMINAL.includes(data.status)) this.release(stepOid);
+      } catch { /* ignore malformed */ }
+    });
+
+    es.addEventListener('output', (ev: MessageEvent) => {
+      try {
+        const data = JSON.parse(ev.data);
+        callbacks.onStateChange(stepOid, state.lastStatus as any, data);
+      } catch {}
+    });
+
+    es.addEventListener('error', () => {
+      es.close();
+      state.eventSource = null;
+      if (!state.cancelled) {
+        callbacks.onConnectivityChange(stepOid, 'reconnecting');
+        this.startPolling(stepOid, serverUri, instanceId, fallbackPollMs, callbacks);
+      }
+    });
+  }
+
   sendCommand(_uri: string, _id: string, _cmd: ActionServerCommand): Promise<void> {
     throw new Error('not implemented');
   }
