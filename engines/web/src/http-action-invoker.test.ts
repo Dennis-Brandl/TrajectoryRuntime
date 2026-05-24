@@ -191,4 +191,40 @@ describe('HttpActionInvoker', () => {
       globalThis.fetch = originalFetch;
     }
   });
+
+  it('sendCommand POSTs to /command and ignores 409', async () => {
+    const originalFetch = globalThis.fetch;
+    let url = '';
+    let body: any = null;
+    globalThis.fetch = (async (input: any, init?: any) => {
+      url = String(input);
+      body = init?.body ? JSON.parse(init.body) : null;
+      return { ok: false, status: 409, json: async () => ({ error: { code: 'INVALID_STATE_TRANSITION' } }) } as any;
+    }) as typeof fetch;
+    try {
+      const inv = new HttpActionInvoker();
+      await inv.sendCommand('http://s/', 'rai-1', 'PAUSE');
+      assert.match(url, /\/instances\/rai-1\/command$/);
+      assert.equal(body.command, 'PAUSE');
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+
+  it('abort DELETEs /instances/{id}', async () => {
+    const originalFetch = globalThis.fetch;
+    let url = '', method = '';
+    globalThis.fetch = (async (input: any, init?: any) => {
+      url = String(input); method = init?.method ?? 'GET';
+      return { ok: true, status: 200, json: async () => ({}) } as any;
+    }) as typeof fetch;
+    try {
+      const inv = new HttpActionInvoker();
+      await inv.abort('http://s/', 'rai-2');
+      assert.match(url, /\/instances\/rai-2$/);
+      assert.equal(method, 'DELETE');
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
 });

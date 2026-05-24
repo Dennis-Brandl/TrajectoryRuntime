@@ -224,10 +224,28 @@ export class HttpActionInvoker implements ActionInvoker {
     });
   }
 
-  sendCommand(_uri: string, _id: string, _cmd: ActionServerCommand): Promise<void> {
-    throw new Error('not implemented');
+  async sendCommand(serverUri: string, instanceId: string, command: ActionServerCommand): Promise<void> {
+    const url = this.normalizeUri(serverUri) + `instances/${encodeURIComponent(instanceId)}/command`;
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ command }),
+      });
+      if (res.status === 409) return;
+    } catch {
+      // best-effort
+    }
   }
-  abort(_uri: string, _id: string): Promise<void> { throw new Error('not implemented'); }
+
+  async abort(serverUri: string, instanceId: string): Promise<void> {
+    const url = this.normalizeUri(serverUri) + `instances/${encodeURIComponent(instanceId)}`;
+    try {
+      await fetch(url, { method: 'DELETE' });
+    } catch {
+      // best-effort
+    }
+  }
 
   release(stepOid: string): void {
     const state = this.active.get(stepOid);
