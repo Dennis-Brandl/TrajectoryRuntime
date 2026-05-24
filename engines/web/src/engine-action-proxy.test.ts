@@ -37,4 +37,25 @@ describe('engine ACTION PROXY — invoker injection', () => {
     engine.setActionInvoker(invoker, new Map([['env1-oid', SERVER]]));
     assert.ok(true);
   });
+
+  it('on activation, sets state STARTING and calls invoker.invoke with action_oid + inputs', async () => {
+    const invoker = new MockActionInvoker();
+    const engine = new WorkflowEngine(makeActionProxyWorkflow());
+    engine.setActionInvoker(invoker, new Map([['env1-oid', SERVER]]));
+    engine.start();
+
+    // Wait one microtask for the async invoke to be recorded
+    await Promise.resolve();
+
+    assert.equal(invoker.invocations.length, 1);
+    const inv = invoker.lastInvocation();
+    assert.equal(inv.req.serverUri, SERVER.uri);
+    assert.equal(inv.req.action_oid, 'action-oid-1');
+    assert.equal(inv.req.stepOid, 'ap-oid');
+
+    const active = engine.getActiveSteps();
+    const proxyStep = active.find(s => s.step.oid === 'ap-oid');
+    assert.ok(proxyStep, 'ACTION PROXY step should be active');
+    assert.equal(proxyStep!.step.state, 'STARTING');
+  });
 });

@@ -477,6 +477,90 @@ export class WorkflowEngine {
     return true;
   }
 
+  private activateActionProxy(target: StepInstance): void {
+    if (!this.actionInvoker) {
+      this.recordTrace(target.oid, 'ERRORED', undefined, 'No ActionInvoker configured');
+      target.state = 'ERRORED';
+      this.workflowState = 'ERRORED';
+      return;
+    }
+
+    const env = this.findEnvironmentForActionLocalId(target.step.local_id);
+    if (!env) {
+      this.recordTrace(target.oid, 'ERRORED', undefined,
+        `No environment contains action local_id "${target.step.local_id}"`);
+      target.state = 'ERRORED';
+      this.workflowState = 'ERRORED';
+      return;
+    }
+
+    const server = this.serverByEnvOid.get(env.oid);
+    if (!server) {
+      this.recordTrace(target.oid, 'ERRORED', undefined,
+        `No action server selected for environment "${env.local_id}"`);
+      target.state = 'ERRORED';
+      this.workflowState = 'ERRORED';
+      return;
+    }
+
+    const includedActions = (env.included_actions ?? []) as Array<{ local_id: string; oid: string }>;
+    const match = includedActions.find(a => a.local_id === target.step.local_id);
+    if (!match) {
+      this.recordTrace(target.oid, 'ERRORED', undefined,
+        `Environment "${env.local_id}" does not include action "${target.step.local_id}"`);
+      target.state = 'ERRORED';
+      this.workflowState = 'ERRORED';
+      return;
+    }
+
+    const inputs = this.stepParameterSnapshots.get(target.oid)?.inputParameters ?? {};
+
+    this.recordTrace(target.oid, 'STARTING');
+    target.state = 'STARTING';
+    this.activeActionProxyServers.set(target.oid, server.uri.trim());
+
+    void this.actionInvoker.invoke({
+      stepOid: target.oid,
+      workflow_instance_id: this.instanceId,
+      serverUri: server.uri.trim(),
+      action_oid: match.oid,
+      inputs,
+      mode: this.actionInvokerMode,
+      pollIntervalMs: this.actionInvokerPollMs,
+    }, {
+      onStateChange: (oid, state, outputs) => this.onExternalStateChange(oid, state, outputs),
+      onConnectivityChange: (oid, status) => this.onConnectivityChange(oid, status),
+    }).then(instanceId => {
+      this.actionInstanceIdByStep.set(target.oid, instanceId);
+    }).catch(err => {
+      this.recordTrace(target.oid, 'ERRORED', undefined, String(err));
+      const step = this.steps.get(target.oid);
+      if (step) step.state = 'ERRORED';
+      this.workflowState = 'ERRORED';
+    });
+  }
+
+  private findEnvironmentForActionLocalId(localId: string): MasterEnvironmentSpecification | undefined {
+    const envs = this.workflow.environment_specifications ?? [];
+    return envs.find(e =>
+      ((e.included_actions ?? []) as Array<{ local_id: string }>).some(a => a.local_id === localId),
+    );
+  }
+
+  // Stub — will be implemented in Task 13
+  private onExternalStateChange(
+    stepOid: string,
+    newState: StepState,
+    outputs?: Record<string, string>,
+  ): void {
+    void stepOid; void newState; void outputs;
+  }
+
+  // Stub — will be implemented later
+  private onConnectivityChange(stepOid: string, status: 'ok' | 'reconnecting' | 'never_connected'): void {
+    void stepOid; void status;
+  }
+
   private activateWorkflowProxy(target: StepInstance): void {
     const childSpec = this.childWorkflows.get(target.step.local_id);
     if (!childSpec) {
@@ -900,6 +984,11 @@ export class WorkflowEngine {
       label: target.step.local_id,
       stepType: target.stepType,
     });
+
+    if (target.stepType === 'ACTION PROXY') {
+      this.activateActionProxy(target);
+      return;
+    }
 
     if (target.stepType === 'WORKFLOW PROXY') {
       this.activateWorkflowProxy(target);
