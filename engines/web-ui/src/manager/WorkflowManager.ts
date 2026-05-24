@@ -180,6 +180,15 @@ export class WorkflowManager {
     });
     this._coordinatorUnsubs.set(instanceId, unsub);
 
+    // Read action-proxy settings from localStorage before starting
+    const apMode = (typeof localStorage !== 'undefined' && localStorage.getItem('actionProxy.mode') === 'poll-only')
+      ? 'poll-only' as const
+      : 'sse-preferred' as const;
+    const apPollSec = typeof localStorage !== 'undefined'
+      ? Math.max(1, Math.min(300, Number(localStorage.getItem('actionProxy.pollSec')) || 4))
+      : 4;
+    coordinator.setActionProxyOptions(apMode, apPollSec * 1000);
+
     // Start execution
     coordinator.start();
     // After start, pump siblings in case this workflow's activation granted resources for others
