@@ -5,9 +5,10 @@
   "license": "AGPL-3.0-or-later",
   "type": "module",
   "scripts": {
-    "dev": "vite --port 5173",
-    "dev:all": "vite --port 5173 --host",
-    "build": "tsc -b && vite build",
+    "dev": "npm run build:help && vite --port 5173",
+    "dev:all": "npm run build:help && vite --port 5173 --host",
+    "build": "npm run build:help && tsc -b && vite build",
+    "build:help": "node scripts/build-help.mjs",
     "preview": "vite preview --port 3001",
     "test": "tsc -b && node --import tsx --test \"src/**/*.test.ts\"",
     "test:integration": "tsc -b && node --import tsx --test \"test/integration/*.test.ts\""
@@ -26,6 +27,7 @@
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "@vitejs/plugin-react": "^4.4.1",
+    "marked": "^18.0.4",
     "tsx": "^4.22.3",
     "typescript": "^5.7.0",
     "vite": "^6.3.5"

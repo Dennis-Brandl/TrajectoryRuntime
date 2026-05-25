@@ -181,6 +181,11 @@ export function SettingsScreen() {
         <h3 className={styles.groupTitle}>About</h3>
         <p className={styles.aboutName}>Trajectory Desktop</p>
         <p className={styles.aboutVersion}>Version {__APP_VERSION__}</p>
+        <p className={styles.settingHelp}>
+          <a href="/help.html" target="_blank" rel="noopener noreferrer">
+            Open Help Guide
+          </a>
+        </p>
       </div>
 
       {dialogScope && (
