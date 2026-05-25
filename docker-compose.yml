@@ -1,5 +1,5 @@
 ##############################################################################
-# Trajectory RT — Docker Compose
+# Trajectory Runtime — Docker Compose
 #
 # Usage:
 #   docker compose up --build -d    # build and start

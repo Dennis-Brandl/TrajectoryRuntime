@@ -1,5 +1,5 @@
 # =============================================================================
-# Trajectory RT — Production Docker Image
+# Trajectory Runtime — Production Docker Image
 #
 # Workflow runtime execution engine with React web UI.
 # Multi-stage build: compile TypeScript engine + build Vite frontend,
