@@ -14,7 +14,6 @@
     "test:integration": "tsc -b && node --import tsx --test \"test/integration/*.test.ts\""
   },
   "dependencies": {
-    "@trajectory/tokens": "file:../../../TrajectoryEditor/packages/tokens",
     "ajv": "^8.18.0",
     "embla-carousel-react": "^8.6.0",
     "jszip": "^3.10.1",
