@@ -1,8 +1,10 @@
-/* Family-shared design tokens from MD's @trajectory/tokens.
+/* Family-shared design tokens from MD's @trajectory/tokens, vendored locally as
+   ./tokens.light.css so the Runtime web-ui builds self-contained in Docker (no
+   TrajectoryEditor sibling in the build context) — see that file's header to refresh.
    Light theme only — web-ui uses [data-theme="dark"] while @trajectory/tokens
    uses .dark for dark mode, so dark won't activate without a separate bridge.
    Documented as known limitation; family dark tokens stay static-light here. */
-@import "@trajectory/tokens/dist/tokens.light.css";
+@import "./tokens.light.css";
 
 :root,
 [data-theme="light"] {

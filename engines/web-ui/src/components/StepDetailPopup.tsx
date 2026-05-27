@@ -1,9 +1,14 @@
 // Copyright (c) 2026 Saturnis.io. All rights reserved.
 // Licensed under the GNU AGPL v3. See LICENSE.md for details.
+import { useContext } from 'react';
 import { X } from 'lucide-react';
 import styles from './StepDetailPopup.module.css';
+import { ActionLogPanel } from './ActionLogPanel.js';
+import { useActionProxy } from '../actionProxy/useActionProxy.js';
+import { WorkflowContext } from '../coordinator/WorkflowContext.js';
 
 interface StepDetailPopupProps {
+  stepOid: string;
   stepType: string;
   description: string;
   completedAt: number;
@@ -15,7 +20,12 @@ interface StepDetailPopupProps {
   onClose: () => void;
 }
 
-export function StepDetailPopup({ stepType, description, completedAt, state, error, scriptSource, inputParameters, outputParameters, onClose }: StepDetailPopupProps) {
+export function StepDetailPopup({ stepOid, stepType, description, completedAt, state, error, scriptSource, inputParameters, outputParameters, onClose }: StepDetailPopupProps) {
+  const coordinator = useContext(WorkflowContext);
+  const isActionProxy = stepType === 'ACTION PROXY';
+  const apController = isActionProxy && coordinator ? coordinator.getActionController(stepOid) : null;
+  const apSnap = useActionProxy(apController);
+
   const date = new Date(completedAt);
   const inputEntries = Object.entries(inputParameters);
   const outputEntries = Object.entries(outputParameters);
@@ -72,6 +82,13 @@ export function StepDetailPopup({ stepType, description, completedAt, state, err
           </table>
         ) : (
           <p className={styles.emptyParams}>None</p>
+        )}
+
+        {isActionProxy && (
+          <div>
+            <h4 className={styles.sectionTitle}>Action log</h4>
+            <ActionLogPanel snapshot={apSnap} />
+          </div>
         )}
       </div>
     </div>

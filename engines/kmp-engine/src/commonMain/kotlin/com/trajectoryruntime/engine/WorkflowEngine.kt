@@ -86,15 +86,9 @@ class WorkflowEngine(
             setup?.starting_parameters,
         )
 
-        // Index child workflows by local_id (prefer v7.0 children over deprecated child_workflows)
-        if (workflow.children != null) {
-            workflow.children.forEach { cw ->
-                childWorkflows[cw.local_id] = cw.toSpec()
-            }
-        } else {
-            workflow.child_workflows?.forEach { cw ->
-                childWorkflows[cw.local_id] = cw
-            }
+        // Index child workflows by local_id
+        workflow.children?.forEach { cw ->
+            childWorkflows[cw.local_id] = cw.toSpec()
         }
 
         // Validate: action local_ids unique across environments

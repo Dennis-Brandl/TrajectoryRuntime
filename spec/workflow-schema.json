@@ -631,10 +631,6 @@
               "type": "array",
               "items": { "$ref": "#/$defs/ChildWorkflowExport" }
             },
-            "child_workflows": {
-              "type": "array",
-              "items": { "$ref": "#" }
-            },
             "viewport": {
               "type": "object",
               "properties": {
@@ -692,10 +688,6 @@
         "children": {
           "type": "array",
           "items": { "$ref": "#/$defs/ChildWorkflowExport" }
-        },
-        "child_workflows": {
-          "type": "array",
-          "items": { "$ref": "#" }
         },
         "viewport": {
           "type": "object",

@@ -156,9 +156,6 @@ export function ActiveScreen({ deviceType, onStepChange }: ActiveScreenProps) {
                   workflowState: flat.workflowState,
                   stepLabel: flat.stepInfo.step.step.description ?? flat.stepInfo.step.step.local_id,
                 }}
-                connectivityStatus={
-                  manager.getCoordinator(flat.workflowId)?.getSnapshot()?.connectivityByStep?.[flat.stepInfo.step.oid]
-                }
               />
             </div>
           ))}

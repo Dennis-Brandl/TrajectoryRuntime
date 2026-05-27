@@ -172,6 +172,45 @@ function hasMatchingWaitAll(parallelOid: string, steps: Record<string, unknown>[
   return false;
 }
 
+function actionProxyValidation(workflow: Record<string, unknown>): ValidationResult | null {
+  const steps = workflow['steps'] as Array<Record<string, unknown>>;
+  const envSpecs = (workflow['environment_specifications'] as Array<Record<string, unknown>> | undefined) ?? [];
+
+  const envActions = new Map<string, Set<string>>();
+  for (const env of envSpecs) {
+    const envOid = env['oid'] as string | undefined;
+    if (typeof envOid !== 'string') continue;
+    const included = (env['included_actions'] as Array<Record<string, unknown>> | undefined) ?? [];
+    const oids = new Set<string>();
+    for (const a of included) {
+      const aOid = a['action_oid'];
+      if (typeof aOid === 'string') oids.add(aOid);
+    }
+    envActions.set(envOid, oids);
+  }
+
+  for (const step of steps) {
+    if (step['step_type'] !== 'ACTION PROXY') continue;
+    const stepOid = (step['oid'] as string | undefined) ?? '<unknown>';
+    const config = step['action_proxy_config'] as Record<string, unknown> | undefined;
+    if (!config) {
+      return { valid: false, error_code: 'INVALID_VALIDATION', error_message: `ACTION PROXY step ${stepOid} missing action_proxy_config` };
+    }
+    const envOid = config['environment_oid'] as string | undefined;
+    const actionOid = config['action_oid'] as string | undefined;
+    if (!envOid || !actionOid) {
+      return { valid: false, error_code: 'INVALID_VALIDATION', error_message: `ACTION PROXY step ${stepOid} action_proxy_config missing required field` };
+    }
+    if (!envActions.has(envOid)) {
+      return { valid: false, error_code: 'INVALID_VALIDATION', error_message: `ACTION PROXY step ${stepOid} references unknown environment_oid ${envOid}` };
+    }
+    if (!envActions.get(envOid)!.has(actionOid)) {
+      return { valid: false, error_code: 'INVALID_VALIDATION', error_message: `ACTION PROXY step ${stepOid} action_oid ${actionOid} not in environment ${envOid}` };
+    }
+  }
+  return null;
+}
+
 function resourceValidation(workflow: Record<string, unknown>): ValidationResult | null {
   // Build (sourceOid → Map<resourceName, resource_type>) across the whole tree:
   // every workflow's own (workflow-scoped) resources keyed by that workflow's oid,
@@ -219,7 +258,7 @@ function resourceValidation(workflow: Record<string, unknown>): ValidationResult
       }
     }
 
-    const childSpecs = (spec['children'] ?? spec['child_workflows']) as Record<string, unknown>[] | undefined;
+    const childSpecs = spec['children'] as Record<string, unknown>[] | undefined;
     if (Array.isArray(childSpecs)) {
       for (const c of childSpecs) gatherOwners(c);
     }
@@ -292,7 +331,7 @@ function resourceValidation(workflow: Record<string, unknown>): ValidationResult
       }
     }
 
-    const childSpecs = (spec['children'] ?? spec['child_workflows']) as Record<string, unknown>[] | undefined;
+    const childSpecs = spec['children'] as Record<string, unknown>[] | undefined;
     if (Array.isArray(childSpecs)) {
       for (const c of childSpecs) {
         const err = validateSpecSteps(c);
@@ -323,7 +362,7 @@ function resourceValidation(workflow: Record<string, unknown>): ValidationResult
         }
       }
     }
-    const childSpecs = (spec['children'] ?? spec['child_workflows']) as Record<string, unknown>[] | undefined;
+    const childSpecs = spec['children'] as Record<string, unknown>[] | undefined;
     if (Array.isArray(childSpecs)) {
       for (const c of childSpecs) {
         const err = validateSpecResourceShape(c);
@@ -452,7 +491,11 @@ export function validate(workflow: Record<string, unknown>): ValidationResult {
   const semanticError = semanticValidation(workflow);
   if (semanticError) return semanticError;
 
-  // Phase A2: Resource validation
+  // Phase A2: ACTION PROXY config validation (§14.2)
+  const actionProxyError = actionProxyValidation(workflow);
+  if (actionProxyError) return actionProxyError;
+
+  // Phase A3: Resource validation
   const resourceError = resourceValidation(workflow);
   if (resourceError) return resourceError;
 
@@ -462,3 +505,5 @@ export function validate(workflow: Record<string, unknown>): ValidationResult {
 
   return { valid: true };
 }
+
+export { validate as validateWorkflow };

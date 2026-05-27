@@ -57,24 +57,6 @@ describe('validator — v7.0 package format', () => {
     assert.equal(result.valid, true, `expected valid, got ${result.error_code}: ${result.error_message}`);
   });
 
-  it('accepts schemaVersion "3.0" with deprecated child_workflows (back-compat)', () => {
-    const wf = {
-      ...baseWorkflow(),
-      schemaVersion: '3.0',
-      child_workflows: [
-        {
-          local_id: 'child-1',
-          oid: 'child-oid-1',
-          version: '1.0.0',
-          last_modified_date: DATE,
-          ...minimalChildSteps(),
-        },
-      ],
-    };
-    const result = validate(wf);
-    assert.equal(result.valid, true, `expected valid, got ${result.error_code}: ${result.error_message}`);
-  });
-
   it('accepts a workflow with no schemaVersion (older export paths)', () => {
     const result = validate(baseWorkflow());
     assert.equal(result.valid, true);
@@ -84,28 +66,6 @@ describe('validator — v7.0 package format', () => {
     const wf = { ...baseWorkflow(), schemaVersion: '2.0' };
     const result = validate(wf);
     assert.equal(result.valid, false);
-  });
-
-  it('accepts a workflow with both children and child_workflows present', () => {
-    const wf = {
-      ...baseWorkflow(),
-      schemaVersion: '4.0',
-      children: [
-        {
-          local_id: 'c-new', oid: 'c-new-oid', version: '1.0.0', last_modified_date: DATE,
-          state: 'Draft', parentChildSpecId: null,
-          ...minimalChildSteps(),
-        },
-      ],
-      child_workflows: [
-        {
-          local_id: 'c-old', oid: 'c-old-oid', version: '1.0.0', last_modified_date: DATE,
-          ...minimalChildSteps(),
-        },
-      ],
-    };
-    const result = validate(wf);
-    assert.equal(result.valid, true, `expected valid, got ${result.error_code}: ${result.error_message}`);
   });
 
   it('accepts nested grandchildren with non-null parentChildSpecId', () => {

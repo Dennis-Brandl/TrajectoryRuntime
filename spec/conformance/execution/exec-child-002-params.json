@@ -26,9 +26,11 @@
       { "from_step_id": "start", "to_step_id": "proxy" },
       { "from_step_id": "proxy", "to_step_id": "end" }
     ],
-    "child_workflows": [
+    "children": [
       {
         "local_id": "child-wf", "oid": "child-wf", "version": "1.0.0", "last_modified_date": "2026-03-15",
+        "parentChildSpecId": null,
+        "state": "Effective",
         "starting_parameter_specifications": [
           { "id": "msg", "oid": "sp1", "default_value": "" }
         ],

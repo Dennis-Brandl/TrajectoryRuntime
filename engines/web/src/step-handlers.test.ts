@@ -2,7 +2,7 @@
 // Licensed under the GNU AGPL v3. See LICENSE.md for details.
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { handleUserAction } from './step-handlers.js';
+import { handleUserAction, needsUserAction } from './step-handlers.js';
 import { PropertyStore } from './properties.js';
 import type { MasterWorkflowStep, UserAction } from './types.js';
 
@@ -165,6 +165,10 @@ describe('handleUserAction', () => {
     assert.equal(store.get('PathPicked'), '0');
     assert.equal(store.get('GlobalPathPicked.Value'), '1');
     assert.deepEqual(result, { conditionValue: 'true', sourceHandleId: 'true', excludeUnconditional: true });
+  });
+
+  it('needsUserAction includes ACTION PROXY', () => {
+    assert.equal(needsUserAction('ACTION PROXY'), true);
   });
 
   it('YES_NO with bound + unbound specs: form value lands in its target, unbound specs stay untouched', () => {

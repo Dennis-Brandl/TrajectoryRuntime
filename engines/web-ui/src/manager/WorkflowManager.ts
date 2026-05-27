@@ -3,7 +3,6 @@
 import type {
   MasterWorkflowSpecification,
   MasterEnvironmentLibrary,
-  ActionServerSpecification,
 } from '@engine/types.js';
 import { deepCopySpec } from '@engine/spec-copy.js';
 import { InMemoryResourceManager } from '@engine/resource-manager.js';
@@ -138,8 +137,13 @@ export class WorkflowManager {
     return rm;
   }
 
-  /** Start a new instance from a loaded workflow spec. */
-  startWorkflow(loadedId: string, startingParams?: Record<string, string>, serverSelections?: Map<string, ActionServerSpecification>): string | null {
+  /**
+   * Prepare a new workflow instance from a loaded spec: creates the coordinator,
+   * calls coordinator.load(), adds to the active list, subscribes for completion —
+   * but does NOT call coordinator.start(). Call runWorkflow(instanceId) to start.
+   * Returns the new instanceId, or null if loadedId is not found.
+   */
+  prepareWorkflow(loadedId: string, startingParams?: Record<string, string>): string | null {
     const loaded = this._loaded.find(w => w.id === loadedId);
     if (!loaded) return null;
 
@@ -181,25 +185,26 @@ export class WorkflowManager {
     });
     this._coordinatorUnsubs.set(instanceId, unsub);
 
-    // Read action-proxy settings from localStorage before starting
-    const apMode = (typeof localStorage !== 'undefined' && localStorage.getItem('actionProxy.mode') === 'poll-only')
-      ? 'poll-only' as const
-      : 'sse-preferred' as const;
-    const apPollSec = typeof localStorage !== 'undefined'
-      ? Math.max(1, Math.min(300, Number(localStorage.getItem('actionProxy.pollSec')) || 4))
-      : 4;
-    coordinator.setActionProxyOptions(apMode, apPollSec * 1000);
+    this.publish();
+    return instanceId;
+  }
 
-    // Apply server selections for ACTION PROXY steps before starting
-    if (serverSelections && serverSelections.size > 0) {
-      coordinator.setServerSelections(serverSelections);
-    }
-
-    // Start execution
-    coordinator.start();
-    // After start, pump siblings in case this workflow's activation granted resources for others
+  /**
+   * Start execution of a prepared workflow instance (call after prepareWorkflow and
+   * any server binding setup). Pumps siblings after start.
+   */
+  runWorkflow(instanceId: string): void {
+    const active = this._active.find(w => w.id === instanceId);
+    if (!active) return;
+    active.coordinator.start();
     this.pumpSiblingCoordinators(instanceId);
     this.publish();
+  }
+
+  /** Prepare and immediately start a workflow instance. Preserves original behavior. */
+  startWorkflow(loadedId: string, startingParams?: Record<string, string>): string | null {
+    const instanceId = this.prepareWorkflow(loadedId, startingParams);
+    if (instanceId) this.runWorkflow(instanceId);
     return instanceId;
   }
 
@@ -275,70 +280,6 @@ export class WorkflowManager {
   getCoordinator(id: string): WorkflowCoordinator | null {
     const active = this._active.find(w => w.id === id);
     return active?.coordinator ?? null;
-  }
-
-  /**
-   * Inspect a loaded workflow for ACTION PROXY steps and return per-environment
-   * server selections.
-   *   - autoSelected: envOid → server (single REST server, no UI needed)
-   *   - needsPick: env list (2+ REST servers, prompt user)
-   *   - missing: env list (zero REST servers — block start)
-   *
-   * Environments are sourced from the loaded workflow's environment libraries.
-   */
-  resolveServerSelections(loadedId: string): {
-    autoSelected: Map<string, ActionServerSpecification>;
-    needsPick: Array<{ envOid: string; envLocalId: string; servers: ActionServerSpecification[] }>;
-    missing: Array<{ envOid: string; envLocalId: string }>;
-  } {
-    const loaded = this._loaded.find(w => w.id === loadedId);
-    if (!loaded) return { autoSelected: new Map(), needsPick: [], missing: [] };
-
-    const proxySteps = loaded.spec.steps.filter(s => s.step_type === 'ACTION PROXY');
-    if (proxySteps.length === 0) {
-      return { autoSelected: new Map(), needsPick: [], missing: [] };
-    }
-
-    // Flatten all environment specs from the nested library structure
-    function flattenLibraries(libs: MasterEnvironmentLibrary[]): import('@engine/types.js').MasterEnvironmentSpecification[] {
-      const result: import('@engine/types.js').MasterEnvironmentSpecification[] = [];
-      for (const lib of libs) {
-        result.push(...lib.environment_specifications);
-        if (lib.child_libraries) result.push(...flattenLibraries(lib.child_libraries));
-      }
-      return result;
-    }
-    const allEnvs = flattenLibraries(loaded.environments);
-
-    // Find which environment OIDs contain at least one ACTION PROXY step's local_id
-    const proxyLocalIds = new Set(proxySteps.map(s => s.local_id));
-    const refEnvOids = new Set<string>();
-    for (const env of allEnvs) {
-      const included = (env.included_actions ?? []) as Array<{ local_id: string }>;
-      if (included.some(a => proxyLocalIds.has(a.local_id))) {
-        refEnvOids.add(env.oid);
-      }
-    }
-
-    const autoSelected = new Map<string, ActionServerSpecification>();
-    const needsPick: Array<{ envOid: string; envLocalId: string; servers: ActionServerSpecification[] }> = [];
-    const missing: Array<{ envOid: string; envLocalId: string }> = [];
-
-    for (const env of allEnvs) {
-      if (!refEnvOids.has(env.oid)) continue;
-      const rest = (env.action_server_specifications ?? []).filter(
-        (s: ActionServerSpecification) => s.connection_type === 'REST',
-      );
-      if (rest.length === 0) {
-        missing.push({ envOid: env.oid, envLocalId: env.local_id });
-      } else if (rest.length === 1) {
-        autoSelected.set(env.oid, rest[0]);
-      } else {
-        needsPick.push({ envOid: env.oid, envLocalId: env.local_id, servers: rest });
-      }
-    }
-
-    return { autoSelected, needsPick, missing };
   }
 
   /** Pump all active coordinators (except the source) to check for cross-workflow resource grants. */

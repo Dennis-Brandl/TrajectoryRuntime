@@ -18,7 +18,7 @@ export function _resetOidCounter(): void {
 /**
  * Deep-copy a workflow spec, regenerating all step OIDs AND spec-level OIDs,
  * remapping connection references and resource_source_oid on resource commands.
- * Recurses into child_workflows.
+ * Recurses into children.
  *
  * Preserved (not regenerated):
  *  - local_id, connection_id, source_handle_id
@@ -40,9 +40,8 @@ function buildSpecOidMap(spec: MasterWorkflowSpecification, map: Map<string, str
   if (!map.has(spec.oid)) {
     map.set(spec.oid, nextOid());
   }
-  const childSpecs = spec.children ?? spec.child_workflows;
-  if (childSpecs) {
-    for (const child of childSpecs) {
+  if (spec.children) {
+    for (const child of spec.children) {
       buildSpecOidMap(child, map);
     }
   }
@@ -74,12 +73,9 @@ function deepCopySpecInternal(
     waypoints: conn.waypoints ? conn.waypoints.map(wp => ({ ...wp })) : undefined,
   }));
 
-  // Recurse into child workflows (prefer v7.0 children over deprecated child_workflows)
+  // Recurse into children
   const children = spec.children
     ? spec.children.map(cw => deepCopySpecInternal(cw, specOidMap) as ChildWorkflowExport)
-    : undefined;
-  const child_workflows = !spec.children && spec.child_workflows
-    ? spec.child_workflows.map(cw => deepCopySpecInternal(cw, specOidMap))
     : undefined;
 
   return {
@@ -88,7 +84,6 @@ function deepCopySpecInternal(
     steps,
     connections,
     children,
-    child_workflows,
     starting_parameter_specifications: spec.starting_parameter_specifications
       ? spec.starting_parameter_specifications.map(p => ({ ...p }))
       : undefined,

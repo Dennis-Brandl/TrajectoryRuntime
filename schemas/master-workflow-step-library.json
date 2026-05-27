@@ -132,6 +132,25 @@
               "source": { "type": "string", "description": "Script source code." }
             }
           },
+          "action_proxy_config": {
+            "type": "object",
+            "description": "Configuration for ACTION PROXY step type. Required when step_type is 'ACTION PROXY'.",
+            "required": ["action_oid", "environment_oid"],
+            "properties": {
+              "action_oid": {
+                "type": "string",
+                "description": "OID of the action to invoke. Must appear in the workflow's environment_specifications[environment_oid].included_actions."
+              },
+              "environment_oid": {
+                "type": "string",
+                "description": "OID of the environment whose registered action server runs this action."
+              },
+              "timeout_ms": {
+                "type": "number",
+                "description": "Optional per-invoke timeout override. Pass-through to the action server."
+              }
+            }
+          },
           "select1_config": {
             "type": "object",
             "description": "Configuration for SELECT 1 step type.",

@@ -15,13 +15,10 @@ import type {
   WaitingStepInfo,
   ActiveStepInfo,
   CompletedStepInfo,
-  ActionServerSpecification,
-  MasterEnvironmentSpecification,
 } from './types.js';
 import { ACTIVE_STEP_STATES } from './types.js';
 import type { ResourceManager } from './resource-manager.js';
 import { InMemoryResourceManager } from './resource-manager.js';
-import type { ActionInvoker, ConnectionMode } from './action-invoker.js';
 import { PropertyStore } from './properties.js';
 import { isAutoCompleting, needsUserAction, handleSelect1, handleUserAction, getFormElements, canonicalStepType, executeScript } from './step-handlers.js';
 import { splitResourceCommands, sortActivationCommands } from './resource-helpers.js';
@@ -45,12 +42,6 @@ export class WorkflowEngine {
   private resourceManager?: ResourceManager;
   private pendingResources: Map<string, PendingResourceState>;
   private instanceId: string;
-  private actionInvoker: ActionInvoker | null = null;
-  private serverByEnvOid: Map<string, ActionServerSpecification> = new Map();
-  private actionInvokerMode: ConnectionMode = 'sse-preferred';
-  private actionInvokerPollMs = 4000;
-  private actionInstanceIdByStep: Map<string, string> = new Map();
-  private activeActionProxyServers: Map<string, string> = new Map();
 
   constructor(
     workflow: MasterWorkflowSpecification,
@@ -87,27 +78,8 @@ export class WorkflowEngine {
       this.stepDefinitionOrder.push(step.oid);
     }
 
-    // Validate: action local_ids are unique across all environments
-    {
-      const envs = this.workflow.environment_specifications ?? [];
-      const seenLocalIds = new Map<string, string>();
-      for (const env of envs) {
-        const actions = (env.included_actions ?? []) as Array<{ local_id: string }>;
-        for (const a of actions) {
-          const prior = seenLocalIds.get(a.local_id);
-          if (prior !== undefined) {
-            throw new Error(
-              `Workflow has duplicate action local_id "${a.local_id}" in environments ` +
-              `"${prior}" and "${env.local_id}". Action local_ids must be unique across environments.`
-            );
-          }
-          seenLocalIds.set(a.local_id, env.local_id);
-        }
-      }
-    }
-
-    // Index child workflows by local_id (prefer v7.0 children over deprecated child_workflows)
-    const childSpecs = workflow.children ?? workflow.child_workflows;
+    // Index child workflows by local_id
+    const childSpecs = workflow.children;
     if (childSpecs) {
       for (const cw of childSpecs) {
         this.childWorkflows.set(cw.local_id, cw);
@@ -134,7 +106,7 @@ export class WorkflowEngine {
     if (!this.resourceManager) {
       const hasResourceSpecs = !!this.workflow.resource_property_specifications?.length;
       const hasResourceCmds = this.workflow.steps.some(s => s.resource_command_specifications?.length);
-      const allChildren = this.workflow.children ?? this.workflow.child_workflows;
+      const allChildren = this.workflow.children;
       const childHasResourceCmds = allChildren?.some(cw =>
         cw.steps.some(s => s.resource_command_specifications?.length),
       );
@@ -177,19 +149,6 @@ export class WorkflowEngine {
     startStep.state = 'COMPLETED';
     this.completionQueue.push(startStep.oid);
     this.drainCompletionQueue();
-  }
-
-  setActionInvoker(
-    invoker: ActionInvoker,
-    serverByEnvOid: Map<string, ActionServerSpecification>,
-  ): void {
-    this.actionInvoker = invoker;
-    this.serverByEnvOid = serverByEnvOid;
-  }
-
-  setActionInvokerOptions(mode: ConnectionMode, pollIntervalMs: number): void {
-    this.actionInvokerMode = mode;
-    this.actionInvokerPollMs = pollIntervalMs;
   }
 
   submitAction(action: UserAction, _actionIndex: number): void {
@@ -387,81 +346,32 @@ export class WorkflowEngine {
     return result;
   }
 
-  /** Pause an EXECUTING step. For ACTION PROXY steps, forwards PAUSE to invoker. */
+  /** Pause an EXECUTING step. */
   pauseStep(stepOid: string): void {
     const step = this.steps.get(stepOid);
-    if (!step) {
-      for (const child of this.activeChildEngines.values()) child.pauseStep(stepOid);
-      return;
-    }
-    if (step.stepType === 'ACTION PROXY') {
-      const serverUri = this.activeActionProxyServers.get(stepOid);
-      const instanceId = this.actionInstanceIdByStep.get(stepOid);
-      if (serverUri && instanceId && this.actionInvoker) {
-        void this.actionInvoker.sendCommand(serverUri, instanceId, 'PAUSE');
-      }
-      return;
-    }
-    if (step.state === 'EXECUTING') {
+    if (step && step.state === 'EXECUTING') {
       step.state = 'PAUSED';
       this.recordTrace(stepOid, 'PAUSED');
+    } else {
+      // Try child engines
+      for (const child of this.activeChildEngines.values()) {
+        child.pauseStep(stepOid);
+      }
     }
   }
 
-  /** Resume a PAUSED step back to EXECUTING. For ACTION PROXY steps, forwards RESUME to invoker. */
+  /** Resume a PAUSED step back to EXECUTING. */
   resumeStep(stepOid: string): void {
     const step = this.steps.get(stepOid);
-    if (!step) {
-      for (const child of this.activeChildEngines.values()) child.resumeStep(stepOid);
-      return;
-    }
-    if (step.stepType === 'ACTION PROXY') {
-      const serverUri = this.activeActionProxyServers.get(stepOid);
-      const instanceId = this.actionInstanceIdByStep.get(stepOid);
-      if (serverUri && instanceId && this.actionInvoker) {
-        void this.actionInvoker.sendCommand(serverUri, instanceId, 'RESUME');
-      }
-      return;
-    }
-    if (step.state === 'PAUSED') {
+    if (step && step.state === 'PAUSED') {
       step.state = 'EXECUTING';
       this.recordTrace(stepOid, 'EXECUTING');
-    }
-  }
-
-  /** Stop an ACTION PROXY step by forwarding STOP to invoker. */
-  stopStep(stepOid: string): void {
-    const step = this.steps.get(stepOid);
-    if (!step) {
-      for (const child of this.activeChildEngines.values()) child.stopStep(stepOid);
-      return;
-    }
-    if (step.stepType !== 'ACTION PROXY') return;
-    const serverUri = this.activeActionProxyServers.get(stepOid);
-    const instanceId = this.actionInstanceIdByStep.get(stepOid);
-    if (serverUri && instanceId && this.actionInvoker) {
-      void this.actionInvoker.sendCommand(serverUri, instanceId, 'STOP');
-    }
-  }
-
-  /** Abort the workflow — aborts all in-flight ACTION PROXY instances and sets state ABORTED. */
-  abortWorkflow(): void {
-    // Abort every in-flight ACTION PROXY instance
-    for (const [stepOid, serverUri] of this.activeActionProxyServers) {
-      const instanceId = this.actionInstanceIdByStep.get(stepOid);
-      if (instanceId && this.actionInvoker) {
-        void this.actionInvoker.abort(serverUri, instanceId);
+    } else {
+      // Try child engines
+      for (const child of this.activeChildEngines.values()) {
+        child.resumeStep(stepOid);
       }
-      this.actionInvoker?.release(stepOid);
     }
-    this.actionInstanceIdByStep.clear();
-    this.activeActionProxyServers.clear();
-
-    for (const child of this.activeChildEngines.values()) {
-      child.abortWorkflow();
-    }
-
-    this.workflowState = 'ABORTED';
   }
 
   /** Get all child engine input parameters (deepest active child wins). */
@@ -543,159 +453,6 @@ export class WorkflowEngine {
     if (!this.resourceManager.hasResource(resourceKey)) return false;
     this.resourceManager.resetResources(new Set([resourceKey]));
     return true;
-  }
-
-  private activateActionProxy(target: StepInstance): void {
-    if (!this.actionInvoker) {
-      this.recordTrace(target.oid, 'ERRORED', undefined, 'No ActionInvoker configured');
-      target.state = 'ERRORED';
-      this.workflowState = 'ERRORED';
-      return;
-    }
-
-    const env = this.findEnvironmentForActionLocalId(target.step.local_id);
-    if (!env) {
-      this.recordTrace(target.oid, 'ERRORED', undefined,
-        `No environment contains action local_id "${target.step.local_id}"`);
-      target.state = 'ERRORED';
-      this.workflowState = 'ERRORED';
-      return;
-    }
-
-    const server = this.serverByEnvOid.get(env.oid);
-    if (!server) {
-      this.recordTrace(target.oid, 'ERRORED', undefined,
-        `No action server selected for environment "${env.local_id}"`);
-      target.state = 'ERRORED';
-      this.workflowState = 'ERRORED';
-      return;
-    }
-
-    const includedActions = (env.included_actions ?? []) as Array<{ local_id: string; oid: string }>;
-    const match = includedActions.find(a => a.local_id === target.step.local_id);
-    if (!match) {
-      this.recordTrace(target.oid, 'ERRORED', undefined,
-        `Environment "${env.local_id}" does not include action "${target.step.local_id}"`);
-      target.state = 'ERRORED';
-      this.workflowState = 'ERRORED';
-      return;
-    }
-
-    const inputs = this.stepParameterSnapshots.get(target.oid)?.inputParameters ?? {};
-
-    this.recordTrace(target.oid, 'STARTING');
-    target.state = 'STARTING';
-    this.activeActionProxyServers.set(target.oid, server.uri.trim());
-
-    const stepInstanceId = `${target.oid}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-    void this.actionInvoker.invoke({
-      stepOid: target.oid,
-      workflow_instance_id: this.instanceId,
-      environment_oid: env.oid,
-      step_instance_id: stepInstanceId,
-      step_oid: target.oid,
-      serverUri: server.uri.trim(),
-      action_oid: match.oid,
-      inputs,
-      mode: this.actionInvokerMode,
-      pollIntervalMs: this.actionInvokerPollMs,
-    }, {
-      onStateChange: (oid, state, outputs) => this.onExternalStateChange(oid, state, outputs),
-      onConnectivityChange: (oid, status) => this.onConnectivityChange(oid, status),
-    }).then(instanceId => {
-      this.actionInstanceIdByStep.set(target.oid, instanceId);
-    }).catch(err => {
-      this.recordTrace(target.oid, 'ERRORED', undefined, String(err));
-      const step = this.steps.get(target.oid);
-      if (step) step.state = 'ERRORED';
-      this.workflowState = 'ERRORED';
-    });
-  }
-
-  private findEnvironmentForActionLocalId(localId: string): MasterEnvironmentSpecification | undefined {
-    const envs = this.workflow.environment_specifications ?? [];
-    return envs.find(e =>
-      ((e.included_actions ?? []) as Array<{ local_id: string }>).some(a => a.local_id === localId),
-    );
-  }
-
-  private onExternalStateChange(
-    stepOid: string,
-    newState: StepState,
-    outputs?: Record<string, string>,
-  ): void {
-    const step = this.steps.get(stepOid);
-    if (!step) return;
-    if (this.workflowState === 'ABORTED' || this.workflowState === 'COMPLETED') return;
-
-    // Normalize STOPPED → ABORTED (engine has no STOPPED state in StepState union)
-    const mapped = (newState as string) === 'STOPPED' ? 'ABORTED' : newState;
-
-    this.recordTrace(stepOid, mapped);
-    step.state = mapped as StepState;
-
-    // Write outputs to PropertyStore via output_parameter_specifications[].target
-    if (outputs && step.step.output_parameter_specifications) {
-      for (const spec of step.step.output_parameter_specifications) {
-        const val = outputs[spec.id];
-        if (val !== undefined && spec.target) {
-          this.propertyStore.set(spec.target, val);
-        }
-      }
-      const snap = this.stepParameterSnapshots.get(stepOid);
-      if (snap) {
-        for (const spec of step.step.output_parameter_specifications) {
-          const val = outputs[spec.id];
-          if (val !== undefined) snap.outputParameters[spec.id] = val;
-        }
-      }
-    }
-
-    const TERMINAL: StepState[] = ['COMPLETED', 'ABORTED', 'ERRORED'];
-    if (TERMINAL.includes(mapped as StepState)) {
-      this.actionInvoker?.release(stepOid);
-      this.actionInstanceIdByStep.delete(stepOid);
-      this.activeActionProxyServers.delete(stepOid);
-
-      if (mapped === 'COMPLETED') {
-        this.completionQueue.push(stepOid);
-        this.drainCompletionQueue();
-      } else if (mapped === 'ERRORED') {
-        this.workflowState = 'ERRORED';
-      }
-    }
-
-    // Notify external-update subscribers so the coordinator can re-publish
-    // its snapshot. Async state transitions (from the invoker callback)
-    // don't trigger the usual synchronous sync path.
-    for (const fn of this.externalUpdateListeners) fn();
-  }
-
-  private externalUpdateListeners: Array<() => void> = [];
-
-  /** Subscribe to async state updates pushed in via onExternalStateChange. */
-  subscribeExternalUpdate(fn: () => void): () => void {
-    this.externalUpdateListeners.push(fn);
-    return () => {
-      const idx = this.externalUpdateListeners.indexOf(fn);
-      if (idx >= 0) this.externalUpdateListeners.splice(idx, 1);
-    };
-  }
-
-  private connectivityListeners: Array<(stepOid: string, status: 'ok' | 'reconnecting' | 'never_connected') => void> = [];
-
-  subscribeConnectivity(
-    fn: (stepOid: string, status: 'ok' | 'reconnecting' | 'never_connected') => void
-  ): () => void {
-    this.connectivityListeners.push(fn);
-    return () => {
-      const idx = this.connectivityListeners.indexOf(fn);
-      if (idx >= 0) this.connectivityListeners.splice(idx, 1);
-    };
-  }
-
-  private onConnectivityChange(stepOid: string, status: 'ok' | 'reconnecting' | 'never_connected'): void {
-    for (const fn of this.connectivityListeners) fn(stepOid, status);
   }
 
   private activateWorkflowProxy(target: StepInstance): void {
@@ -1121,11 +878,6 @@ export class WorkflowEngine {
       label: target.step.local_id,
       stepType: target.stepType,
     });
-
-    if (target.stepType === 'ACTION PROXY') {
-      this.activateActionProxy(target);
-      return;
-    }
 
     if (target.stepType === 'WORKFLOW PROXY') {
       this.activateWorkflowProxy(target);

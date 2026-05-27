@@ -30,7 +30,7 @@ This document is a complete specification of the DRAFT Distributed Workflow Inte
 16. [Resource Specifications](#16-resource-specifications)
 17. [Environment Specifications](#17-environment-specifications)
 18. [Action Specifications](#18-action-specifications)
-19. [Child Workflows](#19-child-workflows)
+19. [Children (Nested Workflow Specifications)](#19-children-nested-workflow-specifications)
 20. [Runtime State Model](#20-runtime-state-model)
 21. [Execution Semantics](#21-execution-semantics)
 22. [Image Handling](#22-image-handling)
@@ -176,7 +176,7 @@ interface MasterWorkflowSpecification extends ManagedElement {
 
   // Embedded dependencies
   environment_specifications?: MasterEnvironmentSpecification[];
-  child_workflows?: MasterWorkflowSpecification[];
+  children?: ChildWorkflowExport[];
 
   // Editor viewport (informational, not used at runtime)
   viewport?: { x: number; y: number; zoom: number };
@@ -926,15 +926,24 @@ interface MasterActionLibrary extends ManagedElement {
 
 ---
 
-## 19. Child Workflows
+## 19. Children (Nested Workflow Specifications)
 
-Workflows can contain embedded child workflows, invoked via `WORKFLOW PROXY` steps:
+Workflows may contain nested child workflows. Each nested workflow is represented as a `ChildWorkflowExport` — a wrapper that identifies the workflow specification being instantiated and carries the full embedded workflow body.
 
 ```typescript
-child_workflows: MasterWorkflowSpecification[]
+children?: ChildWorkflowExport[];
+
+interface ChildWorkflowExport {
+  parentChildSpecId: string;   // OID of the spec being instantiated
+  version: string;
+  state: 'Draft' | 'InTest' | 'InReview' | 'Approved' | 'Effective' | 'Superseded' | 'Obsolete';
+  // ... plus the embedded workflow body (steps, connections, children — recursive)
+}
 ```
 
-Each child workflow has the same complete structure as the root workflow (steps, connections, parameters, resources, etc.). Child workflows can be nested recursively.
+`ChildWorkflowExport` carries the nested workflow's complete structure: its own steps, connections, parameter specifications, resource specifications, and — recursively — any further `children`. The `parentChildSpecId` identifies the workflow specification OID being instantiated, while `version` and `state` reflect the lifecycle state of that specification at the time the package was exported.
+
+> **Deprecation note:** The deprecated `child_workflows` field was removed on 2026-05-22. See `docs/v7.0-package-format-changes.md` for migration guidance.
 
 ---
 
@@ -1243,3 +1252,54 @@ The `form_layout_config` is a declarative UI specification. Each platform implem
 2. Scale the logical pixel canvas to actual screen dimensions
 3. For each element: switch on `type`, emit a native widget at `(x, y)` with `(width, height)`
 4. Apply `zIndex` for element overlap ordering
+
+## ACTION PROXY step
+
+An `ACTION PROXY` step delegates execution to an external action server (Trajectory Action Container) over the Trajectory REST protocol (`docs/2026-05-18-trajectory-rest-protocol-design.md`).
+
+### Step block
+
+```json
+{
+  "local_id": "pick-and-place",
+  "oid": "step-pick-001",
+  "version": "1.0.0",
+  "last_modified_date": "2026-05-19T00:00:00Z",
+  "step_type": "ACTION PROXY",
+  "action_proxy_config": {
+    "action_oid": "act-pick-001",
+    "environment_oid": "env-warehouse",
+    "timeout_ms": 30000
+  }
+}
+```
+
+- `action_proxy_config.action_oid` MUST match an entry in `environment_specifications[environment_oid].included_actions[].action_oid`.
+- `action_proxy_config.environment_oid` MUST match an `environment_specifications[].oid`.
+- `action_proxy_config.timeout_ms` is optional; passed through to the action server's invoke endpoint.
+
+### `action_server_specifications` on an environment
+
+Environments declare the servers that can execute their actions:
+
+```json
+{
+  "oid": "env-warehouse",
+  "local_id": "warehouse",
+  "version": "1.0.0",
+  "last_modified_date": "2026-05-19T00:00:00Z",
+  "action_server_specifications": [
+    {
+      "name": "warehouse-controller-01",
+      "uri": "http://warehouse-01.lan:3002",
+      "description": "Primary warehouse controller",
+      "connection_type": "REST"
+    }
+  ],
+  "included_actions": [
+    { "action_oid": "act-pick-001", "action_name": "PickAndPlace", "action_library": "warehouse-lib" }
+  ]
+}
+```
+
+At workflow start, if an environment has multiple registered servers AND at least one ACTION PROXY step references it, the runtime prompts the user to choose a server. The chosen server is used for every ACTION PROXY invocation referencing that environment for the lifetime of the workflow instance.

@@ -51,6 +51,11 @@ export function SettingsScreen() {
   const [confirmDeleteLoaded, setConfirmDeleteLoaded] = useLocalStorage('trajectory-confirm-delete-loaded', true);
   const [confirmDeleteCompleted, setConfirmDeleteCompleted] = useLocalStorage('trajectory-confirm-delete-completed', false);
 
+  const [envActionMapping, setEnvActionMapping] = useLocalStorage<'Exact' | 'Name'>(
+    'trajectory-env-action-mapping',
+    'Name',
+  );
+
   const handleClearHistory = useCallback(() => {
     if (window.confirm('Clear all completed workflow history?')) {
       manager.clearCompleted();
@@ -198,9 +203,48 @@ export function SettingsScreen() {
       </div>
 
       <div className={styles.settingGroup}>
+        <h3 className={styles.groupTitle}>Action Server Mapping</h3>
+        <p className={styles.settingHelp}>
+          How to resolve workflow environment and action references against connected
+          action servers at workflow start.
+        </p>
+        <label className={styles.settingRow}>
+          <input
+            type="radio"
+            name="env-action-mapping"
+            value="Name"
+            checked={envActionMapping === 'Name'}
+            onChange={() => setEnvActionMapping('Name')}
+          />
+          <span className={styles.settingLabel}>
+            <strong>Name</strong> — match by environment and action names
+            (case-sensitive); rewrite workflow OIDs to server-supplied values.
+          </span>
+        </label>
+        <label className={styles.settingRow}>
+          <input
+            type="radio"
+            name="env-action-mapping"
+            value="Exact"
+            checked={envActionMapping === 'Exact'}
+            onChange={() => setEnvActionMapping('Exact')}
+          />
+          <span className={styles.settingLabel}>
+            <strong>Exact</strong> — workflow OIDs must match the action server
+            exactly; mismatch prevents workflow start.
+          </span>
+        </label>
+      </div>
+
+      <div className={styles.settingGroup}>
         <h3 className={styles.groupTitle}>About</h3>
         <p className={styles.aboutName}>Trajectory Desktop</p>
         <p className={styles.aboutVersion}>Version {__APP_VERSION__}</p>
+        <p className={styles.settingHelp}>
+          <a href="/help.html" target="_blank" rel="noopener noreferrer">
+            Open Help Guide
+          </a>
+        </p>
       </div>
 
       {dialogScope && (

@@ -312,7 +312,7 @@ export interface ActionServerSpecification {
   name: string;
   uri: string;
   description?: string;
-  connection_type: string; // "REST" for now
+  connection_type: string;
 }
 
 export interface MasterEnvironmentSpecification {
@@ -339,6 +339,12 @@ export interface MasterEnvironmentLibrary {
   child_libraries?: MasterEnvironmentLibrary[];
 }
 
+export interface ActionProxyConfig {
+  action_oid: string;
+  environment_oid: string;
+  timeout_ms?: number;
+}
+
 export interface MasterWorkflowStep extends ManagedElement {
   step_type: string;
   position?: { x: number; y: number };
@@ -350,6 +356,7 @@ export interface MasterWorkflowStep extends ManagedElement {
   yes_no_config?: YesNoConfig;
   script_config?: ScriptConfig;
   select1_config?: Select1Config;
+  action_proxy_config?: ActionProxyConfig;
 }
 
 export type DisplayStyle = 'flowchart' | 'bpmn' | 'isa88';
@@ -367,7 +374,6 @@ export interface MasterWorkflowSpecification extends ManagedElement {
   resource_property_specifications?: ResourcePropertySpecification[];
   environment_specifications?: MasterEnvironmentSpecification[];
   children?: ChildWorkflowExport[];
-  child_workflows?: MasterWorkflowSpecification[];
   viewport?: { x: number; y: number; zoom: number };
 }
 
