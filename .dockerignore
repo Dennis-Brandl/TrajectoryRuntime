@@ -18,3 +18,7 @@ LICENSE
 *.md
 !engines/web/README.md
 !engines/web-ui/README.md
+
+# Keep TypeScript incremental build state out of the image: a stale tsbuildinfo
+# plus a stripped dist makes `tsc --build` skip re-emitting .d.ts files.
+**/*.tsbuildinfo
