@@ -78,6 +78,25 @@ export class WorkflowEngine {
       this.stepDefinitionOrder.push(step.oid);
     }
 
+    // Validate: action local_ids are unique across all environments
+    {
+      const envs = workflow.environment_specifications ?? [];
+      const seenLocalIds = new Map<string, string>();
+      for (const env of envs) {
+        const actions = (env.included_actions ?? []) as Array<{ local_id: string }>;
+        for (const a of actions) {
+          const prior = seenLocalIds.get(a.local_id);
+          if (prior !== undefined) {
+            throw new Error(
+              `Workflow has duplicate action local_id "${a.local_id}" in environments ` +
+              `"${prior}" and "${env.local_id}". Action local_ids must be unique across environments.`
+            );
+          }
+          seenLocalIds.set(a.local_id, env.local_id);
+        }
+      }
+    }
+
     // Index child workflows by local_id
     const childSpecs = workflow.children;
     if (childSpecs) {
