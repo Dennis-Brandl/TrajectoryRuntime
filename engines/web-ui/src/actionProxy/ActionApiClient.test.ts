@@ -111,3 +111,47 @@ test('getCapabilities returns env-grouped list', async () => {
   assert.equal(envs[0].actions[0].action_oid, 'act-1');
   assert.equal(envs[0].actions[0].visibility, 'observable');
 });
+
+// ────────────────────────────────────────────────────────────────────────────
+// Regression: default fetch must not throw "fetch called on an object that
+// does not implement interface Window."
+//
+// Some browsers (Firefox, recent Chromium) reject native fetch when called
+// with a `this` other than Window/WorkerGlobalScope. Storing a bare `fetch`
+// reference on a class field and invoking via `this.fetchImpl(...)` triggers
+// that error because the call site sets `this = the class instance`. The fix
+// is to wrap fetch in an arrow so the inner call evaluates as a plain global
+// invocation. This test pins that behavior by replacing `globalThis.fetch`
+// with a strict implementation that asserts the binding on every call.
+// ────────────────────────────────────────────────────────────────────────────
+test('default fetch is invoked with global-style `this` (no Window binding error)', async () => {
+  const originalFetch = globalThis.fetch
+  let observedThisIsClient = false
+  // Strict stand-in: throws if called as a method on the ActionApiClient
+  // instance (mirroring what browsers do for the real fetch).
+  const strictFetch = function (this: unknown, _url: RequestInfo | URL, _init?: RequestInit) {
+    if (this !== undefined && this !== globalThis) {
+      // If we get here with `this` being an ActionApiClient, the regression
+      // is back. The original browser error wording is reproduced verbatim
+      // so the failure mode is unambiguous.
+      observedThisIsClient = true
+      throw new TypeError(`'fetch' called on an object that does not implement interface Window.`)
+    }
+    return Promise.resolve(
+      new Response(
+        JSON.stringify({ data: { environments: [] }, meta: {} }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      ),
+    )
+  } as unknown as typeof fetch
+  ;(globalThis as { fetch: typeof fetch }).fetch = strictFetch
+
+  try {
+    // Use the no-arg constructor so the class-default fetch wrapper runs.
+    const client = new ActionApiClient()
+    await client.getCapabilities('http://localhost:3002')
+    assert.equal(observedThisIsClient, false, 'fetch was invoked with the wrong `this` — the Window-binding fix regressed')
+  } finally {
+    ;(globalThis as { fetch: typeof fetch }).fetch = originalFetch
+  }
+})

@@ -301,6 +301,67 @@ function relaxFormElementRequired(schema: Record<string, unknown>): void {
   }
 }
 
+// ────────────────────────────────────────────────────────────────────────────
+// Form input binding validation
+//
+// Mirrors `formInputBindingValidation` in engines/web/src/validator.ts. Every
+// `textInput` / `textarea` / `checkbox` / `radio` element must declare an
+// `outputParameter`; without it, properties.ts → captureFormOutputs silently
+// skips the element on submit and the captured value disappears. We fail the
+// workflow at file load time so the user sees the binding gap before the
+// Runtime stalls a downstream step with an empty input. See the matching
+// header comment in the engine validator for the full rationale.
+// ────────────────────────────────────────────────────────────────────────────
+
+const INPUT_BINDING_REQUIRED_TYPES: ReadonlySet<string> = new Set([
+  'textInput',
+  'textarea',
+  'checkbox',
+  'radio',
+])
+
+function formInputBindingValidation(workflow: Record<string, unknown>): ValidationResult | null {
+  function checkSpec(spec: Record<string, unknown>): ValidationResult | null {
+    const steps = (spec['steps'] as Record<string, unknown>[] | undefined) ?? []
+    for (const step of steps) {
+      const stepLabel = (step['local_id'] as string | undefined) ?? (step['oid'] as string | undefined) ?? '<unknown>'
+      const layouts = step['form_layout_config'] as Array<Record<string, unknown>> | undefined
+      if (!Array.isArray(layouts)) continue
+      for (const layout of layouts) {
+        const elements = layout['elements'] as Record<string, unknown>[] | undefined
+        if (!Array.isArray(elements)) continue
+        for (const el of elements) {
+          const type = el['type'] as string | undefined
+          if (!type || !INPUT_BINDING_REQUIRED_TYPES.has(type)) continue
+          const outputParameter = el['outputParameter']
+          if (typeof outputParameter !== 'string' || outputParameter.length === 0) {
+            const fieldName = (el['fieldName'] as string | undefined) ?? ''
+            const label = (el['label'] as string | undefined) ?? fieldName ?? '(unlabeled)'
+            const device = (layout['deviceType'] as string | undefined) ?? 'unknown'
+            return {
+              valid: false,
+              error_code: 'UNBOUND_FORM_INPUT',
+              error_message:
+                `Step "${stepLabel}" form ${type} "${label}" (${device} layout) has no outputParameter binding — ` +
+                `captured input would be discarded. Set the element's outputParameter to one of the step's ` +
+                `output_parameter_specifications ids, or remove the element.`,
+            }
+          }
+        }
+      }
+    }
+    const childSpecs = spec['children'] as Record<string, unknown>[] | undefined
+    if (Array.isArray(childSpecs)) {
+      for (const c of childSpecs) {
+        const err = checkSpec(c)
+        if (err) return err
+      }
+    }
+    return null
+  }
+  return checkSpec(workflow)
+}
+
 function normalizeForAjv(workflow: Record<string, unknown>): Record<string, unknown> {
   const clone = JSON.parse(JSON.stringify(workflow)) as Record<string, unknown>;
   const steps = clone['steps'];
@@ -373,6 +434,10 @@ export function validateWorkflow(workflow: Record<string, unknown>): ValidationR
 
   const resourceError = resourceValidation(workflow);
   if (resourceError) return resourceError;
+
+  // Form input binding check — see formInputBindingValidation comment block.
+  const formInputBindingError = formInputBindingValidation(workflow);
+  if (formInputBindingError) return formInputBindingError;
 
   const structuralError = structuralValidation(workflow);
   if (structuralError) return structuralError;

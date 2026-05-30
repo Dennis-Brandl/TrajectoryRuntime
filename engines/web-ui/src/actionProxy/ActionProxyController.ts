@@ -48,7 +48,13 @@ export class ActionProxyController {
   private terminalEmitted = false;
 
   constructor(private cfg: ControllerConfig) {
-    this.api = new ActionApiClient(cfg.fetchImpl ?? fetch);
+    // Pass through the optional override OR `undefined` — never a bare
+    // `fetch` reference. `new ActionApiClient(undefined)` triggers its own
+    // default that wraps `fetch` in an arrow so the call inside the client
+    // doesn't fail with "fetch called on an object that does not implement
+    // interface Window" (caused by `this.fetchImpl(...)` binding `this` to
+    // the client instance). See ActionApiClient.defaultFetch().
+    this.api = new ActionApiClient(cfg.fetchImpl);
     this.snapshot = {
       instanceId: null,
       serverState: null,

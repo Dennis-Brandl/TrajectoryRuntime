@@ -375,6 +375,76 @@ function resourceValidation(workflow: Record<string, unknown>): ValidationResult
   return validateSpecResourceShape(workflow);
 }
 
+// ────────────────────────────────────────────────────────────────────────────
+// Form input binding validation
+//
+// Every form element that captures user input — `textInput`, `textarea`
+// (multi-line text), `checkbox` (checkbox group), and `radio` (radio group) —
+// must declare an `outputParameter` binding. Without one, the runtime's
+// `captureFormOutputs` (engines/web/src/properties.ts) skips the element on
+// submit (`if (!('outputParameter' in el) || !el.outputParameter) continue`)
+// and the user's input is silently discarded — any downstream step that
+// reads the property the author *thought* the field wrote to gets an empty
+// string. That's exactly how the Kitchen workflow's BakeItem hit `int('')`
+// after the "Get Test Info" form's three inputs all had auto-generated
+// fieldNames (`Text_127680`, `Radio_547520`, `Radio_282752`) but no
+// `outputParameter` linking them to the step's output spec.
+//
+// Catching this at validation time fails fast at file load instead of at
+// invoke-time inside Python on the action server.
+// ────────────────────────────────────────────────────────────────────────────
+
+const INPUT_BINDING_REQUIRED_TYPES: ReadonlySet<string> = new Set([
+  'textInput',
+  'textarea',
+  'checkbox',
+  'radio',
+])
+
+function formInputBindingValidation(workflow: Record<string, unknown>): ValidationResult | null {
+  function checkSpec(spec: Record<string, unknown>): ValidationResult | null {
+    const steps = (spec['steps'] as Record<string, unknown>[] | undefined) ?? []
+    for (const step of steps) {
+      const stepLabel = (step['local_id'] as string | undefined) ?? (step['oid'] as string | undefined) ?? '<unknown>'
+      const layouts = step['form_layout_config'] as
+        | Array<Record<string, unknown>>
+        | undefined
+      if (!Array.isArray(layouts)) continue
+      for (const layout of layouts) {
+        const elements = layout['elements'] as Record<string, unknown>[] | undefined
+        if (!Array.isArray(elements)) continue
+        for (const el of elements) {
+          const type = el['type'] as string | undefined
+          if (!type || !INPUT_BINDING_REQUIRED_TYPES.has(type)) continue
+          const outputParameter = el['outputParameter']
+          if (typeof outputParameter !== 'string' || outputParameter.length === 0) {
+            const fieldName = (el['fieldName'] as string | undefined) ?? ''
+            const label = (el['label'] as string | undefined) ?? fieldName ?? '(unlabeled)'
+            const device = (layout['deviceType'] as string | undefined) ?? 'unknown'
+            return {
+              valid: false,
+              error_code: 'UNBOUND_FORM_INPUT',
+              error_message:
+                `Step "${stepLabel}" form ${type} "${label}" (${device} layout) has no outputParameter binding — ` +
+                `captured input would be discarded. Set the element's outputParameter to one of the step's ` +
+                `output_parameter_specifications ids, or remove the element.`,
+            }
+          }
+        }
+      }
+    }
+    const childSpecs = spec['children'] as Record<string, unknown>[] | undefined
+    if (Array.isArray(childSpecs)) {
+      for (const c of childSpecs) {
+        const err = checkSpec(c)
+        if (err) return err
+      }
+    }
+    return null
+  }
+  return checkSpec(workflow)
+}
+
 // Relax form element `required` arrays in the schema so that elements
 // missing optional-in-practice fields (fieldName, label, etc.) still
 // validate.  We keep only `["type"]` so invalid element types are caught.
@@ -498,6 +568,12 @@ export function validate(workflow: Record<string, unknown>): ValidationResult {
   // Phase A3: Resource validation
   const resourceError = resourceValidation(workflow);
   if (resourceError) return resourceError;
+
+  // Phase A4: Form input binding validation — every textInput / textarea /
+  // checkbox / radio element must declare an outputParameter or its captured
+  // value would be silently discarded by captureFormOutputs at runtime.
+  const formInputBindingError = formInputBindingValidation(workflow);
+  if (formInputBindingError) return formInputBindingError;
 
   // Phase B: Structural validation (ajv)
   const structuralError = structuralValidation(workflow);

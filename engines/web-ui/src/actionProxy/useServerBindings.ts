@@ -138,9 +138,27 @@ function runMapping(
   const result = mapWorkflowEnvActions({ mode, workflowEnvs, capabilitiesByServer });
 
   if (result.kind === 'ok') {
+    // After Name-mode mapping, applyOidRewrites rewrites every
+    // step.action_proxy_config.environment_oid to the server's env oid,
+    // but `bindings` was keyed by the WORKFLOW's pre-rewrite env oid (set
+    // back in `begin()`). The coordinator looks up serverUri by the env
+    // oid that's actually on the step (post-rewrite), so without this
+    // remap startActionProxy throws "No server bound for environment ..."
+    // for any workflow whose authored env oids differ from the server's.
+    // Mirror the same remap on chosenServerByEnv for symmetry.
+    const rewrittenBindings: Record<string, string> = {};
+    for (const [oldOid, uri] of Object.entries(bindings)) {
+      const newOid = result.rewrittenOids.get(oldOid) ?? oldOid;
+      rewrittenBindings[newOid] = uri;
+    }
+    const rewrittenChosen = new Map<string, string>();
+    for (const [oldOid, uri] of result.chosenServerByEnv) {
+      const newOid = result.rewrittenOids.get(oldOid) ?? oldOid;
+      rewrittenChosen.set(newOid, uri);
+    }
     setState({
       phase: 'done',
-      result: { bindings, capabilities, rewrittenOids: result.rewrittenOids, chosenServerByEnv: result.chosenServerByEnv },
+      result: { bindings: rewrittenBindings, capabilities, rewrittenOids: result.rewrittenOids, chosenServerByEnv: rewrittenChosen },
     });
     return;
   }
