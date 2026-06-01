@@ -1222,6 +1222,9 @@ class WorkflowEngine(
             "GOTO" -> rc.goto_step_oid?.let { returnGoto(it) }
             "RETRY" -> returnRetry(ctx)
         }
+        // Clear the triggering catch network. This is a no-op for ABANDON/RESTART (they already
+        // idled every step, and RESTART already cleared activeCatches); it does the real work for
+        // GOTO/RETRY, which resume the main flow while the rest of the workflow keeps running.
         if (catchOid != null) {
             cleanupCatchNetwork(catchOid)
             activeCatches.remove(catchOid)
@@ -1277,7 +1280,8 @@ class WorkflowEngine(
     }
 
     private fun returnRetry(ctx: CatchContext?) {
-        if (ctx == null) return
+        if (ctx == null) return // no active catch context (e.g. a RETURN outside a catch network): nothing to re-invoke
+
         val trigger = steps[ctx.trigger_step_oid] ?: return
         if (trigger.state != StepState.IDLE) resetStepInline(ctx.trigger_step_oid)
         activateStep(trigger) // ACTION PROXY → EXECUTING again
