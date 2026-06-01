@@ -35,4 +35,12 @@ class TryCatchEngineTest {
     assertTrue(engine.getActiveSteps().any { it.step.oid == "s2" && it.step.step.step_type == "ACTION PROXY" })
     assertEquals(WorkflowState.RUNNING, engine.getWorkflowState())
   }
+
+  @Test fun `uncaught failure errors the workflow`() {
+    val engine = WorkflowEngine(wfSpec(tryWf(trySpec = "[]"))) // Action has no TRY
+    engine.start()
+    engine.submitAction(UserAction(step_oid = "s2", action = "fail", failure_mode = "ERROR", error = "boom"), 0)
+    assertEquals(WorkflowState.ERRORED, engine.getWorkflowState())
+    assertTrue(engine.getTrace().any { it.step_oid == "s2" && it.state == "ERRORED" })
+  }
 }

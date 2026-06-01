@@ -32,6 +32,8 @@ class WorkflowEngine(
     private val stepParameterSnapshots = mutableMapOf<String, StepParameterSnapshot>()
     private val instanceId: String = "wf-${Random.nextLong()}-${Random.nextInt(1000000)}"
 
+    private val activeCatches = mutableMapOf<String, CatchContext>()
+
     // Child workflow support
     private val childWorkflows = mutableMapOf<String, MasterWorkflowSpecification>()  // local_id -> spec
     private val activeChildEngines = mutableMapOf<String, WorkflowEngine>()  // parent step OID -> child engine
@@ -195,6 +197,11 @@ class WorkflowEngine(
             ?: throw IllegalStateException("Step ${action.step_oid} not found")
         if (stepInstance.state != StepState.EXECUTING) {
             throw IllegalStateException("Step ${action.step_oid} is not EXECUTING")
+        }
+
+        if (action.action == "fail") {
+            handleStepFailure(stepInstance, action.failure_mode ?: "ERROR", action.error, actionIndex)
+            return
         }
 
         // Handle the action
@@ -1073,6 +1080,18 @@ class WorkflowEngine(
                 workflowState = WorkflowState.ERRORED
             }
         }
+    }
+
+    private fun handleStepFailure(stepInstance: StepInstance, mode: String, error: String?, actionIndex: Int) {
+        recordTrace(stepInstance.oid, "ERRORED", actionIndex, error)
+        stepInstance.state = StepState.ERRORED
+        workflowState = WorkflowState.ERRORED
+        pendingUserSteps.remove(stepInstance.oid)
+        // correction #2: parity with TS — also clear pendingResources for the failed step
+        pendingResources.remove(stepInstance.oid)
+        val known = mutableSetOf<String>()
+        collectKnownStepOids(known)
+        resourceManager?.cancelQueuedWaiters(known)
     }
 
     private fun findEnvForActionLocalId(localId: String): MasterEnvironmentSpecification? {
