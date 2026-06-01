@@ -146,11 +146,13 @@ test('input elements WITH outputParameter pass', () => {
     form_layout_config: [
       {
         deviceType: 'phone',
+        canvasWidth: 390,
+        canvasHeight: 844,
         elements: [
-          { type: 'textInput', label: 'Item', fieldName: 'ItemName', outputParameter: 'ItemName' },
-          { type: 'textarea', label: 'Notes', fieldName: 'Notes', outputParameter: 'Notes' },
-          { type: 'checkbox', label: 'Tags', fieldName: 'Tags', outputParameter: 'Tags', options: ['a', 'b'] },
-          { type: 'radio', label: 'Oven', fieldName: 'OvenID', outputParameter: 'OvenID' },
+          { type: 'textInput', x: 0, y: 0, width: 200, height: 40, label: 'Item', fieldName: 'ItemName', outputParameter: 'ItemName' },
+          { type: 'textarea', x: 0, y: 50, width: 200, height: 80, label: 'Notes', fieldName: 'Notes', outputParameter: 'Notes' },
+          { type: 'checkbox', x: 0, y: 140, width: 200, height: 60, label: 'Tags', fieldName: 'Tags', outputParameter: 'Tags', options: ['a', 'b'] },
+          { type: 'radio', x: 0, y: 210, width: 200, height: 60, label: 'Oven', fieldName: 'OvenID', outputParameter: 'OvenID', options: ['o1', 'o2'] },
         ],
       },
     ],
@@ -166,13 +168,15 @@ test('non-input elements without outputParameter pass (button/header/text/divide
     form_layout_config: [
       {
         deviceType: 'phone',
+        canvasWidth: 390,
+        canvasHeight: 844,
         elements: [
-          { type: 'header', content: { content: 'Title', plainText: 'Title' } },
-          { type: 'text', content: { content: 'Body', plainText: 'Body' } },
-          { type: 'divider', thickness: 1 },
-          { type: 'button', label: 'Submit', outputValue: 'continue' },
-          { type: 'image', src: 'foo.jpg' },
-          { type: 'video', src: 'foo.mp4' },
+          { type: 'header', x: 0, y: 0, width: 300, height: 40, content: { content: 'Title', plainText: 'Title' } },
+          { type: 'text', x: 0, y: 50, width: 300, height: 40, content: { content: 'Body', plainText: 'Body' } },
+          { type: 'divider', x: 0, y: 100, width: 300, height: 2, thickness: 1 },
+          { type: 'button', x: 0, y: 110, width: 120, height: 40, label: 'Submit', outputValue: 'continue' },
+          { type: 'image', x: 0, y: 160, width: 120, height: 120, src: 'foo.jpg' },
+          { type: 'video', x: 0, y: 290, width: 200, height: 120, src: 'foo.mp4' },
         ],
       },
     ],
