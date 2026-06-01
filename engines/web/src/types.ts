@@ -345,6 +345,20 @@ export interface ActionProxyConfig {
   timeout_ms?: number;
 }
 
+export type FailureMode = 'ERROR' | 'ABORT' | 'TIMEOUT';
+
+export interface TrySpecification {
+  mode: FailureMode;
+  catch_id: string;
+  release_on_catch?: boolean;
+}
+
+export interface ReturnConfig {
+  command: 'ABANDON' | 'RESTART' | 'GOTO' | 'RETRY';
+  restart_mode?: 'CLEAN' | 'KEEP';
+  goto_step_oid?: string;
+}
+
 export interface MasterWorkflowStep extends ManagedElement {
   step_type: string;
   position?: { x: number; y: number };
@@ -357,6 +371,9 @@ export interface MasterWorkflowStep extends ManagedElement {
   script_config?: ScriptConfig;
   select1_config?: Select1Config;
   action_proxy_config?: ActionProxyConfig;
+  try_specifications?: TrySpecification[];
+  catch_id?: string;
+  return_config?: ReturnConfig;
 }
 
 export type DisplayStyle = 'flowchart' | 'bpmn' | 'isa88';
@@ -403,6 +420,15 @@ export interface StepInstance {
   step: MasterWorkflowStep;
 }
 
+export interface CatchContext {
+  catch_oid: string;
+  trigger_step_oid: string;
+  trigger_step_name: string;
+  trigger_reason: FailureMode;
+  error_message: string | null;
+  activated_at: string;
+}
+
 export interface TraceEntry {
   step_oid: string;
   state: string;
@@ -431,9 +457,13 @@ export interface RoutingResult {
 
 export interface UserAction {
   step_oid: string;
-  action: 'submit' | 'button_press' | 'yes' | 'no' | 'pause' | 'resume';
+  action: 'submit' | 'button_press' | 'yes' | 'no' | 'pause' | 'resume' | 'fail';
   form_values?: Record<string, unknown>;
   button_output?: string;
+  /** Set when action === 'fail': the classified failure mode driving TRY dispatch. */
+  failure_mode?: FailureMode;
+  /** Set when action === 'fail': the underlying error message, if any. */
+  error?: string;
 }
 
 export interface TestFixture {
