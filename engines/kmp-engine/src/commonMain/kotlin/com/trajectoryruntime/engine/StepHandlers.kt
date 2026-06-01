@@ -13,7 +13,7 @@ fun canonicalStepType(raw: String): String {
 
 fun isAutoCompleting(stepType: String): Boolean {
     val t = canonicalStepType(stepType)
-    return t in listOf("START", "END", "PARALLEL", "WAIT ANY", "SELECT 1", "SCRIPT", "MATH")
+    return t in listOf("START", "END", "PARALLEL", "WAIT ANY", "SELECT 1", "SCRIPT", "MATH", "CATCH", "RETURN")
 }
 
 fun needsUserAction(stepType: String): Boolean {

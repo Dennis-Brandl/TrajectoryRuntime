@@ -144,6 +144,32 @@ data class ActionProxyConfig(
     val timeout_ms: Long? = null,
 )
 
+typealias FailureMode = String // "ERROR" | "ABORT" | "TIMEOUT"
+
+@Serializable
+data class TrySpecification(
+    val mode: String,            // ERROR | ABORT | TIMEOUT
+    val catch_id: String,
+    val release_on_catch: Boolean? = null,
+)
+
+@Serializable
+data class ReturnConfig(
+    val command: String,         // ABANDON | RESTART | GOTO | RETRY
+    val restart_mode: String? = null, // CLEAN | KEEP
+    val goto_step_oid: String? = null,
+)
+
+/** Runtime-only (not serialized). */
+data class CatchContext(
+    val catch_oid: String,
+    val trigger_step_oid: String,
+    val trigger_step_name: String,
+    val trigger_reason: String,
+    val error_message: String?,
+    val activated_at: String,
+)
+
 @Serializable
 data class MasterWorkflowStep(
     val local_id: String,
@@ -162,6 +188,9 @@ data class MasterWorkflowStep(
     val script_config: ScriptConfig? = null,
     val select1_config: Select1Config? = null,
     val action_proxy_config: ActionProxyConfig? = null,
+    val try_specifications: List<TrySpecification>? = null,
+    val catch_id: String? = null,
+    val return_config: ReturnConfig? = null,
 )
 
 @Serializable
@@ -345,6 +374,8 @@ data class UserAction(
     val action: String, // "submit" | "button_press" | "yes" | "no"
     val form_values: Map<String, JsonElement>? = null,
     val button_output: String? = null,
+    val failure_mode: String? = null, // set when action == "fail": ERROR | ABORT | TIMEOUT
+    val error: String? = null,        // set when action == "fail"
 )
 
 @Serializable
