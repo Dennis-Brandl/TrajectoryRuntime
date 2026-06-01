@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { ValidationResult } from './types.js';
+import { partitionCatchNetworks, type PartitionStep, type PartitionConnection } from './catch-network-partition.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -123,9 +124,16 @@ function semanticValidation(workflow: Record<string, unknown>): ValidationResult
       }
     }
   }
+  // Catch networks are intentional disconnected islands (reached at runtime via TRY, not via a connection).
+  const partition = partitionCatchNetworks(
+    steps as unknown as PartitionStep[],
+    connections as unknown as PartitionConnection[],
+  );
   for (const step of steps) {
-    if (!reachable.has(step.oid as string)) {
-      return { valid: false, error_code: 'ORPHANED_STEP', error_message: `Step ${step.oid} is not reachable from START` };
+    const oid = step.oid as string;
+    if (partition.catchNetworkStepOids.has(oid)) continue;
+    if (!reachable.has(oid)) {
+      return { valid: false, error_code: 'ORPHANED_STEP', error_message: `Step ${oid} is not reachable from START` };
     }
   }
 
