@@ -1276,7 +1276,12 @@ class WorkflowEngine(
         activateStep(target) // branch-local
     }
 
-    private fun returnRetry(ctx: CatchContext?) { /* KE4 */ }
+    private fun returnRetry(ctx: CatchContext?) {
+        if (ctx == null) return
+        val trigger = steps[ctx.trigger_step_oid] ?: return
+        if (trigger.state != StepState.IDLE) resetStepInline(ctx.trigger_step_oid)
+        activateStep(trigger) // ACTION PROXY → EXECUTING again
+    }
 
     private fun resetStepInline(oid: String) {
         val step = steps[oid] ?: return

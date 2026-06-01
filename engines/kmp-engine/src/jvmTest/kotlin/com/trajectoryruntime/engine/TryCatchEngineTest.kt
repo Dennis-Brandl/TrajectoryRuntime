@@ -91,4 +91,13 @@ class TryCatchEngineTest {
     assertTrue(engine.getActiveSteps().any { it.step.oid == "m1" }, "GOTO target not active")
     assertNotEquals(WorkflowState.ERRORED, engine.getWorkflowState())
   }
+
+  @Test fun `RETURN RETRY re-invokes the trigger and second attempt succeeds`() {
+    val engine = WorkflowEngine(wfSpec(tryWf(returnJson = """{"command":"RETRY"}""")))
+    engine.start()
+    engine.submitAction(UserAction(step_oid = "s2", action = "fail", failure_mode = "ERROR", error = "x"), 0)
+    assertTrue(engine.getActiveSteps().any { it.step.oid == "s2" }, "s2 not re-activated")
+    engine.submitAction(UserAction(step_oid = "s2", action = "submit"), 1)
+    assertEquals(WorkflowState.COMPLETED, engine.getWorkflowState())
+  }
 }
