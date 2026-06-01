@@ -21,7 +21,7 @@
       "enum": [
         "START", "END", "ACTION PROXY", "WORKFLOW PROXY", "SELECT 1",
         "WAIT ANY", "PARALLEL", "WAIT ALL", "MATH", "SCRIPT",
-        "YES_NO", "USER_INTERACTION"
+        "YES_NO", "USER_INTERACTION", "CATCH", "RETURN"
       ]
     },
     "ActionServerSpecification": {
