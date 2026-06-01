@@ -388,6 +388,24 @@
         "source": { "type": "string" }
       }
     },
+    "TrySpecification": {
+      "type": "object",
+      "required": ["mode", "catch_id"],
+      "properties": {
+        "mode": { "type": "string", "enum": ["ERROR", "ABORT", "TIMEOUT"] },
+        "catch_id": { "type": "string", "minLength": 1 },
+        "release_on_catch": { "type": "boolean" }
+      }
+    },
+    "ReturnConfig": {
+      "type": "object",
+      "required": ["command"],
+      "properties": {
+        "command": { "type": "string", "enum": ["ABANDON", "RESTART", "GOTO", "RETRY"] },
+        "restart_mode": { "type": "string", "enum": ["CLEAN", "KEEP"] },
+        "goto_step_oid": { "type": "string" }
+      }
+    },
     "Select1Option": {
       "type": "object",
       "properties": {
@@ -579,7 +597,13 @@
             "connection_references": {
               "type": "array",
               "items": { "type": "string" }
-            }
+            },
+            "try_specifications": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/TrySpecification" }
+            },
+            "catch_id": { "type": "string", "minLength": 1 },
+            "return_config": { "$ref": "#/$defs/ReturnConfig" }
           },
           "required": ["step_type"]
         }

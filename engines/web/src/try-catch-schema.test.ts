@@ -72,3 +72,37 @@ describe('schema: CATCH/RETURN step types', () => {
     assert.equal(enumErr, true);
   });
 });
+
+describe('schema: try_specifications / return_config shape', () => {
+  it('accepts a well-formed try_specifications array on an action step', () => {
+    const validate = compile();
+    const ok = validate(wfWithStep({
+      local_id: 'A', oid: 'a1', step_type: 'ACTION PROXY', version: '1.0.0', last_modified_date: DATE,
+      try_specifications: [
+        { mode: 'ERROR', catch_id: 'C1', release_on_catch: true },
+        { mode: 'TIMEOUT', catch_id: 'C1' },
+      ],
+    }));
+    assert.equal(ok, true, `errors: ${JSON.stringify(validate.errors)}`);
+  });
+
+  it('rejects a try_specifications entry with an unknown mode', () => {
+    const validate = compile();
+    validate(wfWithStep({
+      local_id: 'A', oid: 'a1', step_type: 'ACTION PROXY', version: '1.0.0', last_modified_date: DATE,
+      try_specifications: [{ mode: 'BOGUS', catch_id: 'C1' }],
+    }));
+    const modeErr = (validate.errors ?? []).some(e => e.keyword === 'enum' && (e.instancePath ?? '').includes('mode'));
+    assert.equal(modeErr, true, `errors: ${JSON.stringify(validate.errors)}`);
+  });
+
+  it('rejects a return_config with an unknown command', () => {
+    const validate = compile();
+    validate(wfWithStep({
+      local_id: 'R', oid: 'r1', step_type: 'RETURN', version: '1.0.0', last_modified_date: DATE,
+      return_config: { command: 'NOPE' },
+    }));
+    const cmdErr = (validate.errors ?? []).some(e => e.keyword === 'enum' && (e.instancePath ?? '').includes('command'));
+    assert.equal(cmdErr, true, `errors: ${JSON.stringify(validate.errors)}`);
+  });
+});
