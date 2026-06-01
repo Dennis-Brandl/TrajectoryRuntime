@@ -226,6 +226,31 @@ function tryCatchValidation(workflow: Record<string, unknown>): ValidationResult
       }
     }
   }
+
+  // Cross-reference: catch_id uniqueness, TRY→CATCH resolution, GOTO target.
+  const catchIds = new Set<string>();
+  for (const step of steps) {
+    if (normalizeStepType(String(step.step_type)) !== 'CATCH') continue;
+    const cid = step.catch_id as string | undefined;
+    if (!cid) continue;
+    if (catchIds.has(cid)) return fail('DUPLICATE_CATCH_ID', `catch_id '${cid}' used by more than one CATCH`, step.oid as string);
+    catchIds.add(cid);
+  }
+  const oidSet = new Set(steps.map(s => s.oid as string));
+  const partition = partitionCatchNetworks(steps as unknown as PartitionStep[], connections as unknown as PartitionConnection[]);
+  for (const step of steps) {
+    const tries = step.try_specifications as Array<{ catch_id: string }> | undefined;
+    for (const t of tries ?? []) {
+      if (!catchIds.has(t.catch_id)) return fail('UNMATCHED_TRY', `TRY references undefined catch_id '${t.catch_id}'`, step.oid as string);
+    }
+    if (normalizeStepType(String(step.step_type)) === 'RETURN') {
+      const rc = step.return_config as { command?: string; goto_step_oid?: string } | undefined;
+      if (rc?.command === 'GOTO' && rc.goto_step_oid) {
+        if (!oidSet.has(rc.goto_step_oid)) return fail('GOTO_TARGET_NOT_FOUND', `GOTO target '${rc.goto_step_oid}' not found`, step.oid as string);
+        if (partition.catchNetworkStepOids.has(rc.goto_step_oid)) return fail('GOTO_TARGET_IN_CATCH', `GOTO target '${rc.goto_step_oid}' is inside a catch network`, step.oid as string);
+      }
+    }
+  }
   return null;
 }
 

@@ -81,3 +81,23 @@ describe('validator: structural TRY rules', () => {
     assert.equal(validate(baseWithCatch({ returnConfig: { command: 'GOTO' } })).error_code, 'MISSING_GOTO_TARGET');
   });
 });
+
+describe('validator: cross-reference TRY rules', () => {
+  it('DUPLICATE_CATCH_ID', () => {
+    const wf = baseWithCatch();
+    wf.steps.push(step({ local_id: 'C2', oid: 'c2', step_type: 'CATCH', catch_id: 'C1' }) as never,
+                  step({ local_id: 'R2', oid: 'r2', step_type: 'RETURN', return_config: { command: 'ABANDON' } }) as never);
+    wf.connections.push({ from_step_id: 'c2', to_step_id: 'r2' });
+    assert.equal(validate(wf).error_code, 'DUPLICATE_CATCH_ID');
+  });
+  it('UNMATCHED_TRY', () => {
+    assert.equal(validate(baseWithCatch({ trySpec: [{ mode: 'ERROR', catch_id: 'Ghost' }] })).error_code, 'UNMATCHED_TRY');
+  });
+  it('GOTO_TARGET_NOT_FOUND', () => {
+    assert.equal(validate(baseWithCatch({ returnConfig: { command: 'GOTO', goto_step_oid: 'ghost' } })).error_code, 'GOTO_TARGET_NOT_FOUND');
+  });
+  it('GOTO_TARGET_IN_CATCH', () => {
+    // GOTO points at the CATCH's own step c1 (inside a catch network)
+    assert.equal(validate(baseWithCatch({ returnConfig: { command: 'GOTO', goto_step_oid: 'c1' } })).error_code, 'GOTO_TARGET_IN_CATCH');
+  });
+});
