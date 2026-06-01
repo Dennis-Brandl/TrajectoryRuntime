@@ -113,7 +113,7 @@
         },
         "workflow_state": {
           "type": "string",
-          "enum": ["IDLE", "RUNNING", "COMPLETED", "ABORTED", "STOPPED"],
+          "enum": ["IDLE", "RUNNING", "COMPLETED", "ABORTED", "STOPPED", "ERRORED"],
           "description": "Expected final workflow instance state."
         }
       },
