@@ -22,7 +22,7 @@ import { ACTIVE_STEP_STATES } from './types.js';
 import type { ResourceManager } from './resource-manager.js';
 import { InMemoryResourceManager } from './resource-manager.js';
 import { PropertyStore } from './properties.js';
-import { isAutoCompleting, needsUserAction, handleSelect1, handleUserAction, getFormElements, canonicalStepType, executeScript } from './step-handlers.js';
+import { isAutoCompleting, needsUserAction, handleSelect1, handleUserAction, getFormElements, canonicalStepType, executeScript, activateCatchStep } from './step-handlers.js';
 import { splitResourceCommands, sortActivationCommands } from './resource-helpers.js';
 
 export class WorkflowEngine {
@@ -255,7 +255,37 @@ export class WorkflowEngine {
   }
 
   private handleStepFailure(stepInstance: StepInstance, mode: FailureMode, error: string | null, actionIndex: number): void {
-    // (TRY routing added in Task D2.) Default: an uncaught failure errors the workflow.
+    const matching = stepInstance.step.try_specifications?.find(t => t.mode === mode);
+    const catchStep = matching ? this.findCatchByCatchId(matching.catch_id) : undefined;
+
+    if (matching && catchStep) {
+      if (this.activeCatches.has(catchStep.oid)) {
+        // CATCH_REENTRY (spec §6.4): the catch is already active → abort the workflow.
+        this.recordTrace(stepInstance.oid, 'ERRORED', actionIndex, `CATCH_REENTRY on ${matching.catch_id}`);
+        stepInstance.state = 'ERRORED';
+        this.workflowState = 'ABORTED';
+        return;
+      }
+      this.activeCatches.set(catchStep.oid, {
+        catch_oid: catchStep.oid,
+        trigger_step_oid: stepInstance.oid,
+        trigger_step_name: stepInstance.step.local_id,
+        trigger_reason: mode,
+        error_message: error,
+        activated_at: new Date().toISOString(),
+      });
+      // Deactivate the trigger step (caught — do NOT propagate failure).
+      this.recordTrace(stepInstance.oid, 'IDLE', actionIndex);
+      stepInstance.state = 'IDLE';
+      this.pendingUserSteps.delete(stepInstance.oid);
+      this.pendingResources.delete(stepInstance.oid);
+      // Run the catch network.
+      this.activateStep(catchStep);
+      this.drainCompletionQueue();
+      return;
+    }
+
+    // No matching TRY — uncaught failure errors the workflow (mirrors the SCRIPT-error path).
     this.recordTrace(stepInstance.oid, 'ERRORED', actionIndex, error ?? undefined);
     stepInstance.state = 'ERRORED';
     this.workflowState = 'ERRORED';
@@ -266,6 +296,13 @@ export class WorkflowEngine {
       this.collectKnownStepOids(known);
       this.resourceManager.cancelQueuedWaiters(known);
     }
+  }
+
+  private findCatchByCatchId(catchId: string): StepInstance | undefined {
+    for (const s of this.steps.values()) {
+      if (s.stepType === 'CATCH' && s.step.catch_id === catchId) return s;
+    }
+    return undefined;
   }
 
   /** Check if this engine (or any child engine) owns a step OID. */
@@ -961,6 +998,10 @@ export class WorkflowEngine {
             }
           }
         }
+      }
+      if (target.stepType === 'CATCH') {
+        const ctx = this.activeCatches.get(target.oid);
+        if (ctx) activateCatchStep(target.step, ctx, this.propertyStore);
       }
       this.recordTrace(target.oid, 'COMPLETED');
       target.state = 'COMPLETED';

@@ -53,3 +53,18 @@ describe('engine: fail signal (no matching TRY)', () => {
     assert.ok(traceStates(engine).includes('s2:ERRORED'));
   });
 });
+
+describe('engine: TRY routing to CATCH', () => {
+  it('activates the CATCH network and writes trigger info on a matching failure', () => {
+    const wf = tryWorkflow(); // Action TRY ERROR→C1; catch C1→Ret(ABANDON)
+    const engine = new WorkflowEngine(wf);
+    engine.start();
+    engine.submitAction({ step_oid: 's2', action: 'fail', failure_mode: 'ERROR', error: 'thermocouple failure' }, 0);
+    const states = traceStates(engine);
+    assert.ok(states.includes('c1:COMPLETED'), `CATCH not activated: ${states.join(', ')}`);
+    assert.ok(states.includes('r1:COMPLETED'), 'RETURN not reached');
+    assert.equal(engine.getProperties()['FailureContext.Mode'], 'ERROR');
+    assert.equal(engine.getProperties()['FailureContext.Message'], 'thermocouple failure');
+    assert.notEqual(engine.getWorkflowState(), 'ERRORED'); // failure was caught
+  });
+});
