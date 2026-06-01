@@ -15,6 +15,8 @@ import type {
   WaitingStepInfo,
   ActiveStepInfo,
   CompletedStepInfo,
+  FailureMode,
+  CatchContext,
 } from './types.js';
 import { ACTIVE_STEP_STATES } from './types.js';
 import type { ResourceManager } from './resource-manager.js';
@@ -42,6 +44,7 @@ export class WorkflowEngine {
   private resourceManager?: ResourceManager;
   private pendingResources: Map<string, PendingResourceState>;
   private instanceId: string;
+  private activeCatches: Map<string, CatchContext> = new Map();
 
   constructor(
     workflow: MasterWorkflowSpecification,
@@ -200,6 +203,11 @@ export class WorkflowEngine {
 
     if (stepInstance.state !== 'EXECUTING') throw new Error(`Step ${action.step_oid} is not EXECUTING`);
 
+    if (action.action === 'fail') {
+      this.handleStepFailure(stepInstance, action.failure_mode ?? 'ERROR', action.error ?? null, _actionIndex);
+      return;
+    }
+
     // Handle the action
     const routing = handleUserAction(stepInstance.step, action, this.propertyStore);
 
@@ -244,6 +252,20 @@ export class WorkflowEngine {
 
     this.completionQueue.push(stepInstance.oid);
     this.drainCompletionQueue();
+  }
+
+  private handleStepFailure(stepInstance: StepInstance, mode: FailureMode, error: string | null, actionIndex: number): void {
+    // (TRY routing added in Task D2.) Default: an uncaught failure errors the workflow.
+    this.recordTrace(stepInstance.oid, 'ERRORED', actionIndex, error ?? undefined);
+    stepInstance.state = 'ERRORED';
+    this.workflowState = 'ERRORED';
+    this.pendingUserSteps.delete(stepInstance.oid);
+    this.pendingResources.delete(stepInstance.oid);
+    if (this.resourceManager) {
+      const known = new Set<string>();
+      this.collectKnownStepOids(known);
+      this.resourceManager.cancelQueuedWaiters(known);
+    }
   }
 
   /** Check if this engine (or any child engine) owns a step OID. */
