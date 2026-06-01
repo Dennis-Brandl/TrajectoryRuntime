@@ -180,6 +180,55 @@ function hasMatchingWaitAll(parallelOid: string, steps: Record<string, unknown>[
   return false;
 }
 
+function tryCatchValidation(workflow: Record<string, unknown>): ValidationResult | null {
+  const steps = (workflow['steps'] as Record<string, unknown>[]) ?? [];
+  const connections = (workflow['connections'] as Record<string, unknown>[]) ?? [];
+  const fail = (code: string, msg: string, oid?: string): ValidationResult =>
+    ({ valid: false, error_code: code, error_message: oid ? `${msg} (step ${oid})` : msg });
+
+  const TRY_SCOPED = new Set(['ACTION PROXY', 'WAIT ACTION PROXY']);
+  const MODES = new Set(['ERROR', 'ABORT', 'TIMEOUT']);
+  const COMMANDS = new Set(['ABANDON', 'RESTART', 'GOTO', 'RETRY']);
+
+  for (const step of steps) {
+    const type = normalizeStepType(String(step.step_type));
+    const oid = step.oid as string;
+    const inDeg = connections.filter(c => c.to_step_id === oid).length;
+    const outDeg = connections.filter(c => c.from_step_id === oid).length;
+
+    if (type === 'CATCH' && (inDeg !== 0 || outDeg !== 1)) {
+      return fail('CATCH_WRONG_DEGREE', `CATCH must have 0 incoming and 1 outgoing connection (has ${inDeg} in, ${outDeg} out)`, oid);
+    }
+    if (type === 'RETURN' && (inDeg !== 1 || outDeg !== 0)) {
+      return fail('RETURN_WRONG_DEGREE', `RETURN must have 1 incoming and 0 outgoing connections (has ${inDeg} in, ${outDeg} out)`, oid);
+    }
+
+    const tries = step.try_specifications as Array<{ mode: string; catch_id: string }> | undefined;
+    if (tries && tries.length > 0) {
+      if (!TRY_SCOPED.has(type)) {
+        return fail('TRY_ON_INVALID_STEP', `try_specifications not allowed on step_type '${type}'`, oid);
+      }
+      const seen = new Set<string>();
+      for (const t of tries) {
+        if (!MODES.has(t.mode)) return fail('INVALID_TRY_MODE', `invalid try mode '${t.mode}'`, oid);
+        if (seen.has(t.mode)) return fail('DUPLICATE_TRY_MODE', `mode '${t.mode}' appears more than once`, oid);
+        seen.add(t.mode);
+      }
+    }
+
+    if (type === 'RETURN') {
+      const rc = step.return_config as { command?: string; restart_mode?: string; goto_step_oid?: string } | undefined;
+      if (rc) {
+        if (!rc.command || !COMMANDS.has(rc.command)) return fail('INVALID_RETURN_COMMAND', `invalid RETURN command '${rc.command}'`, oid);
+        if (rc.command === 'RESTART' && !rc.restart_mode) return fail('MISSING_RESTART_MODE', `RESTART requires restart_mode`, oid);
+        if (rc.restart_mode && rc.restart_mode !== 'CLEAN' && rc.restart_mode !== 'KEEP') return fail('INVALID_RESTART_MODE', `invalid restart_mode '${rc.restart_mode}'`, oid);
+        if (rc.command === 'GOTO' && !rc.goto_step_oid) return fail('MISSING_GOTO_TARGET', `GOTO requires goto_step_oid`, oid);
+      }
+    }
+  }
+  return null;
+}
+
 function actionProxyValidation(workflow: Record<string, unknown>): ValidationResult | null {
   const steps = workflow['steps'] as Array<Record<string, unknown>>;
   const envSpecs = (workflow['environment_specifications'] as Array<Record<string, unknown>> | undefined) ?? [];
@@ -568,6 +617,10 @@ export function validate(workflow: Record<string, unknown>): ValidationResult {
   // Phase A: Semantic checks (graph analysis)
   const semanticError = semanticValidation(workflow);
   if (semanticError) return semanticError;
+
+  // Phase A1.5: TRY/CATCH/RETURN structural + cross-reference + topology rules
+  const tryCatchError = tryCatchValidation(workflow);
+  if (tryCatchError) return tryCatchError;
 
   // Phase A2: ACTION PROXY config validation (§14.2)
   const actionProxyError = actionProxyValidation(workflow);

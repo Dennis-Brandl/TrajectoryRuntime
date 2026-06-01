@@ -42,3 +42,42 @@ describe('validator: catch-network is not orphaned', () => {
     assert.equal(r.valid, true, `expected valid, got ${r.error_code}: ${r.error_message}`);
   });
 });
+
+describe('validator: structural TRY rules', () => {
+  function withExtraStep(s: Record<string, unknown>, conns: Array<Record<string, string>> = []) {
+    const wf = baseWithCatch();
+    wf.steps.push(step(s) as never);
+    wf.connections.push(...(conns as never[]));
+    return wf;
+  }
+
+  it('CATCH_WRONG_DEGREE when a CATCH has an incoming connection', () => {
+    const wf = baseWithCatch();
+    wf.connections.push({ from_step_id: 's1', to_step_id: 'c1' });
+    assert.equal(validate(wf).error_code, 'CATCH_WRONG_DEGREE');
+  });
+  it('RETURN_WRONG_DEGREE when a RETURN has an outgoing connection', () => {
+    const wf = baseWithCatch();
+    wf.connections.push({ from_step_id: 'r1', to_step_id: 's3' });
+    assert.equal(validate(wf).error_code, 'RETURN_WRONG_DEGREE');
+  });
+  it('TRY_ON_INVALID_STEP when try_specifications is on a USER_INTERACTION', () => {
+    const wf = withExtraStep(
+      { local_id: 'U', oid: 'u1', step_type: 'USER_INTERACTION', try_specifications: [{ mode: 'ERROR', catch_id: 'C1' }] },
+      [{ from_step_id: 's2', to_step_id: 'u1' }, { from_step_id: 'u1', to_step_id: 's3' }],
+    );
+    // remove the now-redundant s2→s3 edge so u1 is on the main path
+    wf.connections = wf.connections.filter(c => !(c.from_step_id === 's2' && c.to_step_id === 's3'));
+    assert.equal(validate(wf).error_code, 'TRY_ON_INVALID_STEP');
+  });
+  it('DUPLICATE_TRY_MODE when one step repeats a mode', () => {
+    const r = validate(baseWithCatch({ trySpec: [{ mode: 'ERROR', catch_id: 'C1' }, { mode: 'ERROR', catch_id: 'C1' }] }));
+    assert.equal(r.error_code, 'DUPLICATE_TRY_MODE');
+  });
+  it('MISSING_RESTART_MODE when RESTART has no restart_mode', () => {
+    assert.equal(validate(baseWithCatch({ returnConfig: { command: 'RESTART' } })).error_code, 'MISSING_RESTART_MODE');
+  });
+  it('MISSING_GOTO_TARGET when GOTO has no goto_step_oid', () => {
+    assert.equal(validate(baseWithCatch({ returnConfig: { command: 'GOTO' } })).error_code, 'MISSING_GOTO_TARGET');
+  });
+});
