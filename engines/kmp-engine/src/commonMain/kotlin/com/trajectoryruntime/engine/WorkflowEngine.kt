@@ -1270,7 +1270,11 @@ class WorkflowEngine(
         }
     }
 
-    private fun returnGoto(gotoOid: String) { /* KE3 */ }
+    private fun returnGoto(gotoOid: String) {
+        val target = steps[gotoOid] ?: return
+        if (target.state != StepState.IDLE) resetStepInline(gotoOid)
+        activateStep(target) // branch-local
+    }
 
     private fun returnRetry(ctx: CatchContext?) { /* KE4 */ }
 

@@ -77,4 +77,18 @@ class TryCatchEngineTest {
     engine.submitAction(UserAction(step_oid = "s2", action = "fail", failure_mode = "ERROR", error = "x"), 0)
     assertEquals("", engine.getProperties()["FailureContext.Mode"])
   }
+
+  @Test fun `RETURN GOTO resumes the main flow at the target`() {
+    val wf = tryWf(
+      returnJson = """{"command":"GOTO","goto_step_oid":"m1"}""",
+      extraSteps = """,{"local_id":"Mid","oid":"m1","version":"1.0.0","last_modified_date":"$DATE","step_type":"USER_INTERACTION"}""")
+      .replace(
+        """"connections":[{"from_step_id":"s1","to_step_id":"s2"},{"from_step_id":"s2","to_step_id":"s3"}""",
+        """"connections":[{"from_step_id":"s1","to_step_id":"s2"},{"from_step_id":"s2","to_step_id":"m1"},{"from_step_id":"m1","to_step_id":"s3"}""")
+    val engine = WorkflowEngine(wfSpec(wf))
+    engine.start()
+    engine.submitAction(UserAction(step_oid = "s2", action = "fail", failure_mode = "ERROR", error = "x"), 0)
+    assertTrue(engine.getActiveSteps().any { it.step.oid == "m1" }, "GOTO target not active")
+    assertNotEquals(WorkflowState.ERRORED, engine.getWorkflowState())
+  }
 }
