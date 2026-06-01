@@ -382,14 +382,20 @@ export class WorkflowEngine {
     }
   }
 
-  // Stubs — implemented in later tasks. dispatchReturn already routes to them.
+  // Branch-local RETURN commands (dispatchReturn routes to these; GOTO/RETRY re-activate a single step).
   private returnGoto(gotoOid: string): void {
     const target = this.steps.get(gotoOid);
     if (!target) return;
     if (target.state !== 'IDLE') this.resetStep(gotoOid); // backward GOTO: reset a completed/active target first
     this.activateStep(target); // branch-local: other active branches untouched
   }
-  private returnRetry(ctx?: CatchContext): void { /* Task E4 */ void ctx; }
+  private returnRetry(ctx?: CatchContext): void {
+    if (!ctx) return;
+    const trigger = this.steps.get(ctx.trigger_step_oid);
+    if (!trigger) return;
+    if (trigger.state !== 'IDLE') this.resetStep(ctx.trigger_step_oid);
+    this.activateStep(trigger); // re-invoke the trigger ACTION PROXY → EXECUTING again
+  }
 
   /** Check if this engine (or any child engine) owns a step OID. */
   hasStep(stepOid: string): boolean {

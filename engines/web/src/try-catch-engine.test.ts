@@ -126,3 +126,15 @@ describe('engine: RETURN GOTO', () => {
     assert.notEqual(engine.getWorkflowState(), 'ERRORED');
   });
 });
+
+describe('engine: RETURN RETRY', () => {
+  it('re-invokes the trigger action; second attempt can succeed', () => {
+    const engine = new WorkflowEngine(tryWorkflow({ returnConfig: { command: 'RETRY' } }));
+    engine.start();
+    engine.submitAction({ step_oid: 's2', action: 'fail', failure_mode: 'ERROR', error: 'x' }, 0);
+    // After RETRY, s2 is EXECUTING again — supply a successful completion.
+    assert.ok(engine.getActiveSteps().some(a => a.step.oid === 's2'), 's2 not re-activated');
+    engine.submitAction({ step_oid: 's2', action: 'submit', form_values: {} }, 1);
+    assert.equal(engine.getWorkflowState(), 'COMPLETED');
+  });
+});
