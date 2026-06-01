@@ -18,6 +18,18 @@ export function mapServerStateToEngineState(s: ServerState): EngineStepState {
   }
 }
 
+export function mapServerStateToFailureMode(s: ServerState): 'error' | 'abort' | null {
+  switch (s) {
+    case 'ABORTED':
+    case 'STOPPED':
+      return 'abort';
+    case 'ERRORED':
+      return 'error';
+    default:
+      return null;
+  }
+}
+
 const CARD_LABELS: Record<ServerState, string> = {
   IDLE: 'Starting',
   RUNNING: 'Running',

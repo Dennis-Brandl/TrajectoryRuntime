@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Saturnis.io. All rights reserved.
 // Licensed under the GNU AGPL v3. See LICENSE.md for details.
 import { ActionApiClient } from './ActionApiClient.js';
-import { mapServerStateToEngineState } from './stateMapping.js';
+import { mapServerStateToEngineState, mapServerStateToFailureMode } from './stateMapping.js';
 import type { PersistenceStore } from './persistence.js';
 import { retryTransport } from './retry.js';
 import type {
@@ -22,7 +22,7 @@ export interface ControllerConfig {
   persistence: PersistenceStore;
   observer: ActionInstanceObserver;
   fetchImpl?: typeof fetch;
-  onTerminal: (t: { state: 'COMPLETED' | 'ERRORED'; outputs: Record<string, string>; errorMessage: string | null }) => void;
+  onTerminal: (t: { state: 'COMPLETED' | 'ERRORED'; outputs: Record<string, string>; errorMessage: string | null; failureMode: 'error' | 'abort' | 'timeout' | null }) => void;
 }
 
 export interface ControllerSnapshot {
@@ -169,7 +169,7 @@ export class ActionProxyController {
     });
   }
 
-  private emitTerminal(state: ServerState, errorMessage: string | null): void {
+  private emitTerminal(state: ServerState, errorMessage: string | null, failureModeOverride?: 'timeout'): void {
     if (this.terminalEmitted) return;
     this.terminalEmitted = true;
     this.dispose();
@@ -180,6 +180,7 @@ export class ActionProxyController {
       state: engineState === 'COMPLETED' ? 'COMPLETED' : 'ERRORED',
       outputs: Object.fromEntries(this.outputs),
       errorMessage,
+      failureMode: engineState === 'COMPLETED' ? null : (failureModeOverride ?? mapServerStateToFailureMode(state)),
     });
   }
 

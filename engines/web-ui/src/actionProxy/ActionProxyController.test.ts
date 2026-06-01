@@ -41,6 +41,7 @@ interface CapturedTerminal {
   state: 'COMPLETED' | 'ERRORED';
   outputs: Record<string, string>;
   errorMessage: string | null;
+  failureMode?: 'error' | 'abort' | 'timeout' | null;
 }
 
 test('invokes and subscribes, then on COMPLETED writes outputs and signals terminal', async () => {
@@ -89,6 +90,23 @@ test('on ABORTED signals terminal as ERRORED', async () => {
   observer.emit({ kind: 'state_change', state: 'ABORTED', previous_state: 'RUNNING', ts: '2026-05-19T00:00:00Z', eventId: 1 });
   assert.equal(captured.length, 1);
   assert.equal(captured[0].state, 'ERRORED');
+});
+
+test('classifies ABORTED terminal as failureMode "abort"', async () => {
+  const observer = new FakeObserver();
+  const captured: CapturedTerminal[] = [];
+  const controller = new ActionProxyController({
+    serverUri: 'http://localhost:3002', actionOid: 'act-1',
+    invokeRequest: { environment_oid: 'env-1', workflow_instance_id: 'wf-1', step_instance_id: 'si-1', step_oid: 'step-1', input_parameters: [] },
+    visibility: 'observable', supportedCommands: ['ABORT'],
+    persistence: new PersistenceStore(new FakeStorage()), observer,
+    fetchImpl: fakeFetch({ status: 201, body: { data: { instance_id: 'ai-1' }, meta: {} } }) as typeof fetch,
+    onTerminal: t => captured.push(t),
+  });
+  await controller.start();
+  observer.emit({ kind: 'state_change', state: 'ABORTED', previous_state: 'RUNNING', ts: 't', eventId: 1 });
+  assert.equal(captured[0].state, 'ERRORED');
+  assert.equal(captured[0].failureMode, 'abort');
 });
 
 test('sendCommand 409 captures error but stays subscribed', async () => {

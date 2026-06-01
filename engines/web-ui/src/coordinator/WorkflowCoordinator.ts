@@ -190,7 +190,7 @@ export class WorkflowCoordinator {
     actionOid: string,
     environmentOid: string,
     inputs: Array<{ name: string; value: string }>,
-    onTerminal: (t: { state: 'COMPLETED' | 'ERRORED'; outputs: Record<string, string>; errorMessage: string | null }) => void,
+    onTerminal: (t: { state: 'COMPLETED' | 'ERRORED'; outputs: Record<string, string>; errorMessage: string | null; failureMode: 'error' | 'abort' | 'timeout' | null }) => void,
   ): ActionProxyController {
     const serverUri = this._serverBindings[environmentOid];
     if (!serverUri) throw new Error(`No server bound for environment ${environmentOid}`);
@@ -218,7 +218,7 @@ export class WorkflowCoordinator {
     this._actionControllers.set(stepInstanceId, controller);
     controller.start().catch(e => {
       this._actionControllers.delete(stepInstanceId);
-      onTerminal({ state: 'ERRORED', outputs: {}, errorMessage: String(e instanceof Error ? e.message : e) });
+      onTerminal({ state: 'ERRORED', outputs: {}, errorMessage: String(e instanceof Error ? e.message : e), failureMode: 'error' });
     });
     return controller;
   }
