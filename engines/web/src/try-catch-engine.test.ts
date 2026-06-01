@@ -78,3 +78,27 @@ describe('engine: RETURN ABANDON', () => {
     assert.equal(engine.activeCatchesSize(), 0); // catch context removed when RETURN executes (spec §3.2)
   });
 });
+
+describe('engine: RETURN RESTART', () => {
+  it('RESTART KEEP re-runs from START and preserves properties', () => {
+    const wf = tryWorkflow({
+      returnConfig: { command: 'RESTART', restart_mode: 'KEEP' },
+      catchOutputs: [{ id: 'trigger_reason', target: 'FailureContext.Mode' }],
+    });
+    const engine = new WorkflowEngine(wf);
+    engine.start();
+    engine.submitAction({ step_oid: 's2', action: 'fail', failure_mode: 'ERROR', error: 'x' }, 0);
+    assert.equal(engine.getWorkflowState(), 'RUNNING');
+    assert.equal(engine.getProperties()['FailureContext.Mode'], 'ERROR'); // preserved
+    // Action s2 is active again after restart (re-run from START).
+    assert.ok(engine.getActiveSteps().some(a => a.step.oid === 's2'));
+  });
+
+  it('RESTART CLEAN resets properties to defaults', () => {
+    const wf = tryWorkflow({ returnConfig: { command: 'RESTART', restart_mode: 'CLEAN' } });
+    const engine = new WorkflowEngine(wf);
+    engine.start();
+    engine.submitAction({ step_oid: 's2', action: 'fail', failure_mode: 'ERROR', error: 'x' }, 0);
+    assert.equal(engine.getProperties()['FailureContext.Mode'], ''); // reset to declared default
+  });
+});

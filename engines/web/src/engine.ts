@@ -359,8 +359,30 @@ export class WorkflowEngine {
     this.workflowState = 'ABORTED';
   }
 
+  private returnRestart(mode: 'CLEAN' | 'KEEP'): void {
+    // Workflow-global teardown: fully reset every step — state + per-step tracking maps
+    // (routingContext, pendingResources, pendingUserSteps, stepParameterSnapshots,
+    // waitAllTracking, activeChildEngines) via resetStep — then drop queued activations,
+    // clear active catches, and release resources.
+    for (const oid of this.steps.keys()) this.resetStep(oid);
+    this.completionQueue.length = 0;
+    this.activeCatches.clear();
+    if (this.resourceManager) this.releaseAllResources();
+    if (mode === 'CLEAN') {
+      // Re-initialise Value Properties to their declared defaults (same call the ctor uses).
+      this.propertyStore.initializeFromWorkflow(this.workflow);
+    }
+    // Re-fire START (mirror start()'s START handling). The active drainCompletionQueue
+    // loop continues and re-runs the main flow from here.
+    const startStep = [...this.steps.values()].find(st => st.stepType === 'START');
+    if (startStep) {
+      this.recordTrace(startStep.oid, 'COMPLETED');
+      startStep.state = 'COMPLETED';
+      this.completionQueue.push(startStep.oid);
+    }
+  }
+
   // Stubs — implemented in later tasks. dispatchReturn already routes to them.
-  private returnRestart(mode: 'CLEAN' | 'KEEP'): void { /* Task E2 */ void mode; }
   private returnGoto(gotoOid: string): void { /* Task E3 */ void gotoOid; }
   private returnRetry(ctx?: CatchContext): void { /* Task E4 */ void ctx; }
 
