@@ -142,3 +142,15 @@ describe('validator: topology TRY rules', () => {
     assert.equal(r.valid, true, `expected valid, got ${r.error_code}`);
   });
 });
+
+describe('validator: invalid TRY/RETURN enum values (tryCatchValidation precedes AJV)', () => {
+  it('INVALID_TRY_MODE when a try mode is not ERROR/ABORT/TIMEOUT', () => {
+    assert.equal(validate(baseWithCatch({ trySpec: [{ mode: 'BOGUS', catch_id: 'C1' }] })).error_code, 'INVALID_TRY_MODE');
+  });
+  it('INVALID_RETURN_COMMAND when return_config.command is unknown', () => {
+    assert.equal(validate(baseWithCatch({ returnConfig: { command: 'NOPE' } })).error_code, 'INVALID_RETURN_COMMAND');
+  });
+  it('INVALID_RESTART_MODE when restart_mode is not CLEAN/KEEP', () => {
+    assert.equal(validate(baseWithCatch({ returnConfig: { command: 'RESTART', restart_mode: 'BOGUS' } })).error_code, 'INVALID_RESTART_MODE');
+  });
+});
