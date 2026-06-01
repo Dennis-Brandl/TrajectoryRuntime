@@ -1001,9 +1001,11 @@ class WorkflowEngine(
     private fun activateActionProxy(target: StepInstance) {
         val invoker = actionInvoker
         if (invoker == null) {
-            recordTrace(target.oid, "ERRORED", error = "No ActionInvoker configured")
-            target.state = StepState.ERRORED
-            workflowState = WorkflowState.ERRORED
+            // Conformance / headless mode: no Action Container. Park the step like a user-action step
+            // so submitAction (success or 'fail') can drive it — mirrors the TS engine.
+            recordTrace(target.oid, "EXECUTING")
+            target.state = StepState.EXECUTING
+            pendingUserSteps.add(target.oid)
             return
         }
 
