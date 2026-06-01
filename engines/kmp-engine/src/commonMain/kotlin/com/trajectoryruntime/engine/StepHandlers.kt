@@ -135,6 +135,21 @@ fun handleUserAction(
     return RoutingResult()
 }
 
+/** Spec §1.2/§3.1: write runtime-supplied trigger info to the CATCH's declared Value Property targets. */
+fun activateCatchStep(step: MasterWorkflowStep, ctx: CatchContext, propertyStore: PropertyStore) {
+    val fields: Map<String, (CatchContext) -> String> = mapOf(
+        "trigger_step" to { c -> c.trigger_step_name },
+        "trigger_step_oid" to { c -> c.trigger_step_oid },
+        "trigger_reason" to { c -> c.trigger_reason },
+        "error_message" to { c -> c.error_message ?: "" },
+    )
+    for (out in step.output_parameter_specifications ?: emptyList()) {
+        val f = fields[out.id] ?: continue           // unknown id: ignore silently (spec §1.2)
+        val target = out.target ?: continue
+        propertyStore.set(target, f(ctx))
+    }
+}
+
 data class ScriptResult(
     val success: Boolean,
     val error: String? = null,
