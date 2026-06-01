@@ -24,6 +24,7 @@ import { InMemoryResourceManager } from './resource-manager.js';
 import { PropertyStore } from './properties.js';
 import { isAutoCompleting, needsUserAction, handleSelect1, handleUserAction, getFormElements, canonicalStepType, executeScript, activateCatchStep } from './step-handlers.js';
 import { splitResourceCommands, sortActivationCommands } from './resource-helpers.js';
+import { partitionCatchNetworks, type CatchNetworkPartition } from './catch-network-partition.js';
 
 export class WorkflowEngine {
   private steps: Map<string, StepInstance>;
@@ -305,6 +306,64 @@ export class WorkflowEngine {
     return undefined;
   }
 
+  private buildPartition(): CatchNetworkPartition {
+    const steps = [...this.steps.values()].map(s => ({ oid: s.oid, step_type: s.stepType, catch_id: s.step.catch_id }));
+    const conns = this.connections.map(c => ({ from_step_id: c.from_step_id, to_step_id: c.to_step_id }));
+    return partitionCatchNetworks(steps, conns);
+  }
+
+  private findActiveCatchForReturn(returnOid: string): string | undefined {
+    const partition = this.buildPartition();
+    for (const [catchId, net] of partition.networksByCatchId) {
+      if (net.has(returnOid)) {
+        const catchStep = this.findCatchByCatchId(catchId);
+        if (catchStep && this.activeCatches.has(catchStep.oid)) return catchStep.oid;
+      }
+    }
+    return undefined;
+  }
+
+  private cleanupCatchNetwork(catchOid: string): void {
+    const catchStep = this.steps.get(catchOid);
+    const cid = catchStep?.step.catch_id;
+    const net = cid ? this.buildPartition().networksByCatchId.get(cid) : undefined;
+    for (const oid of net ?? []) {
+      const st = this.steps.get(oid);
+      if (st && st.state !== 'IDLE') { this.recordTrace(oid, 'IDLE'); st.state = 'IDLE'; }
+    }
+  }
+
+  private dispatchReturn(returnStep: StepInstance): void {
+    const rc = returnStep.step.return_config;
+    if (!rc) return;
+    const catchOid = this.findActiveCatchForReturn(returnStep.oid);
+    const ctx = catchOid ? this.activeCatches.get(catchOid) : undefined;
+    switch (rc.command) {
+      case 'ABANDON': this.returnAbandon(); break;
+      case 'RESTART': this.returnRestart(rc.restart_mode ?? 'KEEP'); break; // Task E2
+      case 'GOTO': if (rc.goto_step_oid) this.returnGoto(rc.goto_step_oid); break; // Task E3
+      case 'RETRY': this.returnRetry(ctx); break; // Task E4
+    }
+    if (catchOid) {
+      this.cleanupCatchNetwork(catchOid);
+      this.activeCatches.delete(catchOid);
+    }
+  }
+
+  private returnAbandon(): void {
+    for (const step of this.steps.values()) {
+      if (ACTIVE_STEP_STATES.has(step.state)) { this.recordTrace(step.oid, 'IDLE'); step.state = 'IDLE'; }
+    }
+    this.completionQueue.length = 0; // cancel any queued activations
+    if (this.resourceManager) this.releaseAllResources();
+    this.workflowState = 'ABORTED';
+  }
+
+  // Stubs — implemented in later tasks. dispatchReturn already routes to them.
+  private returnRestart(mode: 'CLEAN' | 'KEEP'): void { /* Task E2 */ void mode; }
+  private returnGoto(gotoOid: string): void { /* Task E3 */ void gotoOid; }
+  private returnRetry(ctx?: CatchContext): void { /* Task E4 */ void ctx; }
+
   /** Check if this engine (or any child engine) owns a step OID. */
   hasStep(stepOid: string): boolean {
     if (this.steps.has(stepOid)) return true;
@@ -325,6 +384,9 @@ export class WorkflowEngine {
   getWorkflowState(): WorkflowState {
     return this.workflowState;
   }
+
+  /** Test/observability accessor: count of currently-active catch contexts. */
+  activeCatchesSize(): number { return this.activeCatches.size; }
 
   /** Return the deepest active child workflow spec, or this workflow's spec if no child is active. */
   getActiveSpec(): MasterWorkflowSpecification {
@@ -960,6 +1022,13 @@ export class WorkflowEngine {
     if (target.stepType === 'WORKFLOW PROXY') {
       this.activateWorkflowProxy(target);
       return;
+    }
+
+    if (target.stepType === 'RETURN') {
+      this.recordTrace(target.oid, 'COMPLETED');
+      target.state = 'COMPLETED';
+      this.dispatchReturn(target);
+      return; // RETURN's command is terminal/redirective — do not fall through.
     }
 
     if (isAutoCompleting(target.stepType)) {

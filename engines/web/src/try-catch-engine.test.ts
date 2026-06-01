@@ -68,3 +68,13 @@ describe('engine: TRY routing to CATCH', () => {
     assert.notEqual(engine.getWorkflowState(), 'ERRORED'); // failure was caught
   });
 });
+
+describe('engine: RETURN ABANDON', () => {
+  it('aborts the workflow and cleans up the catch context on RETURN ABANDON', () => {
+    const engine = new WorkflowEngine(tryWorkflow({ returnConfig: { command: 'ABANDON' } }));
+    engine.start();
+    engine.submitAction({ step_oid: 's2', action: 'fail', failure_mode: 'ERROR', error: 'x' }, 0);
+    assert.equal(engine.getWorkflowState(), 'ABORTED');
+    assert.equal(engine.activeCatchesSize(), 0); // catch context removed when RETURN executes (spec §3.2)
+  });
+});
