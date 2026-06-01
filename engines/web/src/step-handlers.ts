@@ -8,6 +8,7 @@ import type {
   RoutingResult,
   Select1Option,
   OutputParameterSpecification,
+  CatchContext,
 } from './types.js';
 import type { PropertyStore } from './properties.js';
 
@@ -20,7 +21,7 @@ export function canonicalStepType(raw: string): string {
 
 export function isAutoCompleting(stepType: string): boolean {
   const t = canonicalStepType(stepType);
-  return ['START', 'END', 'PARALLEL', 'WAIT ANY', 'SELECT 1', 'SCRIPT', 'MATH'].includes(t);
+  return ['START', 'END', 'PARALLEL', 'WAIT ANY', 'SELECT 1', 'SCRIPT', 'MATH', 'CATCH', 'RETURN'].includes(t);
 }
 
 export function needsUserAction(stepType: string): boolean {
@@ -191,4 +192,24 @@ export function executeScript(
   }
 
   return { success: true };
+}
+
+const KNOWN_CATCH_FIELDS: Record<string, (c: CatchContext) => string> = {
+  trigger_step: c => c.trigger_step_name,
+  trigger_step_oid: c => c.trigger_step_oid,
+  trigger_reason: c => c.trigger_reason,
+  error_message: c => c.error_message ?? '',
+};
+
+/** Spec §1.2 / §3.1: write the runtime-supplied trigger info to the CATCH's declared Value Property targets. */
+export function activateCatchStep(
+  step: MasterWorkflowStep,
+  ctx: CatchContext,
+  propertyStore: PropertyStore,
+): void {
+  for (const out of step.output_parameter_specifications ?? []) {
+    const field = KNOWN_CATCH_FIELDS[out.id];
+    if (!field || !out.target) continue; // unknown id: ignore silently (spec §1.2)
+    propertyStore.set(out.target, field(ctx));
+  }
 }
