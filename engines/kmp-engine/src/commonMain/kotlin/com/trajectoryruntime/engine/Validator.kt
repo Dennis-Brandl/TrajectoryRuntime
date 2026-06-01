@@ -120,8 +120,14 @@ private fun semanticValidation(workflow: Map<String, Any?>): ValidationResult? {
             }
         }
     }
+    // Catch networks are intentional disconnected islands (entered at runtime via TRY, not a connection).
+    val partition = partitionCatchNetworks(
+        steps.map { Triple(it["oid"] as String, it["step_type"] as String, it["catch_id"] as String?) },
+        connections.map { (it["from_step_id"] as String) to (it["to_step_id"] as String) },
+    )
     for (step in steps) {
         val oid = step["oid"] as String
+        if (oid in partition.catchNetworkStepOids) continue
         if (oid !in reachable) {
             return ValidationResult(false, "ORPHANED_STEP", "Step $oid is not reachable from START")
         }

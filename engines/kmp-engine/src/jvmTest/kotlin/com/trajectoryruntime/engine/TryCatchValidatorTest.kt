@@ -4,6 +4,7 @@ package com.trajectoryruntime.engine
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
 private val MAPPER = ObjectMapper()
@@ -43,5 +44,10 @@ class TryCatchValidatorTest {
     // (The catch island is still ORPHANED_STEP until the K-B orphan exemption — that's fine here.)
     val r = validate(wfMap(baseWithCatch()))
     assertNotEquals("INVALID_STEP_TYPE", r.error_code, "CATCH/RETURN must be accepted step types")
+  }
+
+  @Test fun `accepts a minimal well-formed TRY CATCH RETURN workflow`() {
+    val r = validate(wfMap(baseWithCatch()))
+    assertEquals(true, r.valid, "expected valid, got ${r.error_code}: ${r.error_message}")
   }
 }
