@@ -437,12 +437,106 @@ private fun actionProxyValidation(workflow: Map<String, Any?>): ValidationResult
     return null
 }
 
+private fun tryCatchValidation(workflow: Map<String, Any?>): ValidationResult? {
+    @Suppress("UNCHECKED_CAST")
+    val steps = workflow["steps"] as List<Map<String, Any?>>
+    @Suppress("UNCHECKED_CAST")
+    val connections = workflow["connections"] as List<Map<String, Any?>>
+    fun fail(code: String, msg: String) = ValidationResult(false, code, msg)
+
+    val tryScoped = setOf("ACTION PROXY", "WAIT ACTION PROXY")
+    val modes = setOf("ERROR", "ABORT", "TIMEOUT")
+    val commands = setOf("ABANDON", "RESTART", "GOTO", "RETRY")
+
+    // Structural (per step)
+    for (step in steps) {
+        val type = normalizeStepType(step["step_type"] as String)
+        val oid = step["oid"] as String
+        val inDeg = connections.count { it["to_step_id"] == oid }
+        val outDeg = connections.count { it["from_step_id"] == oid }
+        if (type == "CATCH" && (inDeg != 0 || outDeg != 1))
+            return fail("CATCH_WRONG_DEGREE", "CATCH $oid must have 0 in / 1 out (has $inDeg in, $outDeg out)")
+        if (type == "RETURN" && (inDeg != 1 || outDeg != 0))
+            return fail("RETURN_WRONG_DEGREE", "RETURN $oid must have 1 in / 0 out (has $inDeg in, $outDeg out)")
+
+        @Suppress("UNCHECKED_CAST")
+        val tries = step["try_specifications"] as? List<Map<String, Any?>>
+        if (!tries.isNullOrEmpty()) {
+            if (type !in tryScoped) return fail("TRY_ON_INVALID_STEP", "try_specifications not allowed on $type")
+            val seen = HashSet<String>()
+            for (t in tries) {
+                val m = t["mode"] as? String
+                if (m !in modes) return fail("INVALID_TRY_MODE", "invalid try mode '$m'")
+                if (!seen.add(m!!)) return fail("DUPLICATE_TRY_MODE", "mode '$m' repeated on $oid")
+            }
+        }
+        if (type == "RETURN") {
+            @Suppress("UNCHECKED_CAST")
+            val rc = step["return_config"] as? Map<String, Any?>
+            if (rc != null) {
+                val cmd = rc["command"] as? String
+                if (cmd !in commands) return fail("INVALID_RETURN_COMMAND", "invalid RETURN command '$cmd'")
+                if (cmd == "RESTART" && rc["restart_mode"] == null) return fail("MISSING_RESTART_MODE", "RESTART needs restart_mode")
+                val rm = rc["restart_mode"] as? String
+                if (rm != null && rm != "CLEAN" && rm != "KEEP") return fail("INVALID_RESTART_MODE", "invalid restart_mode '$rm'")
+                if (cmd == "GOTO" && rc["goto_step_oid"] == null) return fail("MISSING_GOTO_TARGET", "GOTO needs goto_step_oid")
+            }
+        }
+    }
+
+    // Cross-reference
+    val catchIds = HashSet<String>()
+    for (step in steps) {
+        if (normalizeStepType(step["step_type"] as String) != "CATCH") continue
+        val cid = step["catch_id"] as? String ?: continue
+        if (!catchIds.add(cid)) return fail("DUPLICATE_CATCH_ID", "catch_id '$cid' used by more than one CATCH")
+    }
+    val partition = partitionCatchNetworks(
+        steps.map { Triple(it["oid"] as String, it["step_type"] as String, it["catch_id"] as String?) },
+        connections.map { (it["from_step_id"] as String) to (it["to_step_id"] as String) },
+    )
+    val oidSet = steps.map { it["oid"] as String }.toSet()
+    for (step in steps) {
+        @Suppress("UNCHECKED_CAST")
+        val tries = step["try_specifications"] as? List<Map<String, Any?>>
+        for (t in tries ?: emptyList()) {
+            val cid = t["catch_id"] as? String
+            if (cid !in catchIds) return fail("UNMATCHED_TRY", "TRY references undefined catch_id '$cid'")
+        }
+        if (normalizeStepType(step["step_type"] as String) == "RETURN") {
+            @Suppress("UNCHECKED_CAST")
+            val rc = step["return_config"] as? Map<String, Any?>
+            val goto = rc?.get("goto_step_oid") as? String
+            if (rc?.get("command") == "GOTO" && goto != null) {
+                if (goto !in oidSet) return fail("GOTO_TARGET_NOT_FOUND", "GOTO target '$goto' not found")
+                if (goto in partition.catchNetworkStepOids) return fail("GOTO_TARGET_IN_CATCH", "GOTO target '$goto' is inside a catch network")
+            }
+        }
+    }
+
+    // Topology
+    for (conn in connections) {
+        val fromIn = (conn["from_step_id"] as String) in partition.catchNetworkStepOids
+        val toIn = (conn["to_step_id"] as String) in partition.catchNetworkStepOids
+        if (fromIn != toIn) return fail("CROSS_NETWORK_EDGE", "connection ${conn["from_step_id"]} -> ${conn["to_step_id"]} crosses the catch-network boundary")
+    }
+
+    // CATCH_WITHOUT_RETURN / RETURN_WITHOUT_CATCH / CATCH_NETWORK_NOT_CONNECTED (spec §6.3) are editor-time
+    // codes (§6.6): the RETURN-gated partition means a RETURN-less/disconnected catch island is not
+    // orphan-exempt and is rejected transitively as ORPHANED_STEP by semanticValidation (matches the TS engine).
+    // ORPHANED_CATCH (a catch_id referenced by no TRY) is accepted at runtime (valid:true).
+    return null
+}
+
 fun validate(workflow: Map<String, Any?>): ValidationResult {
     // Phase 0: Pre-structural (missing required fields on steps/connections)
     preStructuralChecks(workflow)?.let { return it }
 
     // Phase A: Semantic checks (graph analysis)
     semanticValidation(workflow)?.let { return it }
+
+    // Phase A1.5: TRY/CATCH/RETURN structural + cross-reference + topology rules
+    tryCatchValidation(workflow)?.let { return it }
 
     // Phase A2: Resource command validation
     resourceValidation(workflow)?.let { return it }
