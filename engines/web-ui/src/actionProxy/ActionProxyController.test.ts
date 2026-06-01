@@ -151,3 +151,27 @@ test('logs ring caps at 100 entries', async () => {
   assert.equal(logs[0].message, 'msg 20');
   assert.equal(logs[99].message, 'msg 119');
 });
+
+test('fires ABORT and a timeout terminal when the wall-clock elapses', async () => {
+  const observer = new FakeObserver();
+  const captured: CapturedTerminal[] = [];
+  let fire: (() => void) | null = null;
+  const controller = new ActionProxyController({
+    serverUri: 'http://localhost:3002', actionOid: 'act-1',
+    invokeRequest: { environment_oid: 'env-1', workflow_instance_id: 'wf-1', step_instance_id: 'si-1', step_oid: 'step-1', input_parameters: [] },
+    visibility: 'observable', supportedCommands: ['ABORT'],
+    persistence: new PersistenceStore(new FakeStorage()), observer,
+    fetchImpl: fakeFetch({ status: 201, body: { data: { instance_id: 'ai-1' }, meta: {} } }) as typeof fetch,
+    timeoutMs: 1000,
+    setTimeoutImpl: (cb: () => void) => { fire = cb; return 1 as unknown as ReturnType<typeof setTimeout>; },
+    clearTimeoutImpl: () => { fire = null; },
+    onTerminal: t => captured.push(t),
+  });
+  await controller.start();
+  assert.ok(fire, 'timer not scheduled');
+  const doFire = fire as () => void;
+  doFire();
+  assert.equal(captured.length, 1);
+  assert.equal(captured[0].state, 'ERRORED');
+  assert.equal(captured[0].failureMode, 'timeout');
+});

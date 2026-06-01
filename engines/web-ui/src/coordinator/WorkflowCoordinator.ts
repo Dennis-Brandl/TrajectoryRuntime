@@ -191,6 +191,7 @@ export class WorkflowCoordinator {
     environmentOid: string,
     inputs: Array<{ name: string; value: string }>,
     onTerminal: (t: { state: 'COMPLETED' | 'ERRORED'; outputs: Record<string, string>; errorMessage: string | null; failureMode: 'error' | 'abort' | 'timeout' | null }) => void,
+    timeoutMs?: number,
   ): ActionProxyController {
     const serverUri = this._serverBindings[environmentOid];
     if (!serverUri) throw new Error(`No server bound for environment ${environmentOid}`);
@@ -210,6 +211,7 @@ export class WorkflowCoordinator {
       supportedCommands: cap.supported_commands,
       persistence: this._persistence,
       observer: this._observer,
+      timeoutMs,
       onTerminal: t => {
         this._actionControllers.delete(stepInstanceId);
         onTerminal(t);
@@ -501,6 +503,7 @@ export class WorkflowCoordinator {
             }
           }
         },
+        cfg.timeout_ms,
       );
     }
 

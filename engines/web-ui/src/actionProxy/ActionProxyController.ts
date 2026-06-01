@@ -23,6 +23,9 @@ export interface ControllerConfig {
   observer: ActionInstanceObserver;
   fetchImpl?: typeof fetch;
   onTerminal: (t: { state: 'COMPLETED' | 'ERRORED'; outputs: Record<string, string>; errorMessage: string | null; failureMode: 'error' | 'abort' | 'timeout' | null }) => void;
+  timeoutMs?: number;
+  setTimeoutImpl?: (cb: () => void, ms: number) => ReturnType<typeof setTimeout>;
+  clearTimeoutImpl?: (h: ReturnType<typeof setTimeout>) => void;
 }
 
 export interface ControllerSnapshot {
@@ -46,6 +49,7 @@ export class ActionProxyController {
   private outputs = new Map<string, string>();
   private lastEventId: number | null = null;
   private terminalEmitted = false;
+  private timeoutHandle: ReturnType<typeof setTimeout> | null = null;
 
   constructor(private cfg: ControllerConfig) {
     // Pass through the optional override OR `undefined` — never a bare
@@ -80,6 +84,16 @@ export class ActionProxyController {
       { onAttempt: n => { if (n > 1) console.log(`[ActionProxy] invoke retry attempt ${n}`); } },
     );
     this.setSnapshot({ ...this.snapshot, instanceId: instance_id, serverState: 'IDLE' });
+    const timeoutMs = this.cfg.timeoutMs;
+    if (timeoutMs !== undefined && timeoutMs > 0) {
+      const set = this.cfg.setTimeoutImpl ?? setTimeout;
+      this.timeoutHandle = set(() => {
+        // Best-effort ABORT (fire-and-forget); the TIMEOUT terminal is emitted regardless,
+        // so the engine is notified even if the ABORT request is still in flight.
+        void this.api.sendCommand(this.cfg.serverUri, instance_id, 'ABORT').catch(() => { /* best effort */ });
+        this.emitTerminal('ERRORED', 'Action timed out', 'timeout');
+      }, timeoutMs) as ReturnType<typeof setTimeout>;
+    }
     this.cfg.persistence.upsert({
       workflowInstanceId: this.cfg.invokeRequest.workflow_instance_id,
       stepInstanceId: this.cfg.invokeRequest.step_instance_id,
@@ -125,7 +139,15 @@ export class ActionProxyController {
     }
   }
 
+  private cancelTimeout(): void {
+    if (this.timeoutHandle !== null) {
+      (this.cfg.clearTimeoutImpl ?? clearTimeout)(this.timeoutHandle);
+      this.timeoutHandle = null;
+    }
+  }
+
   dispose(): void {
+    this.cancelTimeout();
     if (this.unsubscribe) {
       this.unsubscribe();
       this.unsubscribe = null;
