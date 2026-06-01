@@ -54,4 +54,11 @@ class TryCatchEngineTest {
     assertEquals("ERROR", engine.getProperties()["FailureContext.Mode"])
     assertNotEquals(WorkflowState.ERRORED, engine.getWorkflowState())
   }
+
+  @Test fun `RETURN ABANDON aborts the workflow`() {
+    val engine = WorkflowEngine(wfSpec(tryWf(returnJson = """{"command":"ABANDON"}""")))
+    engine.start()
+    engine.submitAction(UserAction(step_oid = "s2", action = "fail", failure_mode = "ERROR", error = "x"), 0)
+    assertEquals(WorkflowState.ABORTED, engine.getWorkflowState())
+  }
 }

@@ -436,6 +436,13 @@ class WorkflowEngine(
             return
         }
 
+        if (target.stepType == "RETURN") {
+            recordTrace(target.oid, "COMPLETED")
+            target.state = StepState.COMPLETED
+            dispatchReturn(target)
+            return // RETURN's command is terminal/redirective — do not fall through.
+        }
+
         if (isAutoCompleting(target.stepType)) {
             if (target.stepType == "SELECT 1" || target.stepType == "SELECT_1") {
                 val routing = handleSelect1(target.step, propertyStore)
@@ -1202,6 +1209,70 @@ class WorkflowEngine(
     }
 
     // ── Restart Support ──
+
+    // ── RETURN Dispatch ──
+
+    private fun dispatchReturn(returnStep: StepInstance) {
+        val rc = returnStep.step.return_config ?: return
+        val catchOid = findActiveCatchForReturn(returnStep.oid)
+        val ctx = catchOid?.let { activeCatches[it] }
+        when (rc.command) {
+            "ABANDON" -> returnAbandon()
+            "RESTART" -> returnRestart(rc.restart_mode ?: "KEEP")
+            "GOTO" -> rc.goto_step_oid?.let { returnGoto(it) }
+            "RETRY" -> returnRetry(ctx)
+        }
+        if (catchOid != null) {
+            cleanupCatchNetwork(catchOid)
+            activeCatches.remove(catchOid)
+        }
+    }
+
+    private fun findActiveCatchForReturn(returnOid: String): String? {
+        for ((catchId, net) in buildPartition().networksByCatchId) {
+            if (returnOid in net) {
+                val cs = findCatchByCatchId(catchId)
+                if (cs != null && activeCatches.containsKey(cs.oid)) return cs.oid
+            }
+        }
+        return null
+    }
+
+    private fun cleanupCatchNetwork(catchOid: String) {
+        val cid = steps[catchOid]?.step?.catch_id ?: return
+        val net = buildPartition().networksByCatchId[cid] ?: return
+        for (oid in net) {
+            val st = steps[oid] ?: continue
+            if (st.state != StepState.IDLE) { recordTrace(oid, "IDLE"); st.state = StepState.IDLE }
+        }
+    }
+
+    private fun returnAbandon() {
+        for (step in steps.values) {
+            if (step.state in ACTIVE_STEP_STATES) { recordTrace(step.oid, "IDLE"); step.state = StepState.IDLE }
+        }
+        completionQueue.clear()
+        releaseAllResources()
+        workflowState = WorkflowState.ABORTED
+    }
+
+    private fun returnRestart(mode: String) { /* KE2 */ }
+
+    private fun returnGoto(gotoOid: String) { /* KE3 */ }
+
+    private fun returnRetry(ctx: CatchContext?) { /* KE4 */ }
+
+    private fun resetStepInline(oid: String) {
+        val step = steps[oid] ?: return
+        if (step.state != StepState.IDLE) recordTrace(oid, "IDLE")
+        step.state = StepState.IDLE
+        routingContext.remove(oid)
+        pendingResources.remove(oid)
+        pendingUserSteps.remove(oid)
+        stepParameterSnapshots.remove(oid)
+        waitAllTracking.remove(oid)
+        activeChildEngines.remove(oid)
+    }
 
     fun checkRestartSafety(targetOids: List<String>): List<String> {
         val warnings = mutableListOf<String>()
