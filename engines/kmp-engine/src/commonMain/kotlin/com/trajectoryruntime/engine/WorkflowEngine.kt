@@ -467,6 +467,10 @@ class WorkflowEngine(
                 }
             }
 
+            if (target.stepType == "CATCH") {
+                activeCatches[target.oid]?.let { activateCatchStep(target.step, it, propertyStore) }
+            }
+
             recordTrace(target.oid, "COMPLETED")
             target.state = StepState.COMPLETED
             completionQueue.addLast(target.oid)
@@ -1082,13 +1086,47 @@ class WorkflowEngine(
         }
     }
 
+    private fun findCatchByCatchId(catchId: String): StepInstance? =
+        steps.values.firstOrNull { it.stepType == "CATCH" && it.step.catch_id == catchId }
+
+    private fun buildPartition(): CatchNetworkPartition = partitionCatchNetworks(
+        steps.values.map { Triple(it.oid, it.stepType, it.step.catch_id) },
+        connections.map { it.from_step_id to it.to_step_id },
+    )
+
     private fun handleStepFailure(stepInstance: StepInstance, mode: String, error: String?, actionIndex: Int) {
+        val matching = stepInstance.step.try_specifications?.firstOrNull { it.mode == mode }
+        val catchStep = matching?.let { findCatchByCatchId(it.catch_id) }
+        if (matching != null && catchStep != null) {
+            if (activeCatches.containsKey(catchStep.oid)) {
+                // CATCH_REENTRY (spec §6.4)
+                recordTrace(stepInstance.oid, "ERRORED", actionIndex, "CATCH_REENTRY on ${matching.catch_id}")
+                stepInstance.state = StepState.ERRORED
+                workflowState = WorkflowState.ABORTED
+                return
+            }
+            activeCatches[catchStep.oid] = CatchContext(
+                catch_oid = catchStep.oid,
+                trigger_step_oid = stepInstance.oid,
+                trigger_step_name = stepInstance.step.local_id,
+                trigger_reason = mode,
+                error_message = error,
+                activated_at = "", // audit-only; conformance is time-free
+            )
+            recordTrace(stepInstance.oid, "IDLE", actionIndex)
+            stepInstance.state = StepState.IDLE
+            pendingUserSteps.remove(stepInstance.oid)
+            pendingResources.remove(stepInstance.oid) // parity with TS
+            activateStep(catchStep)
+            drainCompletionQueue()
+            return
+        }
+        // No matching TRY — uncaught failure errors the workflow.
         recordTrace(stepInstance.oid, "ERRORED", actionIndex, error)
         stepInstance.state = StepState.ERRORED
         workflowState = WorkflowState.ERRORED
         pendingUserSteps.remove(stepInstance.oid)
-        // correction #2: parity with TS — also clear pendingResources for the failed step
-        pendingResources.remove(stepInstance.oid)
+        pendingResources.remove(stepInstance.oid) // parity with TS
         val known = mutableSetOf<String>()
         collectKnownStepOids(known)
         resourceManager?.cancelQueuedWaiters(known)

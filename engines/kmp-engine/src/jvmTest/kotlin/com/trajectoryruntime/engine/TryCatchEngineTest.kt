@@ -3,6 +3,7 @@ package com.trajectoryruntime.engine
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 private val LENIENT = Json { ignoreUnknownKeys = true }
@@ -42,5 +43,15 @@ class TryCatchEngineTest {
     engine.submitAction(UserAction(step_oid = "s2", action = "fail", failure_mode = "ERROR", error = "boom"), 0)
     assertEquals(WorkflowState.ERRORED, engine.getWorkflowState())
     assertTrue(engine.getTrace().any { it.step_oid == "s2" && it.state == "ERRORED" })
+  }
+
+  @Test fun `matching failure activates the CATCH network and writes trigger info`() {
+    val engine = WorkflowEngine(wfSpec(tryWf()))
+    engine.start()
+    engine.submitAction(UserAction(step_oid = "s2", action = "fail", failure_mode = "ERROR", error = "thermocouple"), 0)
+    val states = engine.getTrace().map { "${it.step_oid}:${it.state}" }
+    assertTrue(states.contains("c1:COMPLETED"), "CATCH not activated: $states")
+    assertEquals("ERROR", engine.getProperties()["FailureContext.Mode"])
+    assertNotEquals(WorkflowState.ERRORED, engine.getWorkflowState())
   }
 }
