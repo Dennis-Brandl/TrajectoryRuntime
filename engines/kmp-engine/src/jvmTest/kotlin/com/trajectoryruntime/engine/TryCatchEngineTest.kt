@@ -61,4 +61,20 @@ class TryCatchEngineTest {
     engine.submitAction(UserAction(step_oid = "s2", action = "fail", failure_mode = "ERROR", error = "x"), 0)
     assertEquals(WorkflowState.ABORTED, engine.getWorkflowState())
   }
+
+  @Test fun `RESTART KEEP re-runs from START and preserves properties`() {
+    val engine = WorkflowEngine(wfSpec(tryWf(returnJson = """{"command":"RESTART","restart_mode":"KEEP"}""")))
+    engine.start()
+    engine.submitAction(UserAction(step_oid = "s2", action = "fail", failure_mode = "ERROR", error = "x"), 0)
+    assertEquals(WorkflowState.RUNNING, engine.getWorkflowState())
+    assertEquals("ERROR", engine.getProperties()["FailureContext.Mode"])
+    assertTrue(engine.getActiveSteps().any { it.step.oid == "s2" })
+  }
+
+  @Test fun `RESTART CLEAN resets properties to defaults`() {
+    val engine = WorkflowEngine(wfSpec(tryWf(returnJson = """{"command":"RESTART","restart_mode":"CLEAN"}""")))
+    engine.start()
+    engine.submitAction(UserAction(step_oid = "s2", action = "fail", failure_mode = "ERROR", error = "x"), 0)
+    assertEquals("", engine.getProperties()["FailureContext.Mode"])
+  }
 }

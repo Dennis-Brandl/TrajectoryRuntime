@@ -1256,7 +1256,19 @@ class WorkflowEngine(
         workflowState = WorkflowState.ABORTED
     }
 
-    private fun returnRestart(mode: String) { /* KE2 */ }
+    private fun returnRestart(mode: String) {
+        for (step in steps.values) { resetStepInline(step.oid) }
+        completionQueue.clear()
+        activeCatches.clear()
+        releaseAllResources()
+        if (mode == "CLEAN") propertyStore.initializeFromWorkflow(workflow)
+        val startStep = steps.values.firstOrNull { it.stepType == "START" }
+        if (startStep != null) {
+            recordTrace(startStep.oid, "COMPLETED")
+            startStep.state = StepState.COMPLETED
+            completionQueue.addLast(startStep.oid)
+        }
+    }
 
     private fun returnGoto(gotoOid: String) { /* KE3 */ }
 
