@@ -484,14 +484,17 @@ export class WorkflowCoordinator {
               this.publish({ ...this.snapshot, error: String(e) });
             }
           } else {
-            // ERRORED: The engine has no per-step failure signal (UserAction only supports
-            // 'submit' | 'button_press' | 'yes' | 'no' | 'pause' | 'resume').
-            // Phase 1 fallback: log the error and submit with empty form_values so the step
-            // nominally completes and the workflow can continue.
-            // TODO(Phase 2): add a per-step fail signal to the engine and propagate ERRORED state.
-            console.warn(`[ActionProxy] step ${step.oid} terminated as ERRORED: ${t.errorMessage}`);
+            // Real per-step failure: route it into the engine's TRY/CATCH machinery
+            // (replaces the Phase-1 empty-submit stub). Maps the web-ui failure vocabulary
+            // (lowercase) to the engine's FailureMode (uppercase).
+            console.warn(`[ActionProxy] step ${step.oid} terminated as ERRORED (${t.failureMode}): ${t.errorMessage}`);
             try {
-              this.engine.submitAction({ step_oid: step.oid, action: 'submit', form_values: {} }, this.actionIndex++);
+              this.engine.submitAction({
+                step_oid: step.oid,
+                action: 'fail',
+                failure_mode: t.failureMode === 'abort' ? 'ABORT' : t.failureMode === 'timeout' ? 'TIMEOUT' : 'ERROR',
+                error: t.errorMessage ?? undefined,
+              }, this.actionIndex++);
               this.sync();
             } catch (e) {
               this.publish({ ...this.snapshot, error: String(e) });
