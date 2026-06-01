@@ -102,3 +102,27 @@ describe('engine: RETURN RESTART', () => {
     assert.equal(engine.getProperties()['FailureContext.Mode'], ''); // reset to declared default
   });
 });
+
+describe('engine: RETURN GOTO', () => {
+  it('resumes the main flow at the GOTO target', () => {
+    // main flow: Start→Action→Mid→End ; GOTO target = Mid (a USER_INTERACTION). Catch: c1→r1.
+    const wf = tryWorkflow({
+      returnConfig: { command: 'GOTO', goto_step_oid: 'm1' },
+      extraCatchSteps: [s({ local_id: 'Mid', oid: 'm1', step_type: 'USER_INTERACTION' })],
+      extraCatchConns: [{ from_step_id: 'c1', to_step_id: 'r1' }],
+    });
+    // rewire the connections so Mid is on the MAIN flow: Start→Action→Mid→End, plus catch c1→r1
+    (wf.connections as unknown as Array<Record<string, string>>).length = 0;
+    (wf.connections as unknown as Array<Record<string, string>>).push(
+      { from_step_id: 's1', to_step_id: 's2' },
+      { from_step_id: 's2', to_step_id: 'm1' },
+      { from_step_id: 'm1', to_step_id: 's3' },
+      { from_step_id: 'c1', to_step_id: 'r1' },
+    );
+    const engine = new WorkflowEngine(wf);
+    engine.start();
+    engine.submitAction({ step_oid: 's2', action: 'fail', failure_mode: 'ERROR', error: 'x' }, 0);
+    assert.ok(engine.getActiveSteps().some(a => a.step.oid === 'm1'), 'GOTO target not active');
+    assert.notEqual(engine.getWorkflowState(), 'ERRORED');
+  });
+});

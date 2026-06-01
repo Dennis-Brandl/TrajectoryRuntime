@@ -383,7 +383,12 @@ export class WorkflowEngine {
   }
 
   // Stubs — implemented in later tasks. dispatchReturn already routes to them.
-  private returnGoto(gotoOid: string): void { /* Task E3 */ void gotoOid; }
+  private returnGoto(gotoOid: string): void {
+    const target = this.steps.get(gotoOid);
+    if (!target) return;
+    if (target.state !== 'IDLE') this.resetStep(gotoOid); // backward GOTO: reset a completed/active target first
+    this.activateStep(target); // branch-local: other active branches untouched
+  }
   private returnRetry(ctx?: CatchContext): void { /* Task E4 */ void ctx; }
 
   /** Check if this engine (or any child engine) owns a step OID. */
