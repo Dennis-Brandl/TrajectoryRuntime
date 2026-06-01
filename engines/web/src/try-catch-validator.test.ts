@@ -101,3 +101,44 @@ describe('validator: cross-reference TRY rules', () => {
     assert.equal(validate(baseWithCatch({ returnConfig: { command: 'GOTO', goto_step_oid: 'c1' } })).error_code, 'GOTO_TARGET_IN_CATCH');
   });
 });
+
+describe('validator: topology TRY rules', () => {
+  it('CROSS_NETWORK_EDGE when an edge crosses the boundary', () => {
+    // Give the catch network an interior node (c1 → mid1 → r1) so the cross edge
+    // targets a non-CATCH/non-RETURN node and does NOT trip a degree rule first
+    // (spec §6.5: structural-degree checks fire before topology).
+    const wf = baseWithCatch();
+    wf.steps.push(step({ local_id: 'Mid', oid: 'mid1', step_type: 'USER_INTERACTION' }) as never);
+    wf.connections = wf.connections.filter(
+      c => !(c.from_step_id === 'c1' && c.to_step_id === 'r1'),
+    );
+    wf.connections.push(
+      { from_step_id: 'c1', to_step_id: 'mid1' },
+      { from_step_id: 'mid1', to_step_id: 'r1' },
+      { from_step_id: 's2', to_step_id: 'mid1' }, // main flow → catch-network interior
+    );
+    assert.equal(validate(wf).error_code, 'CROSS_NETWORK_EDGE');
+  });
+
+  it('rejects a CATCH that cannot reach a RETURN (runtime: ORPHANED_STEP; CATCH_WITHOUT_RETURN is editor-time)', () => {
+    // Replace the CATCH's RETURN with a non-RETURN dead end. The partition is
+    // RETURN-gated (spec §6.5), so this catch island is NOT orphan-exempt and is
+    // rejected as ORPHANED_STEP at runtime. The dedicated CATCH_WITHOUT_RETURN
+    // code (spec §6.3) is surfaced by the editor (§6.6), not the runtime.
+    const wf = baseWithCatch();
+    wf.steps = wf.steps.map(s =>
+      (s as Record<string, unknown>).oid === 'r1'
+        ? step({ local_id: 'U', oid: 'r1', step_type: 'USER_INTERACTION' }) as never
+        : s,
+    );
+    const r = validate(wf);
+    assert.equal(r.valid, false);
+    assert.equal(r.error_code, 'ORPHANED_STEP');
+  });
+
+  it('accepts an ORPHANED_CATCH (catch_id referenced by no TRY) — valid:true', () => {
+    const wf = baseWithCatch({ trySpec: [] }); // action has no TRY → C1 is orphaned but valid
+    const r = validate(wf);
+    assert.equal(r.valid, true, `expected valid, got ${r.error_code}`);
+  });
+});

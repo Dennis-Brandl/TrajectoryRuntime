@@ -251,6 +251,22 @@ function tryCatchValidation(workflow: Record<string, unknown>): ValidationResult
       }
     }
   }
+
+  // Topology: no edge may cross the main-flow / catch-network boundary (spec §6.3).
+  // The partition is RETURN-gated (spec §6.5); structural-degree checks above fire first.
+  // CATCH_WITHOUT_RETURN / RETURN_WITHOUT_CATCH / CATCH_NETWORK_NOT_CONNECTED (spec §6.3)
+  // are editor-time codes (§6.6); at runtime a RETURN-less or internally-disconnected
+  // catch island is rejected transitively by the ORPHANED_STEP check in semanticValidation.
+  for (const c of connections) {
+    const fromIn = partition.catchNetworkStepOids.has(c.from_step_id as string);
+    const toIn = partition.catchNetworkStepOids.has(c.to_step_id as string);
+    if (fromIn !== toIn) {
+      return fail('CROSS_NETWORK_EDGE', `connection ${c.from_step_id} → ${c.to_step_id} crosses the catch-network boundary`);
+    }
+  }
+  // ORPHANED_CATCH (a catch_id referenced by no TRY) is ACCEPTED at runtime (valid:true);
+  // the editor surfaces the warning chip (spec §6.3, §6.6).
+
   return null;
 }
 
