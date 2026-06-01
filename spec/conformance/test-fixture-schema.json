@@ -54,7 +54,7 @@
           },
           "action": {
             "type": "string",
-            "enum": ["submit", "button_press", "yes", "no"],
+            "enum": ["submit", "button_press", "yes", "no", "fail"],
             "description": "Type of user action."
           },
           "form_values": {
@@ -64,6 +64,14 @@
           "button_output": {
             "type": "string",
             "description": "The outputValue of the button pressed (for button_press action)."
+          },
+          "failure_mode": {
+            "type": "string",
+            "description": "Failure mode for the 'fail' action (e.g., ERROR, TIMEOUT, ABORT); matched against a step's try_specifications."
+          },
+          "error": {
+            "type": "string",
+            "description": "Optional human-readable error message accompanying a 'fail' action."
           }
         },
         "required": ["step_oid", "action"]
