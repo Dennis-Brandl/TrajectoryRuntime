@@ -16,11 +16,15 @@ describe('CATCH/RETURN handlers', () => {
     const store = new PropertyStore();
     store.set('FailureContext.Mode', '');
     store.set('FailureContext.Message', '');
+    store.set('FailureContext.Step', '');
+    store.set('FailureContext.StepID', '');
     const step = {
       oid: 'c1', step_type: 'CATCH', local_id: 'Catch', catch_id: 'C1',
       output_parameter_specifications: [
-        { id: 'trigger_reason', target: 'FailureContext.Mode' },
-        { id: 'error_message', target: 'FailureContext.Message' },
+        { id: 'Reason', target: 'FailureContext.Mode' },
+        { id: 'Message', target: 'FailureContext.Message' },
+        { id: 'Step', target: 'FailureContext.Step' },
+        { id: 'StepID', target: 'FailureContext.StepID' },
       ],
     } as unknown as MasterWorkflowStep;
     const ctx: CatchContext = {
@@ -30,6 +34,8 @@ describe('CATCH/RETURN handlers', () => {
     activateCatchStep(step, ctx, store);
     assert.equal(store.get('FailureContext.Mode'), 'ERROR');
     assert.equal(store.get('FailureContext.Message'), 'thermocouple failure');
+    assert.equal(store.get('FailureContext.Step'), 'Heat Oven');
+    assert.equal(store.get('FailureContext.StepID'), 'a1');
   });
 
   it('ignores unknown output ids without throwing', () => {

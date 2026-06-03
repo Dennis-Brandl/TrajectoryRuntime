@@ -195,10 +195,10 @@ export function executeScript(
 }
 
 const KNOWN_CATCH_FIELDS: Record<string, (c: CatchContext) => string> = {
-  trigger_step: c => c.trigger_step_name,
-  trigger_step_oid: c => c.trigger_step_oid,
-  trigger_reason: c => c.trigger_reason,
-  error_message: c => c.error_message ?? '',
+  Message: c => c.error_message ?? '',
+  Reason: c => c.trigger_reason,
+  Step: c => c.trigger_step_name,
+  StepID: c => c.trigger_step_oid,
 };
 
 /** Spec §1.2 / §3.1: write the runtime-supplied trigger info to the CATCH's declared Value Property targets. */
