@@ -8,6 +8,7 @@
  */
 import Ajv, { type ErrorObject } from 'ajv';
 import type { ValidationResult } from '@engine/types.js';
+import { partitionCatchNetworks, type PartitionStep, type PartitionConnection } from '@engine/catch-network-partition.js';
 import workflowSchema from '../../../../spec/workflow-schema.json';
 import { hasValidServerUriScheme } from '@engine/lib/server-uri.js';
 
@@ -122,8 +123,16 @@ function semanticValidation(workflow: Record<string, unknown>): ValidationResult
       }
     }
   }
+  // Catch networks are intentional disconnected islands (reached at runtime via TRY, not via a connection).
+  // Mirrors engines/web/src/validator.ts — keep the two in sync.
+  const partition = partitionCatchNetworks(
+    steps as unknown as PartitionStep[],
+    connections as unknown as PartitionConnection[],
+  );
   for (const step of steps) {
-    if (!reachable.has(step.oid as string)) {
+    const oid = step.oid as string;
+    if (partition.catchNetworkStepOids.has(oid)) continue;
+    if (!reachable.has(oid)) {
       return { valid: false, error_code: 'ORPHANED_STEP', error_message: `Step ${step.oid} is not reachable from START` };
     }
   }
