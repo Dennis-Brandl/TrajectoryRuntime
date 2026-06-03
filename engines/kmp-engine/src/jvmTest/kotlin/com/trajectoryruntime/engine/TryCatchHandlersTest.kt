@@ -26,4 +26,16 @@ class TryCatchHandlersTest {
     assertEquals("Heat Oven", store.get("FailureContext.Step"))
     assertEquals("a1", store.get("FailureContext.StepID"))
   }
+
+  @Test fun `activateCatchStep ignores unknown output ids without throwing`() {
+    val store = PropertyStore()
+    val step = MasterWorkflowStep(
+      local_id = "C", oid = "c1", version = "1.0.0", last_modified_date = "d", step_type = "CATCH", catch_id = "C1",
+      output_parameter_specifications = listOf(
+        OutputParameterSpecification(id = "not_a_field", target = "X.Y"),
+      ),
+    )
+    val ctx = CatchContext("c1", "a1", "X", "ABORT", null, "d")
+    activateCatchStep(step, ctx, store) // must not throw
+  }
 }
