@@ -13,7 +13,7 @@ private const val DATE = "2026-05-31T12:00:00.000Z"
 /** START→Action(try ERROR→C1)→END + Catch→Return. opts override the TRY and RETURN JSON. */
 private fun tryWf(trySpec: String = """[{"mode":"ERROR","catch_id":"C1"}]""",
                   returnJson: String = """{"command":"ABANDON"}""",
-                  catchOutputs: String = """[{"id":"trigger_reason","target":"FailureContext.Mode"}]""",
+                  catchOutputs: String = """[{"id":"Reason","target":"FailureContext.Mode"}]""",
                   extraSteps: String = "", extraConns: String = ""): String = """
 {
  "local_id":"wf","oid":"wf-1","version":"1.0.0","last_modified_date":"$DATE","schemaVersion":"4.0",
