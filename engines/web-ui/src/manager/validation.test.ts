@@ -39,3 +39,40 @@ test('does not flag a catch-network RETURN/CATCH as orphaned (reachable only via
   );
   assert.equal(result.valid, true, `expected valid; got ${result.error_code}: ${result.error_message}`);
 });
+
+// A RETURN left at the Editor's visual default ABANDON exports with NO return_config.
+// The web-ui validator must reject it (it previously had no RETURN check at all), so the
+// user sees a clear error at import instead of the workflow silently stranding at runtime.
+const catchIslandWf = (returnConfig?: Record<string, unknown>) => {
+  const ret: Record<string, unknown> = { local_id: 'Ret', oid: 'r1', step_type: 'RETURN' };
+  if (returnConfig) ret.return_config = returnConfig;
+  return {
+    schemaVersion: '4.0', local_id: 'wf', oid: 'wf-1', version: '1.0.0', last_modified_date: DATE,
+    steps: [
+      s({ local_id: 'Start', oid: 's1', step_type: 'START' }),
+      s({ local_id: 'End', oid: 's2', step_type: 'END' }),
+      s({ local_id: 'Catch', oid: 'c1', step_type: 'CATCH', catch_id: 'C1' }),
+      s(ret),
+    ],
+    connections: [
+      { from_step_id: 's1', to_step_id: 's2' },
+      { from_step_id: 'c1', to_step_id: 'r1' },
+    ],
+  };
+};
+
+test('rejects a RETURN with no return_config (INVALID_RETURN_COMMAND)', () => {
+  const result = validateWorkflow(catchIslandWf());
+  assert.equal(result.valid, false, 'a RETURN with no return_config must be rejected');
+  assert.equal(result.error_code, 'INVALID_RETURN_COMMAND');
+});
+
+test('rejects a RETURN with an unknown command (INVALID_RETURN_COMMAND)', () => {
+  const result = validateWorkflow(catchIslandWf({ command: 'ABORT' }));
+  assert.equal(result.error_code, 'INVALID_RETURN_COMMAND');
+});
+
+test('accepts a RETURN with a valid ABANDON command', () => {
+  const result = validateWorkflow(catchIslandWf({ command: 'ABANDON' }));
+  assert.equal(result.valid, true, `expected valid; got ${result.error_code}: ${result.error_message}`);
+});

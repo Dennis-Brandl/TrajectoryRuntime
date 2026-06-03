@@ -339,7 +339,19 @@ export class WorkflowEngine {
 
   private dispatchReturn(returnStep: StepInstance): void {
     const rc = returnStep.step.return_config;
-    if (!rc) return;
+    const VALID_COMMANDS = new Set(['ABANDON', 'RESTART', 'GOTO', 'RETRY']);
+    if (!rc || !rc.command || !VALID_COMMANDS.has(rc.command)) {
+      // Defense-in-depth: validation (validator.ts) should reject this at load, but if a
+      // malformed RETURN reaches the engine it must error the workflow rather than complete
+      // silently and leave it RUNNING with no active steps.
+      const reason = rc?.command ? `RETURN has unknown command '${rc.command}'` : 'RETURN has no return_config';
+      this.recordTrace(returnStep.oid, 'ERRORED', undefined, reason);
+      returnStep.state = 'ERRORED';
+      this.workflowState = 'ERRORED';
+      return;
+    }
+    this.recordTrace(returnStep.oid, 'COMPLETED');
+    returnStep.state = 'COMPLETED';
     const catchOid = this.findActiveCatchForReturn(returnStep.oid);
     const ctx = catchOid ? this.activeCatches.get(catchOid) : undefined;
     switch (rc.command) {
@@ -1062,8 +1074,8 @@ export class WorkflowEngine {
     }
 
     if (target.stepType === 'RETURN') {
-      this.recordTrace(target.oid, 'COMPLETED');
-      target.state = 'COMPLETED';
+      // dispatchReturn owns the terminal state: it marks the step COMPLETED for a valid
+      // command, or ERRORED for a missing/unknown one (rather than silently stranding).
       this.dispatchReturn(target);
       return; // RETURN's command is terminal/redirective — do not fall through.
     }

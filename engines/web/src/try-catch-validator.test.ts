@@ -150,6 +150,16 @@ describe('validator: invalid TRY/RETURN enum values (tryCatchValidation precedes
   it('INVALID_RETURN_COMMAND when return_config.command is unknown', () => {
     assert.equal(validate(baseWithCatch({ returnConfig: { command: 'NOPE' } })).error_code, 'INVALID_RETURN_COMMAND');
   });
+  it('INVALID_RETURN_COMMAND when a RETURN has no return_config at all', () => {
+    // A RETURN left at the Editor's visual default ABANDON exports with NO return_config;
+    // it must be rejected rather than silently stranding the workflow at runtime.
+    const wf = baseWithCatch();
+    const ret = wf.steps.find(s => (s as Record<string, unknown>).oid === 'r1') as Record<string, unknown>;
+    delete ret.return_config;
+    const r = validate(wf);
+    assert.equal(r.valid, false, 'a RETURN with no return_config must be rejected');
+    assert.equal(r.error_code, 'INVALID_RETURN_COMMAND');
+  });
   it('INVALID_RESTART_MODE when restart_mode is not CLEAN/KEEP', () => {
     assert.equal(validate(baseWithCatch({ returnConfig: { command: 'RESTART', restart_mode: 'BOGUS' } })).error_code, 'INVALID_RESTART_MODE');
   });

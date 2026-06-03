@@ -79,6 +79,24 @@ describe('engine: RETURN ABANDON', () => {
   });
 });
 
+describe('engine: RETURN with invalid command (runtime backstop)', () => {
+  it('errors the workflow when a RETURN has no return_config (instead of stranding RUNNING)', () => {
+    const wf = tryWorkflow();
+    const ret = (wf.steps as unknown as Array<Record<string, unknown>>).find(s => s.oid === 'r1')!;
+    delete ret.return_config;
+    const engine = new WorkflowEngine(wf);
+    engine.start();
+    engine.submitAction({ step_oid: 's2', action: 'fail', failure_mode: 'ERROR', error: 'x' }, 0);
+    assert.equal(engine.getWorkflowState(), 'ERRORED');
+  });
+  it('errors the workflow when a RETURN command is unrecognized', () => {
+    const engine = new WorkflowEngine(tryWorkflow({ returnConfig: { command: 'ABORT' } }));
+    engine.start();
+    engine.submitAction({ step_oid: 's2', action: 'fail', failure_mode: 'ERROR', error: 'x' }, 0);
+    assert.equal(engine.getWorkflowState(), 'ERRORED');
+  });
+});
+
 describe('engine: RETURN RESTART', () => {
   it('RESTART KEEP re-runs from START and preserves properties', () => {
     const wf = tryWorkflow({

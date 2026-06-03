@@ -455,12 +455,36 @@ function actionServerUriValidation(workflow: Record<string, unknown>): Validatio
   return null;
 }
 
+// A RETURN must carry a valid return_config.command. A missing return_config (a RETURN left
+// at the editor's visual default ABANDON, which exports with no config) or an unknown command
+// is rejected here so the user sees a clear error at import rather than the workflow silently
+// stranding at runtime (the engine's dispatchReturn would otherwise no-op on the absent config).
+function returnConfigValidation(workflow: Record<string, unknown>): ValidationResult | null {
+  const COMMANDS = new Set(['ABANDON', 'RESTART', 'GOTO', 'RETRY']);
+  const steps = (workflow['steps'] as Record<string, unknown>[] | undefined) ?? [];
+  for (const step of steps) {
+    if (normalizeStepType(String(step.step_type)) !== 'RETURN') continue;
+    const rc = step.return_config as { command?: string } | undefined;
+    if (!rc || !rc.command || !COMMANDS.has(rc.command)) {
+      return {
+        valid: false,
+        error_code: 'INVALID_RETURN_COMMAND',
+        error_message: `RETURN requires a valid return_config.command (got '${rc?.command ?? 'none'}') (step ${step.oid})`,
+      };
+    }
+  }
+  return null;
+}
+
 export function validateWorkflow(workflow: Record<string, unknown>): ValidationResult {
   const preError = preStructuralChecks(workflow);
   if (preError) return preError;
 
   const semanticError = semanticValidation(workflow);
   if (semanticError) return semanticError;
+
+  const returnConfigError = returnConfigValidation(workflow);
+  if (returnConfigError) return returnConfigError;
 
   const resourceError = resourceValidation(workflow);
   if (resourceError) return resourceError;
