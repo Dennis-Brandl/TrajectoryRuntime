@@ -350,6 +350,17 @@ export class WorkflowEngine {
       this.workflowState = 'ERRORED';
       return;
     }
+    // Defense-in-depth: a GOTO whose target oid does not resolve to a step must error the
+    // workflow rather than no-op in returnGoto and leave it RUNNING with no active steps and no
+    // way to abort. validator.ts (GOTO_TARGET_NOT_FOUND) rejects this at load; this guards a
+    // malformed workflow that reaches the engine unvalidated (e.g. the web-ui validator fork).
+    if (rc.command === 'GOTO' && (!rc.goto_step_oid || !this.steps.has(rc.goto_step_oid))) {
+      const reason = `RETURN GOTO target not found: '${rc.goto_step_oid ?? 'none'}'`;
+      this.recordTrace(returnStep.oid, 'ERRORED', undefined, reason);
+      returnStep.state = 'ERRORED';
+      this.workflowState = 'ERRORED';
+      return;
+    }
     this.recordTrace(returnStep.oid, 'COMPLETED');
     returnStep.state = 'COMPLETED';
     const catchOid = this.findActiveCatchForReturn(returnStep.oid);

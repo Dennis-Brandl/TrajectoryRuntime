@@ -462,15 +462,42 @@ function actionServerUriValidation(workflow: Record<string, unknown>): Validatio
 function returnConfigValidation(workflow: Record<string, unknown>): ValidationResult | null {
   const COMMANDS = new Set(['ABANDON', 'RESTART', 'GOTO', 'RETRY']);
   const steps = (workflow['steps'] as Record<string, unknown>[] | undefined) ?? [];
+  const connections = (workflow['connections'] as Record<string, unknown>[] | undefined) ?? [];
+  // Mirror of the RETURN/GOTO rules in engines/web/src/validator.ts — keep the two in sync.
+  // The fork previously only checked the command, so a dangling GOTO target passed the runtime
+  // UI's validation, then the engine's returnGoto no-oped and stranded the workflow RUNNING with
+  // no active steps and no way to abort.
+  const oidSet = new Set(steps.map((s) => s.oid as string));
+  const partition = partitionCatchNetworks(
+    steps as unknown as PartitionStep[],
+    connections as unknown as PartitionConnection[],
+  );
   for (const step of steps) {
     if (normalizeStepType(String(step.step_type)) !== 'RETURN') continue;
-    const rc = step.return_config as { command?: string } | undefined;
+    const rc = step.return_config as { command?: string; restart_mode?: string; goto_step_oid?: string } | undefined;
     if (!rc || !rc.command || !COMMANDS.has(rc.command)) {
       return {
         valid: false,
         error_code: 'INVALID_RETURN_COMMAND',
         error_message: `RETURN requires a valid return_config.command (got '${rc?.command ?? 'none'}') (step ${step.oid})`,
       };
+    }
+    if (rc.command === 'RESTART' && !rc.restart_mode) {
+      return { valid: false, error_code: 'MISSING_RESTART_MODE', error_message: `RESTART requires restart_mode (step ${step.oid})` };
+    }
+    if (rc.restart_mode && rc.restart_mode !== 'CLEAN' && rc.restart_mode !== 'KEEP') {
+      return { valid: false, error_code: 'INVALID_RESTART_MODE', error_message: `invalid restart_mode '${rc.restart_mode}' (step ${step.oid})` };
+    }
+    if (rc.command === 'GOTO') {
+      if (!rc.goto_step_oid) {
+        return { valid: false, error_code: 'MISSING_GOTO_TARGET', error_message: `GOTO requires goto_step_oid (step ${step.oid})` };
+      }
+      if (!oidSet.has(rc.goto_step_oid)) {
+        return { valid: false, error_code: 'GOTO_TARGET_NOT_FOUND', error_message: `GOTO target '${rc.goto_step_oid}' not found (step ${step.oid})` };
+      }
+      if (partition.catchNetworkStepOids.has(rc.goto_step_oid)) {
+        return { valid: false, error_code: 'GOTO_TARGET_IN_CATCH', error_message: `GOTO target '${rc.goto_step_oid}' is inside a catch network (step ${step.oid})` };
+      }
     }
   }
   return null;

@@ -76,3 +76,12 @@ test('accepts a RETURN with a valid ABANDON command', () => {
   const result = validateWorkflow(catchIslandWf({ command: 'ABANDON' }));
   assert.equal(result.valid, true, `expected valid; got ${result.error_code}: ${result.error_message}`);
 });
+
+// Drift regression: the fork only checked the RETURN command, so a GOTO whose target oid does
+// not resolve passed the runtime UI's validation, then the engine's returnGoto stranded the
+// workflow RUNNING with no active steps. Mirrors engines/web/src/validator.ts GOTO_TARGET_NOT_FOUND.
+test('rejects a GOTO whose target does not resolve (GOTO_TARGET_NOT_FOUND)', () => {
+  const result = validateWorkflow(catchIslandWf({ command: 'GOTO', goto_step_oid: 'does-not-exist' }));
+  assert.equal(result.valid, false, 'a GOTO with a dangling target must be rejected');
+  assert.equal(result.error_code, 'GOTO_TARGET_NOT_FOUND');
+});
