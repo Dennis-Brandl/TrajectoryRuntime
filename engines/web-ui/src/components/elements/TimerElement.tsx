@@ -1,5 +1,5 @@
-// Copyright (c) 2026 Saturnis.io. All rights reserved.
-// Licensed under the GNU AGPL v3. See LICENSE.md for details.
+// Copyright (c) 2026 Dennis Brandl
+// Licensed under the Apache License, Version 2.0. See LICENSE for details.
 import { useEffect, useRef, useState, useCallback, type CSSProperties } from 'react';
 import { ChevronDown, ChevronUp, Pause, Play, RotateCcw } from 'lucide-react';
 import type { ElementProps } from './registry';

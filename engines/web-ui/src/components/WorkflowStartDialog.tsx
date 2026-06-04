@@ -1,5 +1,5 @@
-// Copyright (c) 2026 Saturnis.io. All rights reserved.
-// Licensed under the GNU AGPL v3. See LICENSE.md for details.
+// Copyright (c) 2026 Dennis Brandl
+// Licensed under the Apache License, Version 2.0. See LICENSE for details.
 import { useCallback } from 'react';
 import type { LoadedWorkflow } from '../manager/types';
 import styles from './WorkflowStartDialog.module.css';

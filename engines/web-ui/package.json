@@ -2,7 +2,7 @@
   "name": "@saturnis/trajectory-desktop",
   "private": true,
   "version": "1.2.0",
-  "license": "AGPL-3.0-or-later",
+  "license": "Apache-2.0",
   "type": "module",
   "scripts": {
     "dev": "npm run build:help && vite --port 5173",
