@@ -3,6 +3,7 @@
 import type { ElementProps } from './registry';
 import type { FormElementText } from '@engine/types.js';
 import { substituteChips } from '../../utils/richText';
+import { sanitizeHTML } from '../../utils/sanitize-html';
 
 // Mirrors the editor's TextRenderer read-mode styling. Param chip + paragraph
 // CSS rules are injected so rich-text content renders identically.
@@ -39,7 +40,7 @@ export function TextElement({ element, properties, inputParameters }: ElementPro
     color?: string;
     align?: 'left' | 'center' | 'right';
   };
-  const html = substituteChips(el.content.content, properties, inputParameters);
+  const html = sanitizeHTML(substituteChips(el.content.content, properties, inputParameters));
   return (
     <>
       <style>{TEXT_CHIP_CSS}</style>

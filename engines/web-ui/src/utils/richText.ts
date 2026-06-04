@@ -32,10 +32,12 @@ export function substituteChips(
       return value !== undefined ? escapeHtml(value) : `{{${trimmed}}}`;
     },
   );
-  // 2. Replace {{KEY}} mustache placeholders
+  // 2. Replace {{KEY}} mustache placeholders (escape the value — it may be
+  //    untrusted form input or property data containing HTML).
   result = result.replace(/\{\{([^}]+)\}\}/g, (_match, key: string) => {
     const trimmed = key.trim();
-    return lookup(trimmed) ?? `{{${trimmed}}}`;
+    const value = lookup(trimmed);
+    return value !== undefined ? escapeHtml(value) : `{{${trimmed}}}`;
   });
   // 3. Convert newlines to <br> so line breaks render in HTML
   result = result.replace(/\n/g, '<br />');
