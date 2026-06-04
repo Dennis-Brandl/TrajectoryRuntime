@@ -6,6 +6,7 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { ValidationResult } from './types.js';
 import { partitionCatchNetworks, type PartitionStep, type PartitionConnection } from './catch-network-partition.js';
+import { hasValidServerUriScheme } from './lib/server-uri.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -650,6 +651,26 @@ function structuralValidation(workflow: Record<string, unknown>): ValidationResu
   return { valid: false, error_code: 'MISSING_REQUIRED_FIELD', error_message: errors[0]?.message ?? 'Validation failed' };
 }
 
+function actionServerUriValidation(workflow: Record<string, unknown>): ValidationResult | null {
+  const envSpecs =
+    (workflow['environment_specifications'] as Array<Record<string, unknown>> | undefined) ?? [];
+  for (const env of envSpecs) {
+    const servers =
+      (env['action_server_specifications'] as Array<Record<string, unknown>> | undefined) ?? [];
+    for (const s of servers) {
+      const uri = s['uri'];
+      if (typeof uri !== 'string' || !hasValidServerUriScheme(uri)) {
+        return {
+          valid: false,
+          error_code: 'INVALID_VALIDATION',
+          error_message: `Action server URI is not a valid http(s) URL: ${String(uri)}`,
+        };
+      }
+    }
+  }
+  return null;
+}
+
 export function validate(workflow: Record<string, unknown>): ValidationResult {
   // Phase 0: Pre-structural (missing required fields on steps/connections)
   const preError = preStructuralChecks(workflow);
@@ -666,6 +687,10 @@ export function validate(workflow: Record<string, unknown>): ValidationResult {
   // Phase A2: ACTION PROXY config validation (§14.2)
   const actionProxyError = actionProxyValidation(workflow);
   if (actionProxyError) return actionProxyError;
+
+  // Phase A2.5: action-server URI scheme check (SSRF — reject non-http(s) URIs)
+  const serverUriError = actionServerUriValidation(workflow);
+  if (serverUriError) return serverUriError;
 
   // Phase A3: Resource validation
   const resourceError = resourceValidation(workflow);

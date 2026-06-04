@@ -155,3 +155,35 @@ test('default fetch is invoked with global-style `this` (no Window binding error
     ;(globalThis as { fetch: typeof fetch }).fetch = originalFetch
   }
 })
+
+test('SSRF guard: rejects a disallowed (non-loopback) server URI before fetching', async () => {
+  let fetched = false
+  const client = new ActionApiClient(async () => {
+    fetched = true
+    return new Response('{}', { status: 201 })
+  })
+  await assert.rejects(
+    client.invoke('https://evil.example', 'act-1', {
+      environment_oid: 'env-1',
+      workflow_instance_id: 'wf-1',
+      step_instance_id: 'si-1',
+      step_oid: 'step-1',
+      input_parameters: [],
+    }),
+  )
+  assert.equal(fetched, false, 'fetch must not be called for a disallowed URI')
+})
+
+test('SSRF guard: allows a loopback server URI', async () => {
+  const client = new ActionApiClient(
+    async () => new Response(JSON.stringify({ data: { instance_id: 'ai-1' } }), { status: 201 }),
+  )
+  const { instance_id } = await client.invoke('http://localhost:3002', 'act-1', {
+    environment_oid: 'env-1',
+    workflow_instance_id: 'wf-1',
+    step_instance_id: 'si-1',
+    step_oid: 'step-1',
+    input_parameters: [],
+  })
+  assert.equal(instance_id, 'ai-1')
+})

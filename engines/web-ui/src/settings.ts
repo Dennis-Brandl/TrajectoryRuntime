@@ -24,3 +24,21 @@ export function setAllowScript(allow: boolean): void {
     // No localStorage (e.g. SSR/tests) — nothing to persist.
   }
 }
+
+const SERVER_ALLOWLIST_KEY = 'trajectory.actionServerAllowlist';
+
+/**
+ * Action-server origins the user trusts beyond loopback (comma-separated in
+ * localStorage). Empty by default → loopback-only.
+ */
+export function getServerAllowlist(): string[] {
+  try {
+    const raw = globalThis.localStorage?.getItem(SERVER_ALLOWLIST_KEY) ?? '';
+    return raw
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+  } catch {
+    return [];
+  }
+}
