@@ -9,6 +9,7 @@ import styles from './OverviewScreen.module.css';
 const PADDING = 40;
 const DIAMOND_STEP_TYPES = new Set(['SELECT 1', 'WAIT ANY', 'WAIT ALL', 'PARALLEL']);
 const CIRCLE_STEP_TYPES = new Set(['START', 'END']);
+const TRAPEZOID_STEP_TYPES = new Set(['CATCH', 'RETURN']);
 
 // Editor node dimensions (flowchart) — positions in the JSON assume these sizes,
 // and the runtime renders at the same scale so connections meet the symbols
@@ -23,6 +24,9 @@ const EDITOR_CIRCLE_R = 13;
 
 function editorNodeSize(stepType: string): { w: number; h: number } {
   if (CIRCLE_STEP_TYPES.has(stepType)) return { w: EDITOR_CIRCLE_SIZE, h: EDITOR_CIRCLE_SIZE };
+  // CATCH/RETURN render at the START/END 30x30 footprint (matching the editor's CatchNode/
+  // ReturnNode), so connection endpoints meet the symbol exactly like START/END do.
+  if (TRAPEZOID_STEP_TYPES.has(stepType)) return { w: EDITOR_CIRCLE_SIZE, h: EDITOR_CIRCLE_SIZE };
   if (DIAMOND_STEP_TYPES.has(stepType)) return { w: EDITOR_GATEWAY_W, h: EDITOR_GATEWAY_H };
   return { w: EDITOR_RECT_W, h: EDITOR_RECT_H };
 }
@@ -187,6 +191,46 @@ function renderIsa88Triangle(
       stroke={stroke}
       strokeWidth={strokeW}
       opacity={color.opacity ?? 1}
+      onMouseEnter={(e) => showTooltip(step, e)}
+      onMouseLeave={hideTooltip}
+      onClick={(e) => showTooltip(step, e)}
+      style={{ cursor: 'pointer' }}
+    />
+  );
+}
+
+/** Render a CATCH (wide-top) or RETURN (narrow-top) trapezoid at the START/END 30x30 footprint. */
+function renderCatchReturnTrapezoid(
+  step: MasterWorkflowStep,
+  pos: { x: number; y: number },
+  color: StepColor,
+  stroke: string,
+  strokeW: number,
+  displayStyle: DisplayStyle,
+  showTooltip: (step: MasterWorkflowStep, e: React.MouseEvent | React.TouchEvent) => void,
+  hideTooltip: () => void,
+): React.ReactNode {
+  const center = stepCenter(pos, step.step_type); // 30x30 footprint, same as START/END
+  const r = EDITOR_CIRCLE_SIZE / 2;
+  const x = center.cx - r;
+  const y = center.cy - r;
+  const isCatch = step.step_type === 'CATCH';
+  // Editor node polygons (CatchNode/ReturnNode), 30x30, translated to absolute coords.
+  const local: Array<[number, number]> = isCatch
+    ? [[0, 0], [30, 0], [23, 30], [7, 30]]
+    : [[7, 0], [23, 0], [30, 30], [0, 30]];
+  const points = local.map(([dx, dy]) => `${x + dx},${y + dy}`).join(' ');
+  // BPMN rotates the shape 90deg CCW for left->right flow (matches the editor canvas).
+  const rotate = displayStyle === 'bpmn' ? `rotate(-90 ${center.cx} ${center.cy})` : undefined;
+  return (
+    <polygon
+      key={step.oid}
+      points={points}
+      fill={color.fill}
+      stroke={stroke}
+      strokeWidth={strokeW}
+      opacity={color.opacity ?? 1}
+      transform={rotate}
       onMouseEnter={(e) => showTooltip(step, e)}
       onMouseLeave={hideTooltip}
       onClick={(e) => showTooltip(step, e)}
@@ -512,6 +556,7 @@ export function WorkflowGraph({ spec, snapshot, isActive, onZoomChange, highligh
           const color = resolveStepColor(state);
           const isDiamond = DIAMOND_STEP_TYPES.has(step.step_type);
           const isCircle = CIRCLE_STEP_TYPES.has(step.step_type);
+          const isTrapezoid = TRAPEZOID_STEP_TYPES.has(step.step_type);
           const isHighlighted = step.oid === highlightedStepOid;
           const stroke = isHighlighted ? '#000000' : (color.stroke ?? 'none');
           const strokeW = isHighlighted ? 4 : (color.strokeWidth ?? 0);
@@ -561,6 +606,10 @@ export function WorkflowGraph({ spec, snapshot, isActive, onZoomChange, highligh
                 style={{ cursor: 'pointer' }}
               />
             );
+          }
+
+          if (isTrapezoid) {
+            return renderCatchReturnTrapezoid(step, pos, color, stroke, strokeW, displayStyle, showTooltip, hideTooltip);
           }
 
           // Rect — sized to match the editor (120×50, rx=4) so connection
