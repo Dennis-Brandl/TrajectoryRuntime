@@ -46,10 +46,11 @@ export class WorkflowEngine {
   private pendingResources: Map<string, PendingResourceState>;
   private instanceId: string;
   private activeCatches: Map<string, CatchContext> = new Map();
+  private allowScript: boolean;
 
   constructor(
     workflow: MasterWorkflowSpecification,
-    setup?: { starting_parameters?: Record<string, string>; initial_properties?: Record<string, string>; resourceManager?: ResourceManager },
+    setup?: { starting_parameters?: Record<string, string>; initial_properties?: Record<string, string>; resourceManager?: ResourceManager; allowScriptExecution?: boolean },
   ) {
     this.workflow = workflow;
     this.steps = new Map();
@@ -67,6 +68,9 @@ export class WorkflowEngine {
     this.activeChildEngines = new Map();
     this.stepParameterSnapshots = new Map();
     this.resourceManager = setup?.resourceManager;
+    // SCRIPT steps execute author-supplied code; disabled unless the user opts
+    // in for a trusted package (untrusted-content safe default).
+    this.allowScript = setup?.allowScriptExecution ?? false;
     this.pendingResources = new Map();
     this.instanceId = `wf-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
@@ -1072,6 +1076,23 @@ export class WorkflowEngine {
         }
       }
       if (target.stepType === 'SCRIPT') {
+        if (target.step.script_config?.source && !this.allowScript) {
+          this.recordTrace(
+            target.oid,
+            'ERRORED',
+            undefined,
+            'SCRIPT execution is disabled — enable it only for trusted packages',
+          );
+          target.state = 'ERRORED';
+          this.workflowState = 'ERRORED';
+          this.pendingResources.delete(target.oid);
+          if (this.resourceManager) {
+            const known = new Set<string>();
+            this.collectKnownStepOids(known);
+            this.resourceManager.cancelQueuedWaiters(known);
+          }
+          return;
+        }
         const inputParams = this.stepParameterSnapshots.get(target.oid)?.inputParameters ?? {};
         const result = executeScript(target.step, this.propertyStore, inputParams);
         if (!result.success) {

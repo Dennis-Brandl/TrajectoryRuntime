@@ -3,6 +3,7 @@
 import { WorkflowEngine } from '@engine/engine.js';
 import { InMemoryResourceManager } from '@engine/resource-manager.js';
 import { loadEnvironmentLibrary } from '@engine/environment-loader.js';
+import { getAllowScript } from '../settings.js';
 import type {
   MasterWorkflowSpecification,
   MasterEnvironmentLibrary,
@@ -103,7 +104,7 @@ export class WorkflowCoordinator {
   start(): void {
     if (!this.workflow) return;
 
-    const engineSetup: { starting_parameters?: Record<string, string>; initial_properties?: Record<string, string>; resourceManager?: InstanceType<typeof InMemoryResourceManager> } = { ...this._setup };
+    const engineSetup: { starting_parameters?: Record<string, string>; initial_properties?: Record<string, string>; resourceManager?: InstanceType<typeof InMemoryResourceManager>; allowScriptExecution?: boolean } = { ...this._setup, allowScriptExecution: getAllowScript() };
     if (this.environments.length > 0) {
       // Use shared resource manager if provided (for cross-workflow environment sync),
       // otherwise create a local one
