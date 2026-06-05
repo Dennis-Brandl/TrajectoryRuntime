@@ -79,6 +79,24 @@ describe('engine: RETURN ABANDON', () => {
   });
 });
 
+describe('engine: RETURN with invalid command (runtime backstop)', () => {
+  it('errors the workflow when a RETURN has no return_config (instead of stranding RUNNING)', () => {
+    const wf = tryWorkflow();
+    const ret = (wf.steps as unknown as Array<Record<string, unknown>>).find(s => s.oid === 'r1')!;
+    delete ret.return_config;
+    const engine = new WorkflowEngine(wf);
+    engine.start();
+    engine.submitAction({ step_oid: 's2', action: 'fail', failure_mode: 'ERROR', error: 'x' }, 0);
+    assert.equal(engine.getWorkflowState(), 'ERRORED');
+  });
+  it('errors the workflow when a RETURN command is unrecognized', () => {
+    const engine = new WorkflowEngine(tryWorkflow({ returnConfig: { command: 'ABORT' } }));
+    engine.start();
+    engine.submitAction({ step_oid: 's2', action: 'fail', failure_mode: 'ERROR', error: 'x' }, 0);
+    assert.equal(engine.getWorkflowState(), 'ERRORED');
+  });
+});
+
 describe('engine: RETURN RESTART', () => {
   it('RESTART KEEP re-runs from START and preserves properties', () => {
     const wf = tryWorkflow({
@@ -124,6 +142,16 @@ describe('engine: RETURN GOTO', () => {
     engine.submitAction({ step_oid: 's2', action: 'fail', failure_mode: 'ERROR', error: 'x' }, 0);
     assert.ok(engine.getActiveSteps().some(a => a.step.oid === 'm1'), 'GOTO target not active');
     assert.notEqual(engine.getWorkflowState(), 'ERRORED');
+  });
+
+  it('errors the workflow when the GOTO target does not resolve, instead of stranding RUNNING with no active steps', () => {
+    // A dangling goto_step_oid (e.g. the target step was deleted/recreated) used to make
+    // returnGoto no-op, leaving the workflow RUNNING with zero active steps and no way to abort.
+    const engine = new WorkflowEngine(tryWorkflow({ returnConfig: { command: 'GOTO', goto_step_oid: 'does-not-exist' } }));
+    engine.start();
+    engine.submitAction({ step_oid: 's2', action: 'fail', failure_mode: 'ERROR', error: 'x' }, 0);
+    assert.equal(engine.getWorkflowState(), 'ERRORED');
+    assert.equal(engine.getActiveSteps().length, 0);
   });
 });
 

@@ -219,12 +219,15 @@ function tryCatchValidation(workflow: Record<string, unknown>): ValidationResult
 
     if (type === 'RETURN') {
       const rc = step.return_config as { command?: string; restart_mode?: string; goto_step_oid?: string } | undefined;
-      if (rc) {
-        if (!rc.command || !COMMANDS.has(rc.command)) return fail('INVALID_RETURN_COMMAND', `invalid RETURN command '${rc.command}'`, oid);
-        if (rc.command === 'RESTART' && !rc.restart_mode) return fail('MISSING_RESTART_MODE', `RESTART requires restart_mode`, oid);
-        if (rc.restart_mode && rc.restart_mode !== 'CLEAN' && rc.restart_mode !== 'KEEP') return fail('INVALID_RESTART_MODE', `invalid restart_mode '${rc.restart_mode}'`, oid);
-        if (rc.command === 'GOTO' && !rc.goto_step_oid) return fail('MISSING_GOTO_TARGET', `GOTO requires goto_step_oid`, oid);
+      // A RETURN must carry a valid command. A missing return_config (e.g. a RETURN left
+      // at the editor's visual default) is rejected here rather than silently stranding the
+      // workflow at runtime (dispatchReturn would otherwise no-op on the absent config).
+      if (!rc || !rc.command || !COMMANDS.has(rc.command)) {
+        return fail('INVALID_RETURN_COMMAND', `RETURN requires a valid return_config.command (got '${rc?.command ?? 'none'}')`, oid);
       }
+      if (rc.command === 'RESTART' && !rc.restart_mode) return fail('MISSING_RESTART_MODE', `RESTART requires restart_mode`, oid);
+      if (rc.restart_mode && rc.restart_mode !== 'CLEAN' && rc.restart_mode !== 'KEEP') return fail('INVALID_RESTART_MODE', `invalid restart_mode '${rc.restart_mode}'`, oid);
+      if (rc.command === 'GOTO' && !rc.goto_step_oid) return fail('MISSING_GOTO_TARGET', `GOTO requires goto_step_oid`, oid);
     }
   }
 
