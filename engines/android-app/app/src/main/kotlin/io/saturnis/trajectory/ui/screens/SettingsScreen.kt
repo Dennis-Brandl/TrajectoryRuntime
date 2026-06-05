@@ -23,6 +23,7 @@ private const val PREFS_NAME = "trajectoryruntime_settings"
 private const val KEY_THEME = "theme"
 private const val KEY_CONFIRM_DELETE_LOADED = "confirm_delete_loaded"
 private const val KEY_CONFIRM_DELETE_COMPLETED = "confirm_delete_completed"
+private const val KEY_ALLOW_SCRIPT = "allow_script_execution"
 
 private enum class ThemeOption(val key: String, val label: String) {
     LIGHT("light", "Light"),
@@ -61,6 +62,9 @@ fun SettingsScreen(
     }
     var confirmDeleteCompleted by remember {
         mutableStateOf(prefs.getBoolean(KEY_CONFIRM_DELETE_COMPLETED, true))
+    }
+    var allowScript by remember {
+        mutableStateOf(prefs.getBoolean(KEY_ALLOW_SCRIPT, false))
     }
 
     Scaffold(
@@ -155,6 +159,39 @@ fun SettingsScreen(
                     onCheckedChange = { checked ->
                         confirmDeleteCompleted = checked
                         prefs.edit().putBoolean(KEY_CONFIRM_DELETE_COMPLETED, checked).apply()
+                    },
+                )
+            }
+
+            HorizontalDivider()
+
+            // Security section
+            Text(
+                text = "Security",
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.primary,
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Allow SCRIPT execution from imported workflows",
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    Text(
+                        text = "SCRIPT steps run author-supplied JavaScript. Only enable for packages you trust.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Switch(
+                    checked = allowScript,
+                    onCheckedChange = { checked ->
+                        allowScript = checked
+                        prefs.edit().putBoolean(KEY_ALLOW_SCRIPT, checked).apply()
                     },
                 )
             }

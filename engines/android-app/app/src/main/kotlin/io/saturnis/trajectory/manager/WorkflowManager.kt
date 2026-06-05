@@ -121,7 +121,7 @@ class WorkflowManager(
     }
 
     @OptIn(kotlinx.coroutines.FlowPreview::class)
-    fun startWorkflow(loadedId: String, startingParams: Map<String, String>? = null): String? {
+    fun startWorkflow(loadedId: String, startingParams: Map<String, String>? = null, allowScriptExecution: Boolean = false): String? {
         val loaded = _state.value.loaded.find { it.id == loadedId } ?: return null
         val instanceId = UUID.randomUUID().toString()
         val coordinator = WorkflowCoordinator()
@@ -166,7 +166,7 @@ class WorkflowManager(
         // Start engine (synchronous — state settles immediately)
         val setup = if (startingParams != null) TestFixtureSetup(starting_parameters = startingParams) else null
         val sharedRM = getSharedResourceManager(loaded.environmentJsons)
-        coordinator.loadAndStart(loaded.spec, setup = setup, mediaMap = loaded.mediaMap, environmentJsons = loaded.environmentJsons, sharedResourceManager = sharedRM)
+        coordinator.loadAndStart(loaded.spec, setup = setup, mediaMap = loaded.mediaMap, environmentJsons = loaded.environmentJsons, sharedResourceManager = sharedRM, allowScriptExecution = allowScriptExecution)
 
         // After start, pump siblings in case this workflow's activation granted resources for others
         pumpSiblingCoordinators(instanceId)
