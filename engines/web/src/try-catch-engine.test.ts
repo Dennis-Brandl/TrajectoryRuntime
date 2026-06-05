@@ -25,8 +25,8 @@ function tryWorkflow(opts: {
       s({ local_id: 'End', oid: 's3', step_type: 'END' }),
       s({ local_id: 'Catch', oid: 'c1', step_type: 'CATCH', catch_id: 'C1',
           output_parameter_specifications: opts.catchOutputs ?? [
-            { id: 'trigger_reason', target: 'FailureContext.Mode' },
-            { id: 'error_message', target: 'FailureContext.Message' },
+            { id: 'Reason', target: 'FailureContext.Mode' },
+            { id: 'Message', target: 'FailureContext.Message' },
           ] }),
       ...(opts.extraCatchSteps ?? []) as never[],
       s({ local_id: 'Ret', oid: 'r1', step_type: 'RETURN', return_config: opts.returnConfig ?? { command: 'ABANDON' } }),
@@ -83,7 +83,7 @@ describe('engine: RETURN RESTART', () => {
   it('RESTART KEEP re-runs from START and preserves properties', () => {
     const wf = tryWorkflow({
       returnConfig: { command: 'RESTART', restart_mode: 'KEEP' },
-      catchOutputs: [{ id: 'trigger_reason', target: 'FailureContext.Mode' }],
+      catchOutputs: [{ id: 'Reason', target: 'FailureContext.Mode' }],
     });
     const engine = new WorkflowEngine(wf);
     engine.start();
