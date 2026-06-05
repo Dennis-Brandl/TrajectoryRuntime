@@ -437,6 +437,29 @@ private fun actionProxyValidation(workflow: Map<String, Any?>): ValidationResult
     return null
 }
 
+// SSRF: every declared action-server URI must be a parseable http(s) URL. The full
+// loopback/allow-list policy is enforced at the network chokepoint (KtorActionInvoker);
+// this phase rejects obviously-unfetchable / non-http(s) schemes at validation time.
+private fun actionServerUriValidation(workflow: Map<String, Any?>): ValidationResult? {
+    @Suppress("UNCHECKED_CAST")
+    val envSpecs = workflow["environment_specifications"] as? List<Map<String, Any?>> ?: return null
+    for (env in envSpecs) {
+        @Suppress("UNCHECKED_CAST")
+        val servers = env["action_server_specifications"] as? List<Map<String, Any?>> ?: continue
+        for (s in servers) {
+            val uri = s["uri"]
+            if (uri !is String || !hasValidServerUriScheme(uri)) {
+                return ValidationResult(
+                    false,
+                    "INVALID_VALIDATION",
+                    "Action server URI is not a valid http(s) URL: $uri",
+                )
+            }
+        }
+    }
+    return null
+}
+
 private fun tryCatchValidation(workflow: Map<String, Any?>): ValidationResult? {
     @Suppress("UNCHECKED_CAST")
     val steps = workflow["steps"] as List<Map<String, Any?>>
@@ -546,6 +569,9 @@ fun validate(workflow: Map<String, Any?>): ValidationResult {
 
     // Phase C: ACTION PROXY config validation (§14.2 rules)
     actionProxyValidation(workflow)?.let { return it }
+
+    // Phase C.5: action-server URI scheme check (SSRF — reject non-http(s) URIs)
+    actionServerUriValidation(workflow)?.let { return it }
 
     return ValidationResult(valid = true)
 }

@@ -225,7 +225,8 @@ fun HomeScreen(
             workflow = workflow,
             onStart = { id, startingParams ->
                 startTarget = null
-                manager.startWorkflow(id, startingParams)
+                val allowScript = prefs.getBoolean("allow_script_execution", false)
+                manager.startWorkflow(id, startingParams, allowScript)
                 onNavigateToActive()
             },
             onCancel = { startTarget = null },

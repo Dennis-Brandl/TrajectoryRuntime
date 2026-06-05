@@ -25,7 +25,9 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 
-class KtorActionInvoker : ActionInvoker {
+class KtorActionInvoker(
+    private val allowlist: List<String> = emptyList(),
+) : ActionInvoker {
     private val client = HttpClient {
         install(ContentNegotiation) { json() }
     }
@@ -37,6 +39,7 @@ class KtorActionInvoker : ActionInvoker {
     }
 
     override suspend fun invoke(req: InvokeRequestKmp, callbacks: ActionInvokerCallbacks): String {
+        assertAllowedServerUri(req.serverUri, allowlist)
         val base = normalize(req.serverUri)
         val invokeUrl = "${base}actions/${req.actionOid}/invoke"
         val bodyJson = buildJsonObject {
@@ -139,6 +142,7 @@ class KtorActionInvoker : ActionInvoker {
     }
 
     override suspend fun sendCommand(serverUri: String, instanceId: String, command: ActionServerCommand) {
+        assertAllowedServerUri(serverUri, allowlist)
         val url = "${normalize(serverUri)}instances/$instanceId/command"
         try {
             val r = client.post(url) {
@@ -152,6 +156,7 @@ class KtorActionInvoker : ActionInvoker {
     }
 
     override suspend fun abort(serverUri: String, instanceId: String) {
+        assertAllowedServerUri(serverUri, allowlist)
         try {
             client.delete("${normalize(serverUri)}instances/$instanceId")
         } catch (_: Throwable) {

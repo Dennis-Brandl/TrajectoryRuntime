@@ -35,6 +35,7 @@ class WorkflowCoordinator {
     private val jsonFormat = Json { ignoreUnknownKeys = true }
 
     private var _sharedResourceManager: InMemoryResourceManager? = null
+    private var _allowScriptExecution: Boolean = false
 
     fun loadAndStart(
         spec: MasterWorkflowSpecification,
@@ -42,11 +43,13 @@ class WorkflowCoordinator {
         mediaMap: Map<String, String> = emptyMap(),
         environmentJsons: List<String> = emptyList(),
         sharedResourceManager: InMemoryResourceManager? = null,
+        allowScriptExecution: Boolean = false,
     ) {
         this.spec = spec
         this._mediaMap = mediaMap
         this._environmentJsons = environmentJsons
         this._sharedResourceManager = sharedResourceManager
+        this._allowScriptExecution = allowScriptExecution
         this._userActions.clear()
         this.actionIndex = 0
 
@@ -70,7 +73,7 @@ class WorkflowCoordinator {
             setup
         }
 
-        engine = WorkflowEngine(spec, mergedSetup, resourceManager)
+        engine = WorkflowEngine(spec, mergedSetup, resourceManager, allowScriptExecution)
         engine!!.start()
         sync()
     }
@@ -104,7 +107,7 @@ class WorkflowCoordinator {
 
     fun restart() {
         val s = spec ?: return
-        loadAndStart(s, mediaMap = _mediaMap, environmentJsons = _environmentJsons, sharedResourceManager = _sharedResourceManager)
+        loadAndStart(s, mediaMap = _mediaMap, environmentJsons = _environmentJsons, sharedResourceManager = _sharedResourceManager, allowScriptExecution = _allowScriptExecution)
     }
 
     /** Check for pending cross-workflow resource grants and resume any unblocked steps. */

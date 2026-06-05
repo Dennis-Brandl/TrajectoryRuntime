@@ -6,6 +6,7 @@ import org.junit.Assert.*
 import org.junit.Test
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
@@ -76,5 +77,25 @@ class FileProcessorTest {
         val outputDir = tempDir.newFolder("output")
         val result = FileProcessor.extractZip(zipFile, outputDir)
         assertTrue(result.specFile.exists())
+    }
+
+    @Test
+    fun `extractZip rejects path-traversal entries (Zip Slip)`() {
+        val zipFile = tempDir.newFile("evil.WFmasterX")
+        ZipOutputStream(zipFile.outputStream()).use { zos ->
+            zos.putNextEntry(ZipEntry("Test Workflow.WFmaster"))
+            zos.write("""{"local_id":"wf-1","oid":"oid-1","version":"1.0","last_modified_date":"2026-01-01","steps":[],"connections":[]}""".toByteArray())
+            zos.closeEntry()
+            zos.putNextEntry(ZipEntry("../evil.txt"))
+            zos.write("pwned".toByteArray())
+            zos.closeEntry()
+        }
+        val outputDir = tempDir.newFolder("output")
+        assertThrows(SecurityException::class.java) {
+            FileProcessor.extractZip(zipFile, outputDir)
+        }
+        // The escaping entry ("../evil.txt") resolves to outputDir's parent and
+        // must never be written there.
+        assertFalse(File(outputDir.parentFile, "evil.txt").exists())
     }
 }

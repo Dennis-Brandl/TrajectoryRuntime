@@ -13,6 +13,7 @@ class WorkflowEngine(
     private val workflow: MasterWorkflowSpecification,
     setup: TestFixtureSetup? = null,
     resourceManager: ResourceManager? = null,
+    private val allowScriptExecution: Boolean = false,
 ) {
     private val steps = mutableMapOf<String, StepInstance>()
     private val stepDefinitionOrder = mutableListOf<String>()
@@ -452,6 +453,21 @@ class WorkflowEngine(
             }
 
             if (target.stepType == "SCRIPT") {
+                // B4: SCRIPT runs author-supplied code; disabled unless the user opts
+                // in for a trusted package (untrusted-content safe default).
+                if (target.step.script_config?.source != null && !allowScriptExecution) {
+                    recordTrace(
+                        target.oid,
+                        "ERRORED",
+                        error = "SCRIPT execution is disabled — enable it only for trusted packages",
+                    )
+                    target.state = StepState.ERRORED
+                    workflowState = WorkflowState.ERRORED
+                    val known = mutableSetOf<String>()
+                    collectKnownStepOids(known)
+                    resourceManager?.cancelQueuedWaiters(known)
+                    return
+                }
                 val inputParams = propertyStore.getInputParameters().toMutableMap()
                 target.step.input_parameter_specifications?.forEach { spec ->
                     if (spec.id !in inputParams) {
@@ -522,7 +538,7 @@ class WorkflowEngine(
         val childEngine = WorkflowEngine(childSpec, TestFixtureSetup(
             starting_parameters = startingParams,
             initial_properties = initialProperties,
-        ), resourceManager)
+        ), resourceManager, allowScriptExecution)
 
         // Mark parent step as EXECUTING
         recordTrace(target.oid, "EXECUTING")

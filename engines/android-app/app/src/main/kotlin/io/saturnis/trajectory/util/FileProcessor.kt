@@ -60,12 +60,21 @@ object FileProcessor {
         val environmentJsons = mutableListOf<String>()
         var specFile: File? = null
 
+        val outputRoot = outputDir.canonicalFile
         ZipInputStream(zipFile.inputStream()).use { zis ->
             var entry = zis.nextEntry
             while (entry != null) {
                 if (!entry.isDirectory) {
                     val name = entry.name
                     val outFile = File(outputDir, name)
+                    val canonical = outFile.canonicalFile
+                    // Zip-Slip containment: the resolved path must stay under outputDir.
+                    // Rejects "../" traversal and absolute entry names.
+                    if (canonical != outputRoot &&
+                        !canonical.path.startsWith(outputRoot.path + File.separator)
+                    ) {
+                        throw SecurityException("Zip entry escapes target directory: $name")
+                    }
                     outFile.parentFile?.mkdirs()
                     outFile.outputStream().use { zis.copyTo(it) }
 
