@@ -101,7 +101,8 @@ class ConformanceRunner {
         // Deserialize workflow as typed object
         val workflowJson = fixture.workflow.toString()
         val workflow = json.decodeFromString<MasterWorkflowSpecification>(workflowJson)
-        val engine = WorkflowEngine(workflow, fixture.setup)
+        // Conformance fixtures are trusted spec contracts; SCRIPT steps must execute.
+        val engine = WorkflowEngine(workflow, fixture.setup, allowScriptExecution = true)
         engine.start()
 
         // Submit user actions
