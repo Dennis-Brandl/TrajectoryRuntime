@@ -7,8 +7,6 @@
 # Native platform builds not needed for web Docker image
 engines/kmp-engine
 engines/android-app
-engines/ios
-engines/ios-ui
 
 # Docs and tests
 docs

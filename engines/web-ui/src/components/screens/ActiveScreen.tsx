@@ -1,5 +1,5 @@
-// Copyright (c) 2026 Saturnis.io. All rights reserved.
-// Licensed under the GNU AGPL v3. See LICENSE.md for details.
+// Copyright (c) 2026 Dennis Brandl
+// Licensed under the Apache License, Version 2.0. See LICENSE for details.
 import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import type { EmblaCarouselType } from 'embla-carousel';

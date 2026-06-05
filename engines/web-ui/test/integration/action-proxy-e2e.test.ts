@@ -1,5 +1,5 @@
-// Copyright (c) 2026 Saturnis.io. All rights reserved.
-// Licensed under the GNU AGPL v3. See LICENSE.md for details.
+// Copyright (c) 2026 Dennis Brandl
+// Licensed under the Apache License, Version 2.0. See LICENSE for details.
 import { test, before } from 'node:test';
 import { strict as assert } from 'node:assert';
 import { ensureContainerUp, listCapabilities, invokeAction, getInstance, deleteInstance, waitForState, sendCommand, BASE_URL } from './action-container.js';
