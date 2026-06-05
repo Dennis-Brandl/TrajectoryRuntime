@@ -6,11 +6,16 @@
  * Extracted from engines/web/src/validator.ts with Node.js dependencies removed.
  * Uses Vite JSON import for the schema instead of readFileSync.
  */
-import Ajv, { type ErrorObject } from 'ajv';
+import type { ErrorObject } from 'ajv';
 import type { ValidationResult } from '@engine/types.js';
 import { partitionCatchNetworks, type PartitionStep, type PartitionConnection } from '@engine/catch-network-partition.js';
-import workflowSchema from '../../../../spec/workflow-schema.json';
 import { hasValidServerUriScheme } from '@engine/lib/server-uri.js';
+// CSP-safe structural validator. The Runtime runs under a strict CSP
+// (script-src 'self', no 'unsafe-eval'), so Ajv's runtime new Function() schema
+// compilation is blocked in the browser. The workflow schema is instead
+// precompiled to this standalone validator at build time (scripts/gen-validator.mjs;
+// run via `npm run gen:validator`), which executes without any runtime eval.
+import validateStructural from './workflow-validator.generated.cjs';
 
 // ── Helpers ──
 
@@ -286,30 +291,11 @@ function resourceValidation(workflow: Record<string, unknown>): ValidationResult
   return null;
 }
 
-// ── Structural validation (Ajv) ──
-
-function relaxFormElementRequired(schema: Record<string, unknown>): void {
-  const defs = schema['$defs'] as Record<string, unknown> | undefined;
-  if (!defs) return;
-
-  const formElementNames = [
-    'FormElementButton', 'FormElementText', 'FormElementHeader',
-    'FormElementTextInput', 'FormElementTextarea', 'FormElementImage',
-    'FormElementVideo', 'FormElementCheckbox', 'FormElementRadio',
-    'FormElementDivider', 'FormElementTimer',
-  ];
-
-  for (const name of formElementNames) {
-    const def = defs[name] as Record<string, unknown> | undefined;
-    if (!def?.allOf) continue;
-    const allOf = def.allOf as Record<string, unknown>[];
-    for (const part of allOf) {
-      if (part.properties && (part.properties as Record<string, unknown>).type) {
-        part.required = ['type'];
-      }
-    }
-  }
-}
+// ── Structural validation (Ajv, precompiled) ──
+//
+// The form-element relaxation that used to run here (relaxFormElementRequired)
+// now happens at build time inside scripts/gen-validator.mjs and is baked into
+// the precompiled validator imported above. Keep the two in sync if it changes.
 
 // ────────────────────────────────────────────────────────────────────────────
 // Form input binding validation
@@ -385,23 +371,12 @@ function normalizeForAjv(workflow: Record<string, unknown>): Record<string, unkn
   return clone;
 }
 
-// Prepare schema once at module load: deep clone, remove $schema, relax form elements
-const preparedSchema = (() => {
-  const raw = JSON.parse(JSON.stringify(workflowSchema)) as Record<string, unknown>;
-  delete raw['$schema'];
-  relaxFormElementRequired(raw);
-  return raw;
-})();
-
 function structuralValidation(workflow: Record<string, unknown>): ValidationResult | null {
-  const AjvConstructor = (Ajv as { default?: typeof Ajv }).default ?? Ajv;
-  const ajv = new AjvConstructor({ allErrors: true, strict: false });
-  const validateFn = ajv.compile(preparedSchema);
-  const valid = validateFn(normalizeForAjv(workflow));
+  const valid = validateStructural(normalizeForAjv(workflow));
 
   if (valid) return null;
 
-  const errors = validateFn.errors ?? [];
+  const errors = validateStructural.errors ?? [];
 
   // Filter out form element oneOf/const errors — unknown element types are a rendering
   // concern, not a structural problem. The runtime should accept any element type and
