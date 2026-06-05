@@ -250,9 +250,11 @@ export function SettingsScreen() {
           />
         </label>
         <p className={styles.settingHelp}>
-          SCRIPT steps run code supplied by the workflow author. Leave this OFF
-          unless you trust the imported package — a malicious script can run in
-          your browser. Off by default.
+          SCRIPT steps run code supplied by the workflow author. This browser
+          Runtime blocks dynamic code execution via its Content Security Policy,
+          so SCRIPT steps cannot run here even when enabled — they error with a
+          prompt to use the native Trajectory runtime, which runs them in a
+          sandbox. Off by default.
         </p>
       </div>
 
