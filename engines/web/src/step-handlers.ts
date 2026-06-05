@@ -144,6 +144,27 @@ export interface ScriptResult {
 }
 
 /**
+ * Map a SCRIPT execution failure to a user-facing message.
+ *
+ * A strict Content Security Policy (`script-src` without `'unsafe-eval'`) makes
+ * the browser throw an `EvalError` when `new Function()` runs — i.e. SCRIPT
+ * cannot execute in the browser Runtime. Surface that as actionable guidance
+ * (use the native runtime) instead of the raw, browser-specific "blocked by CSP"
+ * text. In environments where eval is allowed (the native runtime, the Node
+ * reference engine) this branch never fires and the original error is returned.
+ */
+export function scriptErrorMessage(err: unknown): string {
+  if (err instanceof EvalError) {
+    return (
+      'SCRIPT steps cannot run in the browser Runtime — its Content Security ' +
+      'Policy blocks dynamic code execution. Run the workflow on the native ' +
+      'Trajectory runtime, which executes SCRIPT steps in a sandbox.'
+    );
+  }
+  return err instanceof Error ? err.message : String(err);
+}
+
+/**
  * Execute a SCRIPT step's source code via `new Function()`.
  *
  * Input parameters are injected as local variables (by their spec id).
@@ -170,7 +191,7 @@ export function executeScript(
     const fn = new Function(...argNames, 'output', config.source);
     fn(...argValues, outputObj);
   } catch (err) {
-    return { success: false, error: err instanceof Error ? err.message : String(err) };
+    return { success: false, error: scriptErrorMessage(err) };
   }
 
   // Map output object keys → output_parameter_specifications → PropertyStore

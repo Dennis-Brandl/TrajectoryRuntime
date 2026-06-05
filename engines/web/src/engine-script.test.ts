@@ -3,6 +3,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { WorkflowEngine } from './engine.js';
+import { scriptErrorMessage } from './step-handlers.js';
 import type { MasterWorkflowSpecification } from './types.js';
 
 function makeScriptWorkflow(
@@ -172,5 +173,23 @@ describe('SCRIPT execution gating (off by default)', () => {
     engine.start();
     assert.equal(engine.getWorkflowState(), 'COMPLETED');
     assert.equal(engine.getProperties()['Out.X'], 'ran');
+  });
+});
+
+describe('scriptErrorMessage (CSP-aware SCRIPT failure text)', () => {
+  it('maps a CSP EvalError to native-runtime guidance', () => {
+    // What a browser throws when script-src lacks 'unsafe-eval'.
+    const msg = scriptErrorMessage(new EvalError('call to Function() blocked by CSP'));
+    assert.match(msg, /native/i);
+    assert.match(msg, /Content Security Policy/i);
+    assert.doesNotMatch(msg, /blocked by CSP/); // raw browser text is replaced
+  });
+
+  it('passes a normal script Error message through unchanged', () => {
+    assert.equal(scriptErrorMessage(new Error('bad input')), 'bad input');
+  });
+
+  it('stringifies a non-Error throw', () => {
+    assert.equal(scriptErrorMessage('boom'), 'boom');
   });
 });
