@@ -157,7 +157,9 @@ function runExecutionFixture(fixture: TestFixture): { pass: boolean; error?: str
   }
 
   const workflowSpec = fixture.workflow as unknown as MasterWorkflowSpecification;
-  const engine = new WorkflowEngine(workflowSpec, setup);
+  // Conformance fixtures are trusted spec contracts; SCRIPT steps must execute
+  // (mirrors the KMP ConformanceRunner). The web product keeps SCRIPT off by default.
+  const engine = new WorkflowEngine(workflowSpec, { ...(setup ?? {}), allowScriptExecution: true });
   engine.start();
 
   // Submit user actions
