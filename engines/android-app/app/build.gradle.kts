@@ -6,15 +6,6 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
-// Auto-bump patch version from git commit count.
-// Baseline 274 was the commit count when the 1.2.x cycle started, so the
-// first build of this cycle shows versionName "1.2.1".
-val gitCommitCount = providers.exec {
-    commandLine("git", "rev-list", "--count", "HEAD")
-}.standardOutput.asText.get().trim().toIntOrNull() ?: 1
-val versionPatchBaseline = 274
-val versionPatch = (gitCommitCount - versionPatchBaseline).coerceAtLeast(1)
-
 android {
     namespace = "io.saturnis.trajectory"
     compileSdk = 35
@@ -23,8 +14,8 @@ android {
         applicationId = "io.saturnis.trajectory"
         minSdk = 29
         targetSdk = 35
-        versionCode = gitCommitCount
-        versionName = "1.2.${versionPatch}"
+        versionCode = 1
+        versionName = "1.2.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -49,6 +40,14 @@ android {
 
     buildFeatures {
         compose = true
+    }
+
+    testOptions {
+        // android.util.Log etc. are unavailable in plain JVM unit tests; return
+        // default (no-op) values instead of throwing "Method ... not mocked".
+        unitTests {
+            isReturnDefaultValues = true
+        }
     }
 }
 
