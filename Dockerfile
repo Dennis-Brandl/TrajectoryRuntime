@@ -66,16 +66,8 @@ FROM nginx:alpine
 # Copy built static files
 COPY --from=builder /app/engines/web-ui/dist /usr/share/nginx/html
 
-# SPA routing: serve index.html for all client-side routes
-RUN printf 'server {\n\
-    listen 80;\n\
-    server_name localhost;\n\
-    root /usr/share/nginx/html;\n\
-    index index.html;\n\
-    location / {\n\
-        try_files $uri $uri/ /index.html;\n\
-    }\n\
-}\n' > /etc/nginx/conf.d/default.conf
+# nginx config: SPA routing + security headers (Content-Security-Policy, etc.)
+COPY engines/web-ui/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 

@@ -56,6 +56,8 @@ export function SettingsScreen() {
     'Name',
   );
 
+  const [allowScript, setAllowScriptSetting] = useLocalStorage('trajectory.allowScriptExecution', false);
+
   const handleClearHistory = useCallback(() => {
     if (window.confirm('Clear all completed workflow history?')) {
       manager.clearCompleted();
@@ -234,6 +236,24 @@ export function SettingsScreen() {
             exactly; mismatch prevents workflow start.
           </span>
         </label>
+      </div>
+
+      <div className={styles.settingGroup}>
+        <h3 className={styles.groupTitle}>Security</h3>
+        <label className={styles.settingRow}>
+          <span className={styles.settingLabel}>Allow SCRIPT step execution</span>
+          <input
+            type="checkbox"
+            checked={allowScript}
+            onChange={(e) => setAllowScriptSetting(e.target.checked)}
+            className={styles.checkbox}
+          />
+        </label>
+        <p className={styles.settingHelp}>
+          SCRIPT steps run code supplied by the workflow author. Leave this OFF
+          unless you trust the imported package — a malicious script can run in
+          your browser. Off by default.
+        </p>
       </div>
 
       <div className={styles.settingGroup}>

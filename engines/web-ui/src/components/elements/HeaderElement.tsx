@@ -3,6 +3,7 @@
 import type { ElementProps } from './registry';
 import type { FormElementHeader } from '@engine/types.js';
 import { substituteChips } from '../../utils/richText';
+import { sanitizeHTML } from '../../utils/sanitize-html';
 
 // Inline styles mirror the editor's HeaderRenderer read-mode output.
 // Param chips and paragraph rules come from the editor's PARAM_CHIP_CSS so
@@ -41,7 +42,7 @@ export function HeaderElement({ element, properties, inputParameters }: ElementP
     color?: string;
     align?: 'left' | 'center' | 'right';
   };
-  const html = substituteChips(el.content.content, properties, inputParameters);
+  const html = sanitizeHTML(substituteChips(el.content.content, properties, inputParameters));
   return (
     <>
       <style>{HEADER_CHIP_CSS}</style>

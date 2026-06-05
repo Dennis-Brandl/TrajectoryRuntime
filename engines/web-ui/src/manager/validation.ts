@@ -9,6 +9,7 @@
 import Ajv, { type ErrorObject } from 'ajv';
 import type { ValidationResult } from '@engine/types.js';
 import workflowSchema from '../../../../spec/workflow-schema.json';
+import { hasValidServerUriScheme } from '@engine/lib/server-uri.js';
 
 // ── Helpers ──
 
@@ -425,6 +426,26 @@ function structuralValidation(workflow: Record<string, unknown>): ValidationResu
 
 // ── Public API ──
 
+function actionServerUriValidation(workflow: Record<string, unknown>): ValidationResult | null {
+  const envSpecs =
+    (workflow['environment_specifications'] as Array<Record<string, unknown>> | undefined) ?? [];
+  for (const env of envSpecs) {
+    const servers =
+      (env['action_server_specifications'] as Array<Record<string, unknown>> | undefined) ?? [];
+    for (const s of servers) {
+      const uri = s['uri'];
+      if (typeof uri !== 'string' || !hasValidServerUriScheme(uri)) {
+        return {
+          valid: false,
+          error_code: 'INVALID_VALIDATION',
+          error_message: `Action server URI is not a valid http(s) URL: ${String(uri)}`,
+        };
+      }
+    }
+  }
+  return null;
+}
+
 export function validateWorkflow(workflow: Record<string, unknown>): ValidationResult {
   const preError = preStructuralChecks(workflow);
   if (preError) return preError;
@@ -438,6 +459,10 @@ export function validateWorkflow(workflow: Record<string, unknown>): ValidationR
   // Form input binding check — see formInputBindingValidation comment block.
   const formInputBindingError = formInputBindingValidation(workflow);
   if (formInputBindingError) return formInputBindingError;
+
+  // Action-server URI scheme check (SSRF — reject non-http(s) URIs)
+  const serverUriError = actionServerUriValidation(workflow);
+  if (serverUriError) return serverUriError;
 
   const structuralError = structuralValidation(workflow);
   if (structuralError) return structuralError;

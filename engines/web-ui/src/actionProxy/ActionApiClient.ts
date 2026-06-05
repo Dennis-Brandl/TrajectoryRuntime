@@ -7,6 +7,8 @@ import type {
   InstanceSnapshot,
   InvokeRequest,
 } from './types.js';
+import { assertAllowedServerUri } from '@engine/lib/server-uri.js';
+import { getServerAllowlist } from '../settings.js';
 
 export type FetchLike = typeof fetch;
 
@@ -60,7 +62,16 @@ function defaultFetch(): FetchLike {
 }
 
 export class ActionApiClient {
-  constructor(private fetchImpl: FetchLike = defaultFetch()) {}
+  private fetchImpl: FetchLike;
+  constructor(fetchImpl: FetchLike = defaultFetch()) {
+    // SSRF guard: reject disallowed action-server URIs before any request leaves
+    // the browser (covers invoke / getInstance / sendCommand / deleteInstance /
+    // getCapabilities — all go through fetchImpl).
+    this.fetchImpl = ((...args: Parameters<FetchLike>) => {
+      assertAllowedServerUri(String(args[0]), getServerAllowlist());
+      return fetchImpl(...args);
+    }) as FetchLike;
+  }
 
   async invoke(serverUri: string, actionOid: string, body: InvokeRequest): Promise<{ instance_id: string }> {
     const resp = await this.fetchImpl(`${serverUri}/trajectory/v1/actions/${encodeURIComponent(actionOid)}/invoke`, {

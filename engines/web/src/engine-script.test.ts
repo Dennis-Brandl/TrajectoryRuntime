@@ -55,7 +55,7 @@ describe('SCRIPT step execution', () => {
       undefined,
       [{ id: 'greeting', target: 'Result.Greeting' }],
     );
-    const engine = new WorkflowEngine(wf);
+    const engine = new WorkflowEngine(wf, { allowScriptExecution: true });
     engine.start();
 
     assert.equal(engine.getWorkflowState(), 'COMPLETED');
@@ -72,7 +72,7 @@ describe('SCRIPT step execution', () => {
       [{ id: 'result', target: 'Result.Info' }],
       [{ name: 'User', entries: [{ name: 'Name', value: 'Alice' }] }],
     );
-    const engine = new WorkflowEngine(wf);
+    const engine = new WorkflowEngine(wf, { allowScriptExecution: true });
     engine.start();
 
     assert.equal(engine.getWorkflowState(), 'COMPLETED');
@@ -81,7 +81,7 @@ describe('SCRIPT step execution', () => {
 
   it('script error stops workflow with ERRORED state', () => {
     const wf = makeScriptWorkflow('throw new Error("bad input");');
-    const engine = new WorkflowEngine(wf);
+    const engine = new WorkflowEngine(wf, { allowScriptExecution: true });
     engine.start();
 
     assert.equal(engine.getWorkflowState(), 'ERRORED');
@@ -97,7 +97,7 @@ describe('SCRIPT step execution', () => {
 
   it('script syntax error stops workflow', () => {
     const wf = makeScriptWorkflow('this is not valid javascript!!!');
-    const engine = new WorkflowEngine(wf);
+    const engine = new WorkflowEngine(wf, { allowScriptExecution: true });
     engine.start();
 
     assert.equal(engine.getWorkflowState(), 'ERRORED');
@@ -110,7 +110,7 @@ describe('SCRIPT step execution', () => {
     const wf = makeScriptWorkflow(
       'output["Calc.Sum"] = "42";',
     );
-    const engine = new WorkflowEngine(wf);
+    const engine = new WorkflowEngine(wf, { allowScriptExecution: true });
     engine.start();
 
     assert.equal(engine.getWorkflowState(), 'COMPLETED');
@@ -123,7 +123,7 @@ describe('SCRIPT step execution', () => {
       undefined,
       [{ id: 'result', target: 'Out.Result' }],
     );
-    const engine = new WorkflowEngine(wf);
+    const engine = new WorkflowEngine(wf, { allowScriptExecution: true });
     engine.start();
 
     const snapshots = engine.getStepParameterSnapshots();
@@ -145,11 +145,32 @@ describe('SCRIPT step execution', () => {
         { id: 'label', target: 'Calc.Label' },
       ],
     );
-    const engine = new WorkflowEngine(wf);
+    const engine = new WorkflowEngine(wf, { allowScriptExecution: true });
     engine.start();
 
     assert.equal(engine.getWorkflowState(), 'COMPLETED');
     assert.equal(engine.getProperties()['Calc.Sum'], '35');
     assert.equal(engine.getProperties()['Calc.Label'], 'Total: 35');
+  });
+});
+
+describe('SCRIPT execution gating (off by default)', () => {
+  it('is disabled by default — a SCRIPT with source ERRORs the workflow', () => {
+    const wf = makeScriptWorkflow('output.x = "ran";', undefined, [{ id: 'x', target: 'Out.X' }]);
+    const engine = new WorkflowEngine(wf); // no allowScriptExecution
+    engine.start();
+    assert.equal(engine.getWorkflowState(), 'ERRORED');
+    assert.equal(engine.getProperties()['Out.X'], undefined);
+    const errored = engine.getTrace().find(t => t.step_oid === 'script' && t.state === 'ERRORED');
+    assert.ok(errored, 'script step should be ERRORED');
+    assert.match(errored!.error ?? '', /disabled/i);
+  });
+
+  it('executes when allowScriptExecution is true', () => {
+    const wf = makeScriptWorkflow('output.x = "ran";', undefined, [{ id: 'x', target: 'Out.X' }]);
+    const engine = new WorkflowEngine(wf, { allowScriptExecution: true });
+    engine.start();
+    assert.equal(engine.getWorkflowState(), 'COMPLETED');
+    assert.equal(engine.getProperties()['Out.X'], 'ran');
   });
 });
