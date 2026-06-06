@@ -56,7 +56,7 @@ export function SettingsScreen() {
     'Name',
   );
 
-  const [allowScript, setAllowScriptSetting] = useLocalStorage('trajectory.allowScriptExecution', false);
+  const [allowScript, setAllowScriptSetting] = useLocalStorage('trajectory.allowScriptExecution', true);
 
   const handleClearHistory = useCallback(() => {
     if (window.confirm('Clear all completed workflow history?')) {
@@ -250,11 +250,10 @@ export function SettingsScreen() {
           />
         </label>
         <p className={styles.settingHelp}>
-          SCRIPT steps run code supplied by the workflow author. This browser
-          Runtime blocks dynamic code execution via its Content Security Policy,
-          so SCRIPT steps cannot run here even when enabled — they error with a
-          prompt to use the native Trajectory runtime, which runs them in a
-          sandbox. Off by default.
+          SCRIPT steps run JavaScript supplied by the workflow author directly
+          in this browser, with the same privileges as the Runtime itself — no
+          sandbox. On by default in this build. Only load SCRIPT workflows you
+          trust; uncheck to block SCRIPT execution.
         </p>
       </div>
 

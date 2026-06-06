@@ -7,13 +7,15 @@ const ALLOW_SCRIPT_KEY = 'trajectory.allowScriptExecution';
 
 /**
  * Whether SCRIPT steps from imported workflows may execute author-supplied
- * code. Default FALSE — only enable for packages you trust.
+ * code. Default TRUE in this build (demo): SCRIPT runs unless the user has
+ * explicitly opted out. Only an explicit 'false' disables execution.
  */
 export function getAllowScript(): boolean {
   try {
-    return globalThis.localStorage?.getItem(ALLOW_SCRIPT_KEY) === 'true';
+    // Demo default: ON. Only an explicit opt-out ('false') disables execution.
+    return globalThis.localStorage?.getItem(ALLOW_SCRIPT_KEY) !== 'false';
   } catch {
-    return false;
+    return true;
   }
 }
 
