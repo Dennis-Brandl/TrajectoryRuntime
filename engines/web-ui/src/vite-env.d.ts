@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE for details.
 /// <reference types="vite/client" />
 
-/** App version string injected by vite.config.ts at build time (e.g. "1.2.1"). */
+/** App version string injected by vite.config.ts at build time (e.g. "2.1.1"). */
 declare const __APP_VERSION__: string;
 
 declare module '@kmp-engine/kmp-engine.js' {

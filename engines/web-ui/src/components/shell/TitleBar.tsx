@@ -44,8 +44,9 @@ function DefaultTitleBar({ activeTab, onHomeMenuAction }: { activeTab: TabId; on
   return (
     <div className={styles.titleBar}>
       <div className={styles.branding}>
-        <div className={styles.appIcon}>T</div>
+        <img src="/ic_launcher_round.png" alt="" className={styles.appIcon} />
         <span className={styles.appName}>Trajectory Desktop</span>
+        <span className={styles.appVersion}>v{__APP_VERSION__}</span>
       </div>
       {showMenu ? (
         <div className={styles.menuContainer} ref={menuRef}>

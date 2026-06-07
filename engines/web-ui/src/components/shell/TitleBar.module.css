@@ -19,13 +19,6 @@
   width: 40px;
   height: 40px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #D4AF37, #080C16);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-bg);
-  font-weight: 700;
-  font-size: 20px;
   flex-shrink: 0;
 }
 
@@ -33,6 +26,12 @@
   font-size: 16px;
   font-weight: 600;
   color: var(--color-text);
+}
+
+.appVersion {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
 }
 
 /* Active tab view: workflow info */
@@ -147,13 +146,17 @@
   width: 24px;
   height: 24px;
   border-radius: 6px;
-  font-size: 13px;
 }
 
 [data-device="desktop"] .appName {
   font-size: 14px;
   font-weight: 600;
   letter-spacing: -0.005em;
+}
+
+[data-device="desktop"] .appVersion {
+  font-size: 12px;
+  color: var(--color-text-muted);
 }
 
 [data-device="desktop"] .menuButton {
