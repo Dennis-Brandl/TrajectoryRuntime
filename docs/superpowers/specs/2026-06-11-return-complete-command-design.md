@@ -14,7 +14,7 @@ Add a fifth command, **`COMPLETE`**: mark the triggering step as if it had compl
 ## Decisions (locked with user)
 
 - **Semantics:** `COMPLETE` marks the triggering step `COMPLETED` and activates that step's normal (success-path) outgoing connections. The action itself is **not** re-run.
-- **Branch-local**, like `GOTO`/`RETRY`: only the failed branch advances; other parallel branches keep running. (Contrast `ABANDON`/`RESTART`, which are workflow-global.)
+- **Strictly local — never mutates another branch.** `COMPLETE` writes only the triggering step's state and advances only the triggering step's own outgoing edges. It never reads, completes, aborts, resets, or otherwise directly touches any concurrent/parallel step — a step being force-completed changing a sibling's state would be a source of very unexpected behavior. The single possible *indirect* cross-branch effect is ordinary resource release: if the trigger releases a resource on completion, a sibling that was *waiting on that resource* resumes, exactly as on a genuine completion. Branch-local like `GOTO`/`RETRY`; contrast workflow-global `ABANDON`/`RESTART`.
 - **No new step-state; failure stays on the record.** The trigger's trace is `EXECUTING → IDLE (caught) → COMPLETED` — the same `IDLE` the engine already records for *any* caught step, plus a final `COMPLETED`. The failure detail is preserved the way it always is: the catch activation and the `CatchContext` (Reason / Message / Step / StepID) captured it. No `FORCE_COMPLETED`-style state is added.
 - **No synthesized outputs.** A failed action produced no outputs, so `COMPLETE` maps none. Authors who need downstream data write Value Properties from the catch network (CATCH named outputs, or a SCRIPT/USER step) before the RETURN.
 - **Full parity:** the TS `web` engine, the Kotlin `kmp-engine`, the `web-ui` validation mirror, the canonical spec, the JSON schema, the shared conformance suite, **and** the Editor — all updated together so nothing diverges and the conformance suite stays green.
@@ -29,7 +29,7 @@ Extends `2026-05-31-try-catch-return-design.md` §5 (RETURN command dispatch) wi
 > 1. Look up `CatchContext.trigger_step_oid` — the step that originally failed. It is currently `IDLE` (TRY deactivated it when the CATCH activated; see §5.4 step 2).
 > 2. Mark the trigger step `COMPLETED` and append the trace entry. Its `EXECUTING → IDLE` caught-failure history remains.
 > 3. Activate the trigger step's normal outgoing connection(s) — its success-path successors — as if it had completed. The trigger's completion-time **Release** `resource_command_specifications` run as part of normal completion; a `WAIT ALL` / `WAIT ANY` successor counts as one arrival at that join from this branch (identical to §5.4).
-> 4. Other parallel branches keep running.
+> 4. Other parallel branches keep running, **untouched** — `COMPLETE` never advances, completes, aborts, or resets a sibling step. (A shared `WAIT ALL` join still blocks until the siblings arrive on their own; see step 3.)
 >
 > No action outputs are produced (the action failed). `COMPLETE` carries no sub-fields.
 
@@ -114,7 +114,7 @@ Both engines run the shared conformance fixtures; both must pass.
 
 **Conformance** — `TrajectoryRuntime/spec/conformance/execution/` (next free id is `008`):
 - `exec-try-catch-008-error-to-complete.json` (new): an `ACTION PROXY` with `try ON ERROR → CATCH → RETURN COMPLETE`, followed by an `END`. A `fail` user-action fires `ERROR`; expect `workflow_state: COMPLETED` (the trigger is force-completed, its successor `END` runs). Assert the CATCH's bound `final_properties` to prove the failure was still captured.
-- `exec-try-catch-009-complete-branch-local.json` (new, recommended): a `PARALLEL` fan-out where one branch's action fails and `COMPLETE`s while a sibling branch is mid-flight; assert both branches finish and the workflow completes — pins the branch-local guarantee in both engines.
+- **No parallel/branch-local conformance case.** `COMPLETE` is local by construction (the handler references only the trigger), and a force-completed step must never alter a concurrent step — there is no cross-branch behavior to assert, and codifying a `PARALLEL` scenario would only invite the misreading that such coordination exists.
 
 ## Editor (`TrajectoryEditor`)
 
@@ -135,10 +135,11 @@ Both engines run the shared conformance fixtures; both must pass.
 - No change to `CatchContext`, catch-network partitioning, TRY dispatch, or `release_on_catch` handling.
 - No change to `ABANDON`/`RESTART`/`GOTO`/`RETRY` behavior or to the Editor's default command.
 - No backfill/migration: existing workflows are untouched; `COMPLETE` is opt-in per RETURN.
+- No cross-branch coordination: `COMPLETE` never inspects or modifies concurrent branches; its only effect outside the trigger is following the trigger's own outgoing edges (plus ordinary resource release on completion).
 
 ## Testing
 
-- **TS engine** — `engines/web/src/try-catch-engine.test.ts`: `ERROR → CATCH → COMPLETE` marks the trigger `COMPLETED`, runs its successor, and the workflow reaches `COMPLETED`; a parallel case asserts the sibling branch is unaffected. `try-catch-validator.test.ts` / `try-catch-schema.test.ts`: `COMPLETE` is accepted (and needs no sub-fields).
+- **TS engine** — `engines/web/src/try-catch-engine.test.ts`: `ERROR → CATCH → COMPLETE` marks the trigger `COMPLETED`, runs its successor, and the workflow reaches `COMPLETED`. `try-catch-validator.test.ts` / `try-catch-schema.test.ts`: `COMPLETE` is accepted (and needs no sub-fields).
 - **Kotlin engine** — equivalent `:jvmTest` cases in `TryCatchEngineTest.kt` and `TryCatchValidatorTest.kt`.
 - **Conformance** — `exec-try-catch-008` (+ `009`) pass in **both** engines.
 - **Editor** — `ReturnConfigEditor.test.tsx`: the dropdown offers `COMPLETE` and selecting it yields `{ command: 'COMPLETE' }` with no sub-fields. `try-catch-roundtrip.test.ts`: a `COMPLETE` RETURN survives export → import. `ReturnNode.test.tsx`: the node renders the `COMPLETE` label.
