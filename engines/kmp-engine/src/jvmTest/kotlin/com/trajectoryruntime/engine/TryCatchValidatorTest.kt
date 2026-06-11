@@ -51,6 +51,11 @@ class TryCatchValidatorTest {
     assertEquals(true, r.valid, "expected valid, got ${r.error_code}: ${r.error_message}")
   }
 
+  @Test fun `accepts a RETURN with the COMPLETE command`() {
+    val r = validate(wfMap(baseWithCatch(returnJson = """{"command":"COMPLETE"}""")))
+    assertEquals(true, r.valid, "expected valid, got ${r.error_code}: ${r.error_message}")
+  }
+
   @Test fun `CATCH_WRONG_DEGREE`() {
     val wf = baseWithCatch().replace(
       """{"from_step_id":"c1","to_step_id":"r1"}""",

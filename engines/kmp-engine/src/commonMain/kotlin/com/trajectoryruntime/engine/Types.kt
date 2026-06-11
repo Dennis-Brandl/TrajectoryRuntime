@@ -155,7 +155,7 @@ data class TrySpecification(
 
 @Serializable
 data class ReturnConfig(
-    val command: String,         // ABANDON | RESTART | GOTO | RETRY
+    val command: String,         // ABANDON | RESTART | GOTO | RETRY | COMPLETE
     val restart_mode: String? = null, // CLEAN | KEEP
     val goto_step_oid: String? = null,
 )

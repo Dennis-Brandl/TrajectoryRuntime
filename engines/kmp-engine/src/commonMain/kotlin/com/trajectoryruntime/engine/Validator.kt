@@ -469,7 +469,7 @@ private fun tryCatchValidation(workflow: Map<String, Any?>): ValidationResult? {
 
     val tryScoped = setOf("ACTION PROXY", "WAIT ACTION PROXY")
     val modes = setOf("ERROR", "ABORT", "TIMEOUT")
-    val commands = setOf("ABANDON", "RESTART", "GOTO", "RETRY")
+    val commands = setOf("ABANDON", "RESTART", "GOTO", "RETRY", "COMPLETE")
 
     // Structural (per step)
     for (step in steps) {
