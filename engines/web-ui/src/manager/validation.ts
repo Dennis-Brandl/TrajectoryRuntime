@@ -435,7 +435,7 @@ function actionServerUriValidation(workflow: Record<string, unknown>): Validatio
 // is rejected here so the user sees a clear error at import rather than the workflow silently
 // stranding at runtime (the engine's dispatchReturn would otherwise no-op on the absent config).
 function returnConfigValidation(workflow: Record<string, unknown>): ValidationResult | null {
-  const COMMANDS = new Set(['ABANDON', 'RESTART', 'GOTO', 'RETRY']);
+  const COMMANDS = new Set(['ABANDON', 'RESTART', 'GOTO', 'RETRY', 'COMPLETE']);
   const steps = (workflow['steps'] as Record<string, unknown>[] | undefined) ?? [];
   const connections = (workflow['connections'] as Record<string, unknown>[] | undefined) ?? [];
   // Mirror of the RETURN/GOTO rules in engines/web/src/validator.ts — keep the two in sync.

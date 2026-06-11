@@ -85,3 +85,8 @@ test('rejects a GOTO whose target does not resolve (GOTO_TARGET_NOT_FOUND)', () 
   assert.equal(result.valid, false, 'a GOTO with a dangling target must be rejected');
   assert.equal(result.error_code, 'GOTO_TARGET_NOT_FOUND');
 });
+
+test('accepts a RETURN with the COMPLETE command', () => {
+  const result = validateWorkflow(catchIslandWf({ command: 'COMPLETE' }));
+  assert.equal(result.valid, true, `expected valid; got ${result.error_code}: ${result.error_message}`);
+});
