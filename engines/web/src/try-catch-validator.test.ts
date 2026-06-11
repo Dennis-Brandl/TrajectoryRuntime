@@ -41,6 +41,11 @@ describe('validator: catch-network is not orphaned', () => {
     const r = validate(baseWithCatch());
     assert.equal(r.valid, true, `expected valid, got ${r.error_code}: ${r.error_message}`);
   });
+
+  it('accepts a RETURN with the COMPLETE command', () => {
+    const r = validate(baseWithCatch({ returnConfig: { command: 'COMPLETE' } }));
+    assert.equal(r.valid, true, `expected valid, got ${r.error_code}: ${r.error_message}`);
+  });
 });
 
 describe('validator: structural TRY rules', () => {

@@ -189,7 +189,7 @@ function tryCatchValidation(workflow: Record<string, unknown>): ValidationResult
 
   const TRY_SCOPED = new Set(['ACTION PROXY', 'WAIT ACTION PROXY']);
   const MODES = new Set(['ERROR', 'ABORT', 'TIMEOUT']);
-  const COMMANDS = new Set(['ABANDON', 'RESTART', 'GOTO', 'RETRY']);
+  const COMMANDS = new Set(['ABANDON', 'RESTART', 'GOTO', 'RETRY', 'COMPLETE']);
 
   for (const step of steps) {
     const type = normalizeStepType(String(step.step_type));

@@ -354,7 +354,7 @@ export interface TrySpecification {
 }
 
 export interface ReturnConfig {
-  command: 'ABANDON' | 'RESTART' | 'GOTO' | 'RETRY';
+  command: 'ABANDON' | 'RESTART' | 'GOTO' | 'RETRY' | 'COMPLETE';
   restart_mode?: 'CLEAN' | 'KEEP';
   goto_step_oid?: string;
 }
