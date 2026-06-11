@@ -100,4 +100,12 @@ class TryCatchEngineTest {
     engine.submitAction(UserAction(step_oid = "s2", action = "submit"), 1)
     assertEquals(WorkflowState.COMPLETED, engine.getWorkflowState())
   }
+
+  @Test fun `RETURN COMPLETE force-completes the trigger and the workflow completes`() {
+    val engine = WorkflowEngine(wfSpec(tryWf(returnJson = """{"command":"COMPLETE"}""")))
+    engine.start()
+    engine.submitAction(UserAction(step_oid = "s2", action = "fail", failure_mode = "ERROR", error = "x"), 0)
+    assertEquals(WorkflowState.COMPLETED, engine.getWorkflowState())
+    assertTrue(engine.getTrace().any { it.step_oid == "s2" && it.state == "COMPLETED" }, "s2 was not force-completed")
+  }
 }

@@ -1237,6 +1237,7 @@ class WorkflowEngine(
             "RESTART" -> returnRestart(rc.restart_mode ?: "KEEP")
             "GOTO" -> rc.goto_step_oid?.let { returnGoto(it) }
             "RETRY" -> returnRetry(ctx)
+            "COMPLETE" -> returnComplete(ctx)
         }
         // Clear the triggering catch network. This is a no-op for ABANDON/RESTART (they already
         // idled every step, and RESTART already cleared activeCatches); it does the real work for
@@ -1301,6 +1302,17 @@ class WorkflowEngine(
         val trigger = steps[ctx.trigger_step_oid] ?: return
         if (trigger.state != StepState.IDLE) resetStepInline(ctx.trigger_step_oid)
         activateStep(trigger) // ACTION PROXY → EXECUTING again
+    }
+
+    // COMPLETE (branch-local): mark the triggering step as if it had completed and resume its
+    // successors. The active drainCompletionQueue loop advances from the trigger's outgoing edges
+    // — the same mechanism RESTART uses for START. Unlike RESTART it does NOT clear completionQueue.
+    private fun returnComplete(ctx: CatchContext?) {
+        if (ctx == null) return
+        val trigger = steps[ctx.trigger_step_oid] ?: return
+        recordTrace(trigger.oid, "COMPLETED")
+        trigger.state = StepState.COMPLETED
+        completionQueue.addLast(trigger.oid)
     }
 
     private fun resetStepInline(oid: String) {
