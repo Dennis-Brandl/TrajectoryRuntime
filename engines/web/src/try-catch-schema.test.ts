@@ -105,4 +105,15 @@ describe('schema: try_specifications / return_config shape', () => {
     const cmdErr = (validate.errors ?? []).some(e => e.keyword === 'enum' && (e.instancePath ?? '').includes('command'));
     assert.equal(cmdErr, true, `errors: ${JSON.stringify(validate.errors)}`);
   });
+
+  it('accepts a return_config with the COMPLETE command', () => {
+    const validate = compile();
+    const ok = validate(wfWithStep({
+      local_id: 'R', oid: 'r1', step_type: 'RETURN', version: '1.0.0', last_modified_date: DATE,
+      return_config: { command: 'COMPLETE' },
+    }));
+    const cmdErr = (validate.errors ?? []).some(e => e.keyword === 'enum' && (e.instancePath ?? '').includes('command'));
+    assert.equal(cmdErr, false, `unexpected command enum error: ${JSON.stringify(validate.errors)}`);
+    assert.equal(ok, true, `errors: ${JSON.stringify(validate.errors)}`);
+  });
 });

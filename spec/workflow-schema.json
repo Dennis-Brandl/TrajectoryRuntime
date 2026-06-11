@@ -401,7 +401,7 @@
       "type": "object",
       "required": ["command"],
       "properties": {
-        "command": { "type": "string", "enum": ["ABANDON", "RESTART", "GOTO", "RETRY"] },
+        "command": { "type": "string", "enum": ["ABANDON", "RESTART", "GOTO", "RETRY", "COMPLETE"] },
         "restart_mode": { "type": "string", "enum": ["CLEAN", "KEEP"] },
         "goto_step_oid": { "type": "string" }
       }
