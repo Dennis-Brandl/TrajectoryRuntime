@@ -339,7 +339,7 @@ export class WorkflowEngine {
 
   private dispatchReturn(returnStep: StepInstance): void {
     const rc = returnStep.step.return_config;
-    const VALID_COMMANDS = new Set(['ABANDON', 'RESTART', 'GOTO', 'RETRY']);
+    const VALID_COMMANDS = new Set(['ABANDON', 'RESTART', 'GOTO', 'RETRY', 'COMPLETE']);
     if (!rc || !rc.command || !VALID_COMMANDS.has(rc.command)) {
       // Defense-in-depth: validation (validator.ts) should reject this at load, but if a
       // malformed RETURN reaches the engine it must error the workflow rather than complete
@@ -370,6 +370,7 @@ export class WorkflowEngine {
       case 'RESTART': this.returnRestart(rc.restart_mode ?? 'KEEP'); break; // Task E2
       case 'GOTO': if (rc.goto_step_oid) this.returnGoto(rc.goto_step_oid); break; // Task E3
       case 'RETRY': this.returnRetry(ctx); break; // Task E4
+      case 'COMPLETE': this.returnComplete(ctx); break;
     }
     if (catchOid) {
       this.cleanupCatchNetwork(catchOid);
@@ -422,6 +423,21 @@ export class WorkflowEngine {
     if (!trigger) return;
     if (trigger.state !== 'IDLE') this.resetStep(ctx.trigger_step_oid);
     this.activateStep(trigger); // re-invoke the trigger ACTION PROXY → EXECUTING again
+  }
+
+  /** COMPLETE (branch-local): mark the triggering step as if it had completed and resume its
+   *  successors. The active drainCompletionQueue loop (dispatchReturn runs inside it) advances
+   *  from the trigger's outgoing edges — the same mechanism RESTART uses to re-fire START.
+   *  Unlike RESTART it does NOT clear completionQueue: sibling-branch activations already queued
+   *  must keep their place. cleanupCatchNetwork (after the switch) leaves the trigger alone — it
+   *  lives in the main flow, not the catch network. */
+  private returnComplete(ctx?: CatchContext): void {
+    if (!ctx) return;
+    const trigger = this.steps.get(ctx.trigger_step_oid);
+    if (!trigger) return;
+    this.recordTrace(trigger.oid, 'COMPLETED');
+    trigger.state = 'COMPLETED';
+    this.completionQueue.push(trigger.oid);
   }
 
   /** Check if this engine (or any child engine) owns a step OID. */

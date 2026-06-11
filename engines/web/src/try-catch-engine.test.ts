@@ -166,3 +166,15 @@ describe('engine: RETURN RETRY', () => {
     assert.equal(engine.getWorkflowState(), 'COMPLETED');
   });
 });
+
+describe('engine: RETURN COMPLETE', () => {
+  it('force-completes the triggering step and resumes its successors; workflow completes', () => {
+    const engine = new WorkflowEngine(tryWorkflow({ returnConfig: { command: 'COMPLETE' } }));
+    engine.start();
+    engine.submitAction({ step_oid: 's2', action: 'fail', failure_mode: 'ERROR', error: 'x' }, 0);
+    // Trigger s2 is marked COMPLETED and the flow advances to End (s3) → workflow COMPLETED.
+    assert.equal(engine.getWorkflowState(), 'COMPLETED');
+    assert.ok(traceStates(engine).includes('s2:COMPLETED'), 's2 was not force-completed');
+    assert.equal(engine.activeCatchesSize(), 0); // catch context cleaned up when RETURN executes
+  });
+});
