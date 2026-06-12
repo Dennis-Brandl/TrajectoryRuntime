@@ -1,4 +1,4 @@
 # Generated at build time by scripts/gen-validator.mjs (npm run gen:validator).
 # Precompiled, CSP-safe Ajv workflow validator — regenerated on build/test/dev,
-# so it is not tracked. The hand-written type surface (.d.cts) IS tracked.
-src/manager/workflow-validator.generated.cjs
+# so it is not tracked. The hand-written type surface (.d.ts) IS tracked.
+src/manager/workflow-validator.generated.js

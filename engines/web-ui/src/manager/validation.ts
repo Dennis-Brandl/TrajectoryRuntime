@@ -15,7 +15,7 @@ import { hasValidServerUriScheme } from '@engine/lib/server-uri.js';
 // compilation is blocked in the browser. The workflow schema is instead
 // precompiled to this standalone validator at build time (scripts/gen-validator.mjs;
 // run via `npm run gen:validator`), which executes without any runtime eval.
-import validateStructural from './workflow-validator.generated.cjs';
+import validateStructural from './workflow-validator.generated.js';
 
 // ── Helpers ──
 

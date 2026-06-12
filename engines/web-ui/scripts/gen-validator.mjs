@@ -24,10 +24,12 @@ const standaloneCode = standaloneModule.default ?? standaloneModule;
 
 const here = dirname(fileURLToPath(import.meta.url));
 const schemaPath = resolve(here, '../../../spec/workflow-schema.json');
-// Emitted as CommonJS (.cjs): Ajv's standalone output require()s small runtime
-// helpers (e.g. ucs2length). A .cjs module resolves those natively; Vite and tsx
-// bundle them, so the browser bundle still contains no runtime eval/new Function.
-const outPath = resolve(here, '../src/manager/workflow-validator.generated.cjs');
+// Emitted as native ESM (.js, via esm:true below). Ajv's standalone output imports a
+// small runtime helper (ucs2length); ESM is required because Vite's DEV server serves
+// source modules natively WITHOUT CommonJS interop, so a .cjs default export only links
+// in the Rollup `vite build` path — under `vite` dev the app white-screens with
+// "doesn't provide an export named: 'default'". Still precompiled: no eval/new Function.
+const outPath = resolve(here, '../src/manager/workflow-validator.generated.js');
 
 // Must stay in lockstep with the form-element handling the runtime applied
 // before compiling, so the precompiled validator is byte-for-byte equivalent.
@@ -58,9 +60,32 @@ relaxFormElementRequired(schema);
 // logger:false silences Ajv's "unknown format ... ignored" notices (strict:false
 // already ignores formats — same behavior the runtime had). It does not affect the
 // generated validator code.
-const ajv = new Ajv({ allErrors: true, strict: false, logger: false, code: { source: true } });
+const ajv = new Ajv({ allErrors: true, strict: false, logger: false, code: { source: true, esm: true } });
 const validate = ajv.compile(schema);
 const moduleCode = standaloneCode(ajv, validate);
+
+// Ajv's esm:true output emits ESM `export`s but STILL pulls its runtime helper
+// (ucs2length) in via a CommonJS `require().default` — a hybrid valid as neither
+// CJS nor ESM. Rewrite that single top-level require into a static ESM import
+// (hoisted) so the module is pure ESM and Vite's dev server can link it natively.
+const esmCode = moduleCode.replace(
+  /const (\w+) = require\((["'])([^"']+)\2\)\.default;/g,
+  (_match, id, quote, spec) => {
+    // Strict ESM resolvers (Node native) require an explicit extension on deep
+    // package paths; Vite/Rollup tolerate either, so the extension is the safe form.
+    const path = /\.[mc]?js$/.test(spec) ? spec : `${spec}.js`;
+    // The helper (ajv/dist/runtime/ucs2length) is CommonJS exposing its function as
+    // `exports.default`. ESM↔CJS default interop DIFFERS by loader: Node native ESM
+    // makes the default the whole `module.exports` (fn at `.default.default`), while
+    // esbuild/Vite unwrap `__esModule` (fn at `.default`). Import the namespace and
+    // unwrap defensively so the module works under BOTH node:test and Vite/browser.
+    const ns = `__cjs_${id}`;
+    return (
+      `import * as ${ns} from ${quote}${path}${quote};` +
+      `const ${id} = ${ns}.default?.default ?? ${ns}.default ?? ${ns};`
+    );
+  },
+);
 
 const header =
   '// @ts-nocheck\n' +
@@ -69,5 +94,5 @@ const header =
   '// Produced by scripts/gen-validator.mjs from spec/workflow-schema.json.\n' +
   '// CSP-safe: precompiled so the browser never calls new Function(). Regenerate: npm run gen:validator\n';
 
-writeFileSync(outPath, header + moduleCode);
-console.log(`[gen-validator] wrote ${outPath} (${header.length + moduleCode.length} bytes)`);
+writeFileSync(outPath, header + esmCode);
+console.log(`[gen-validator] wrote ${outPath} (${header.length + esmCode.length} bytes)`);
