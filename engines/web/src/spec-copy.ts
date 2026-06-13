@@ -17,8 +17,8 @@ export function _resetOidCounter(): void {
 
 /**
  * Deep-copy a workflow spec, regenerating all step OIDs AND spec-level OIDs,
- * remapping connection references and resource_source_oid on resource commands.
- * Recurses into children.
+ * remapping connection references, RETURN goto_step_oid, and resource_source_oid
+ * on resource commands. Recurses into children.
  *
  * Preserved (not regenerated):
  *  - local_id, connection_id, source_handle_id
@@ -62,7 +62,7 @@ function deepCopySpecInternal(
 
   // Deep-clone steps with new OIDs and remapped resource_source_oid
   const steps: MasterWorkflowStep[] = spec.steps.map(step =>
-    copyStep(step, stepOidMap.get(step.oid)!, specOidMap),
+    copyStep(step, stepOidMap.get(step.oid)!, specOidMap, stepOidMap),
   );
 
   // Remap connections
@@ -108,6 +108,7 @@ function copyStep(
   step: MasterWorkflowStep,
   newOid: string,
   specOidMap: Map<string, string>,
+  stepOidMap: Map<string, string>,
 ): MasterWorkflowStep {
   return {
     ...step,
@@ -137,6 +138,17 @@ function copyStep(
     select1_config: step.select1_config
       ? { ...step.select1_config, options: step.select1_config.options?.map(o => ({ ...o })) }
       : undefined,
+    // A RETURN GOTO references another main-flow step by oid; remap it (like connections)
+    // so it still resolves after per-instance OID regeneration — otherwise the GOTO target
+    // keeps the authored oid while the step itself becomes rt_N, and the GOTO can never resolve.
+    return_config: step.return_config
+      ? {
+          ...step.return_config,
+          goto_step_oid: step.return_config.goto_step_oid
+            ? (stepOidMap.get(step.return_config.goto_step_oid) ?? step.return_config.goto_step_oid)
+            : step.return_config.goto_step_oid,
+        }
+      : step.return_config,
   };
 }
 

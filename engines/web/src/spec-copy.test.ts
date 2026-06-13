@@ -211,4 +211,28 @@ describe('deepCopySpec', () => {
     assert.notEqual(copy1.oid, copy2.oid);
     assert.notEqual(copy1.children![0].oid, copy2.children![0].oid);
   });
+
+  it('remaps return_config.goto_step_oid to the target step\'s new OID (GOTO RETURN)', () => {
+    // Per-instance copy regenerates step OIDs to rt_N; a RETURN GOTO's goto_step_oid
+    // must be remapped to the target step's NEW oid, or the GOTO can never resolve.
+    const spec: MasterWorkflowSpecification = {
+      local_id: 'goto-wf', oid: 'goto-oid', version: '1.0.0', last_modified_date: '2026-03-26',
+      steps: [
+        { local_id: 'start', oid: 'g-start', version: '1.0.0', last_modified_date: '2026-03-26', step_type: 'START' },
+        { local_id: 'target', oid: 'g-target', version: '1.0.0', last_modified_date: '2026-03-26', step_type: 'USER_INTERACTION' },
+        { local_id: 'catch', oid: 'g-catch', version: '1.0.0', last_modified_date: '2026-03-26', step_type: 'CATCH', catch_id: 'C1' },
+        { local_id: 'ret', oid: 'g-ret', version: '1.0.0', last_modified_date: '2026-03-26', step_type: 'RETURN', return_config: { command: 'GOTO', goto_step_oid: 'g-target' } },
+      ],
+      connections: [
+        { from_step_id: 'g-start', to_step_id: 'g-target' },
+        { from_step_id: 'g-catch', to_step_id: 'g-ret' },
+      ],
+    };
+    const copy = deepCopySpec(spec);
+    const target = copy.steps.find(s => s.local_id === 'target')!;
+    const ret = copy.steps.find(s => s.local_id === 'ret')!;
+    assert.ok(target.oid.startsWith('rt_'), 'target step should have a new rt_ oid');
+    assert.equal(ret.return_config!.goto_step_oid, target.oid, 'GOTO goto_step_oid must be remapped to the target step\'s new oid');
+    assert.notEqual(ret.return_config!.goto_step_oid, 'g-target', 'goto_step_oid must not keep the authored oid');
+  });
 });
